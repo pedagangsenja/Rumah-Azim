@@ -8,11 +8,11 @@ Model 3D three.js (r128, global `THREE` dari CDN) untuk banglo setingkat milik p
 - **Sumber data:** Semua dimensi dan maklumat datang daripada lukisan. Jangan reka nilai. Jika sesuatu dianggarkan, tandakan "anggaran" atau "≈" dalam teks maklumat dan sebutkan dalam README (bahagian *Perkara yang perlu disahkan*).
 - **Data vs kod:** Data (bilik, bukaan, jadual, kemasan) diletakkan dalam `js/data.js`. Kod binaan diletakkan dalam `js/model.js`. Jangan campurkan.
 - **Privasi:** Repo ini awam. Jangan tambah PDF lukisan, alamat lot, nombor lot atau nama penuh pemilik.
-- **Turutan skrip:** `data.js → core.js → model.js → ui.js`. Semua skrip klasik berkongsi `const` peringkat atas, jadi elakkan nama berulang antara fail.
+- **Turutan skrip:** `data.js → core.js → model.js → landskap.js → ui.js → jalan.js`. Semua skrip klasik berkongsi `const` peringkat atas, jadi elakkan nama berulang antara fail.
 - **Telefon:** Pemilik kebanyakannya menggunakan telefon. Pastikan susun atur berfungsi pada lebar ~400 px dan sentuhan (ketik / seret / cubit) masih berfungsi.
 
 ## Koordinat
-- Pelan: x = grid 1→6 (m), y = grid C→A (m).
+- Pelan: x = grid 1→6 (m), y = grid C→A (m). Utara = −x, timur = +y.
 - Three.js: `(x, aras, -y)`. Gunakan `boxPlan(x1,y1,x2,y2,z1,z2,mat,group)`.
 - Aras dari tanah:
   - FFL 0.50
@@ -26,15 +26,18 @@ Model 3D three.js (r128, global `THREE` dari CDN) untuk banglo setingkat milik p
 ## Rujukan lukisan utama
 | Lukisan | Isi |
 |---|---|
-| M1002 | Pelan tingkat bawah |
+| M1001 | Pelan tapak: sempadan lot, pokok sedia ada, tangki |
+| M1002 | Pelan tingkat bawah & perparitan |
 | M1003 | Luas bilik, lokasi pintu/tingkap |
-| M1004 | Bumbung, perabot |
+| M1004 | Bumbung (limas + gable atas lanai), perabot |
 | M1005 | Elevation |
 | M1006 | Keratan |
 | D1001–D1006 | Kemasan |
 | D2001–D2008 | Sanitari |
 | D3001 / D3002 | Jadual pintu / tingkap |
 | D4001 | Siling |
-| D6xxx | Pagar |
-| D7xxx | Ambang & tangga |
+| D5001 | Butiran bumbung: cucur 725, lurah, rabung |
+| D6001–D6004 | Pagar |
+| D7001 / D7006 / D7007 | Skirting, tangga yard & lanai |
+| D8001–D8005 | Ambang tingkap, bucu, pintu |
 | D9001 | Elektrik |

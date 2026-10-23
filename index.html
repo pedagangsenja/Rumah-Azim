@@ -27,10 +27,13 @@
       <dl id="infoRows"></dl>
     </section>
 
-    <div class="tabs" role="tablist" aria-label="Kawalan">
-      <button type="button" role="tab" id="tb-p" aria-selected="true" aria-controls="tab-p">Paparan</button>
-      <button type="button" role="tab" id="tb-l" aria-selected="false" aria-controls="tab-l">Lapisan</button>
-      <button type="button" role="tab" id="tb-k" aria-selected="false" aria-controls="tab-k">Kemasan</button>
+    <div class="bar">
+      <div class="tabs" role="tablist" aria-label="Kawalan">
+        <button type="button" role="tab" id="tb-p" aria-selected="true" aria-controls="tab-p">Paparan</button>
+        <button type="button" role="tab" id="tb-l" aria-selected="false" aria-controls="tab-l">Lapisan</button>
+        <button type="button" role="tab" id="tb-k" aria-selected="false" aria-controls="tab-k">Kemasan</button>
+      </div>
+      <button type="button" class="tog" id="panelTog" aria-expanded="true" aria-label="Kecilkan panel"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 6l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     </div>
 
     <div class="body" id="tab-p" role="tabpanel">
@@ -40,7 +43,12 @@
           <button type="button" class="btn view" data-view="3d" aria-pressed="true">3D</button>
           <button type="button" class="btn view" data-view="atas" aria-pressed="false">Pelan atas</button>
           <button type="button" class="btn view" data-view="depan" aria-pressed="false">Depan</button>
+          <button type="button" class="btn view" data-view="jalan" aria-pressed="false">Jalan</button>
         </div>
+      </div>
+      <div class="grp">
+        <label class="lbl" for="masa">Waktu matahari · <span class="swname" id="masaT"></span></label>
+        <input type="range" id="masa" min="6.5" max="19.5" step="0.25" value="16">
       </div>
       <div class="grp">
         <label class="lbl" for="tour">Lawat bilik</label>
@@ -57,8 +65,10 @@
         <button type="button" class="chip" data-layer="furn" aria-pressed="true">Perabot</button>
         <button type="button" class="chip" data-layer="san" aria-pressed="true">Sanitari</button>
         <button type="button" class="chip" data-layer="label" aria-pressed="true">Label bilik</button>
+        <button type="button" class="chip" data-layer="land" aria-pressed="true">Landskap</button>
+        <button type="button" class="chip" data-layer="lot" aria-pressed="true">Sempadan lot</button>
       </div>
-      <p class="note">Siling hanya kelihatan dari bawah, jadi ia paling jelas semasa melawat bilik.</p>
+      <p class="note">Bumbung dimatikan automatik dalam Pelan atas. Siling hanya kelihatan dari bawah, jadi ia paling jelas semasa melawat bilik atau berjalan.</p>
     </div>
 
     <div class="body" id="tab-k" role="tabpanel" hidden>
@@ -75,8 +85,14 @@
       <button type="button" class="btn" id="resetFin">Kembali ke kemasan lukisan</button>
     </div>
 
-    <p class="note">Ketik dinding, tingkap, pintu, sanitari, perabot atau lantai untuk maklumat. Seret untuk putar, cubit untuk zum. Model anggaran; bukan lukisan pembinaan.</p>
+    <p class="note">Ketik dinding, tingkap, pintu, bumbung, sanitari, perabot, lantai atau tapak untuk maklumat. Seret untuk putar, cubit untuk zum. Model anggaran; bukan lukisan pembinaan.</p>
   </div>
+</div>
+<div id="walk" hidden>
+  <div class="walk-top"><span class="eyebrow">Mod jalan</span><strong id="walkRoom">Laman</strong></div>
+  <button type="button" class="walk-x" id="walkX">Keluar</button>
+  <div class="joy" id="joy" role="application" aria-label="Kayu bedik: seret untuk berjalan"><div class="joy-k" id="joyK"></div></div>
+  <p class="walk-hint" id="walkHint">Seret bulatan untuk berjalan. Seret skrin untuk memandang.</p>
 </div>
 <div id="err" hidden>Model 3D tidak dapat dimuatkan. Muat semula halaman.</div>
 
@@ -85,6 +101,8 @@
 <script src="js/data.js"></script>
 <script src="js/core.js"></script>
 <script src="js/model.js"></script>
+<script src="js/landskap.js"></script>
 <script src="js/ui.js"></script>
+<script src="js/jalan.js"></script>
 </body>
 </html>

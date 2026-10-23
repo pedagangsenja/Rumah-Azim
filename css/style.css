@@ -75,7 +75,7 @@ body{
 .grp{display:grid; gap:6px}
 .lbl{font-family:var(--f-mono); font-size:10.5px; letter-spacing:.07em; text-transform:uppercase; color:var(--muted)}
 
-.seg{display:grid; grid-template-columns:repeat(3,1fr); gap:6px}
+.seg{display:grid; grid-template-columns:repeat(4,1fr); gap:6px}
 .btn{
   font:500 12.5px/1.15 var(--f-ui); color:var(--ink); background:transparent;
   border:1px solid var(--line); border-radius:8px; padding-block:9px; padding-inline:10px; cursor:pointer; text-align:center;
@@ -100,3 +100,37 @@ select{
 button:focus-visible, select:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
 .note{margin:0; font-size:11px; color:var(--muted); line-height:1.4}
 #err{position:fixed; inset:auto 16px 50% 16px; text-align:center; font-size:14px; color:var(--ink)}
+
+/* Slider waktu matahari */
+input[type=range]{width:100%; accent-color:var(--accent); margin:2px 0 0; height:28px}
+
+/* Mod jalan: panel disembunyikan, kayu bedik di kiri bawah */
+body.walking .sheet, body.walking .panel{display:none}
+#walk{position:fixed; inset:0; z-index:8; pointer-events:none}
+#walk > *{pointer-events:auto}
+.walk-top{position:absolute; left:50%; transform:translateX(-50%); top:calc(12px + env(safe-area-inset-top, 0px));
+  display:grid; justify-items:center; gap:1px; background:var(--surface); border:1px solid var(--line); border-radius:8px;
+  padding-block:6px; padding-inline:14px; backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); pointer-events:none}
+.walk-top strong{font-size:15px; font-weight:700}
+.walk-x{position:absolute; top:calc(12px + env(safe-area-inset-top, 0px)); right:max(12px, env(safe-area-inset-right, 0px));
+  font:600 13px/1 var(--f-ui); color:var(--accent-ink); background:var(--accent); border:0; border-radius:8px; padding-block:10px; padding-inline:14px; cursor:pointer}
+.joy{position:absolute; left:max(20px, env(safe-area-inset-left, 0px)); bottom:calc(24px + env(safe-area-inset-bottom, 0px));
+  width:128px; height:128px; border-radius:50%; background:color-mix(in srgb, var(--surface) 55%, transparent);
+  border:1.5px solid var(--line); touch-action:none; display:grid; place-items:center; backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px)}
+.joy-k{width:52px; height:52px; border-radius:50%; background:var(--accent); box-shadow:0 4px 14px rgba(10,20,24,.25); pointer-events:none}
+.walk-hint{position:absolute; left:50%; transform:translateX(-50%); bottom:calc(30px + env(safe-area-inset-bottom, 0px));
+  max-width:min(320px, calc(100% - 200px)); margin:0; font-size:12px; line-height:1.4; color:var(--ink); background:var(--surface);
+  border:1px solid var(--line); border-radius:8px; padding-block:8px; padding-inline:10px; pointer-events:none}
+@media (max-width:520px){ .walk-hint{left:auto; right:max(12px, env(safe-area-inset-right, 0px)); transform:none; max-width:calc(100% - 190px)} }
+@media (pointer:fine){ .joy{opacity:.85} }
+
+/* Panel boleh dilipat: hanya tab kelihatan; kad maklumat kekal */
+.bar{display:flex; gap:6px; align-items:stretch}
+.bar .tabs{flex:1; min-width:0}
+.tog{flex:none; width:42px; border:1px solid var(--line); border-radius:8px; background:var(--chip); color:var(--ink); cursor:pointer; display:grid; place-items:center; padding:0}
+.tog svg{transition:transform .2s}
+body.panel-min .tog svg{transform:rotate(180deg)}
+body.panel-min .card .body, body.panel-min .card > .note{display:none!important}
+body.panel-min .tabs button[aria-selected="true"]{background:transparent; color:var(--ink)}
+@media (max-width:600px){ .card{max-height:calc(52vh - env(safe-area-inset-bottom, 0px))} }
+@media (prefers-reduced-motion: reduce){ .tog svg{transition:none} }
