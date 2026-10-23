@@ -123,3 +123,14 @@ body.walking .sheet, body.walking .panel{display:none}
   border:1px solid var(--line); border-radius:8px; padding-block:8px; padding-inline:10px; pointer-events:none}
 @media (max-width:520px){ .walk-hint{left:auto; right:max(12px, env(safe-area-inset-right, 0px)); transform:none; max-width:calc(100% - 190px)} }
 @media (pointer:fine){ .joy{opacity:.85} }
+
+/* Panel boleh dilipat: hanya tab kelihatan; kad maklumat kekal */
+.bar{display:flex; gap:6px; align-items:stretch}
+.bar .tabs{flex:1; min-width:0}
+.tog{flex:none; width:42px; border:1px solid var(--line); border-radius:8px; background:var(--chip); color:var(--ink); cursor:pointer; display:grid; place-items:center; padding:0}
+.tog svg{transition:transform .2s}
+body.panel-min .tog svg{transform:rotate(180deg)}
+body.panel-min .card .body, body.panel-min .card > .note{display:none!important}
+body.panel-min .tabs button[aria-selected="true"]{background:transparent; color:var(--ink)}
+@media (max-width:600px){ .card{max-height:calc(52vh - env(safe-area-inset-bottom, 0px))} }
+@media (prefers-reduced-motion: reduce){ .tog svg{transition:none} }

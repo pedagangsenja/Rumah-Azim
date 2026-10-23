@@ -18,6 +18,7 @@ Model memerlukan internet kerana three.js dan fon dimuatkan dari CDN.
 | Jalan | Mod orang pertama pada paras mata 1.6 m. Telefon: seret bulatan untuk berjalan, seret skrin untuk memandang. Komputer: W A S D / anak panah, Shift untuk laju, Esc untuk keluar. Dinding, pagar dan perabot menghalang; tangga dinaiki ikut aras sebenar |
 | Waktu matahari | Kedudukan matahari sebenar untuk Kangar (≈6.44° U, 100.19° T) pada tarikh hari ini, 6:30 pagi hingga 7:30 malam. Bayang-bayang, warna langit dan pantulan kaca ikut waktu |
 | Lapisan | Bumbung, potong dinding, siling, lampu & kipas, perabot, sanitari, label, landskap, sempadan lot |
+| Panel | Butang anak panah di sebelah tab melipat atau membuka panel. Di telefon panel dilipat secara lalai dan dilipat semula bila skrin diseret; pandangan 3D dialih supaya rumah tidak terlindung |
 | Kemasan | Warna bumbung, dinding, bingkai, pintu; jubin lantai setiap bilik |
 
 ## Struktur fail

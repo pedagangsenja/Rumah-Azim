@@ -17,9 +17,17 @@ document.querySelectorAll('[data-layer]').forEach(b=>b.addEventListener('click',
   sync();
 }));
 
-/* Tab */
+/* Tab & lipat panel (telefon: dilipat secara lalai, dilipat semula bila skrin diseret) */
 const tabs=[['tb-p','tab-p'],['tb-l','tab-l'],['tb-k','tab-k']];
-tabs.forEach(([b,p])=>$(b).addEventListener('click',()=>{ tabs.forEach(([b2,p2])=>{ $(b2).setAttribute('aria-selected',b2===b?'true':'false'); $(p2).hidden=p2!==p; }); }));
+const isMin=()=>document.body.classList.contains('panel-min');
+function setMin(v){ document.body.classList.toggle('panel-min',v); const t=$('panelTog'); t.setAttribute('aria-expanded',v?'false':'true'); t.setAttribute('aria-label',v?'Buka panel':'Kecilkan panel'); }
+tabs.forEach(([b,p])=>$(b).addEventListener('click',()=>{
+  if($(b).getAttribute('aria-selected')==='true'&&!isMin()){ setMin(true); return; }
+  tabs.forEach(([b2,p2])=>{ $(b2).setAttribute('aria-selected',b2===b?'true':'false'); $(p2).hidden=p2!==p; }); setMin(false); }));
+$('panelTog').addEventListener('click',()=>setMin(!isMin()));
+const narrow=()=>window.innerWidth<=600;
+if(narrow()) setMin(true);
+canvas.addEventListener('pointerdown',()=>{ if(narrow()&&!S.walk&&!isMin()) setMin(true); });
 
 /* ================= Waktu matahari ================= */
 const masa=$('masa');
@@ -37,7 +45,7 @@ function fly(p,t,fov){ if(reduce){ camera.position.copy(p); controls.target.copy
   tween={p0:camera.position.clone(),t0:controls.target.clone(),f0:camera.fov,p1:p,t1:t,f1:fov,s:performance.now(),d:900}; }
 function scaleF(){ return camera.aspect<0.6?1.75:(camera.aspect<0.85?1.5:(camera.aspect<1.2?1.2:1)); }
 function viewFov(name){ const base=name==='depan'?34:38; return camera.aspect<0.7?base+16:(camera.aspect<1?base+8:base); }
-function tgt(v){ const t=new THREE.Vector3(...v.t); if(camera.aspect<0.85) t.y-=1.6; return t; }
+function tgt(v){ return new THREE.Vector3(...v.t); }
 function goView(name){
   if(S.walk) stopWalk(true);
   S.room=null; $('tour').value=''; controls.minDistance=4; controls.maxDistance=90; controls.maxPolarAngle=1.52;
@@ -126,7 +134,17 @@ $('resetFin').addEventListener('click',()=>{ for(const k in OPTS) applyOpt(k,0);
 function applyTheme(){ if(selBox) selBox.material.color.copy(selColor()); }
 try{ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',applyTheme); }catch(e){}
 new MutationObserver(applyTheme).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
-function resize(){ const w=window.innerWidth, h=window.innerHeight; renderer.setSize(w,h,false); camera.aspect=w/h; camera.updateProjectionMatrix(); }
+function resize(){ const w=window.innerWidth, h=window.innerHeight; renderer.setSize(w,h,false); camera.aspect=w/h; camera.updateProjectionMatrix(); measureOff(); applyOff(true); }
+/* Pusat pandangan dialih ke ruang yang tidak dilindungi panel dan tajuk (bila panel selebar skrin) */
+let viewOff=0, viewOffT=0, offDone=-1;
+function measureOff(){
+  const c=document.querySelector('.card').getBoundingClientRect(), sh=document.querySelector('.sheet').getBoundingClientRect(), H=window.innerHeight;
+  if(S.walk||c.height===0||c.width<window.innerWidth*.7){ viewOffT=0; return; }
+  viewOffT=Math.max(0,H/2-((sh.height?sh.bottom:0)+Math.min(H,c.top))/2);
+}
+function applyOff(force){ if(!force&&Math.abs(viewOff-offDone)<.25) return; offDone=viewOff; const W=window.innerWidth, H=window.innerHeight;
+  if(viewOff<.5) camera.clearViewOffset(); else camera.setViewOffset(W,H,0,viewOff,W,H); }
+try{ new ResizeObserver(measureOff).observe(document.querySelector('.card')); }catch(e){}
 window.addEventListener('resize',resize); resize();
 { const v=VIEWS['3d'], t=tgt(v); camera.position.copy(new THREE.Vector3(...v.p).sub(t).multiplyScalar(scaleF()).add(t)); controls.target.copy(t); camera.fov=viewFov('3d'); camera.updateProjectionMatrix(); }
 onMasa(); updateEnv(); sync();
@@ -141,6 +159,7 @@ renderer.setAnimationLoop(()=>{
   if(!reduce && S.light) for(const f of fans) f.rotation.y+=0.03;
   for(const fn of TICK) fn(dt);
   if(!S.walk) controls.update();
+  viewOff=Math.abs(viewOffT-viewOff)<.5?viewOffT:viewOff+(viewOffT-viewOff)*Math.min(1,dt*8); applyOff();
   sky.position.copy(camera.position);
   renderer.render(scene,camera);
 });

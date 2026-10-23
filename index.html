@@ -27,10 +27,13 @@
       <dl id="infoRows"></dl>
     </section>
 
-    <div class="tabs" role="tablist" aria-label="Kawalan">
-      <button type="button" role="tab" id="tb-p" aria-selected="true" aria-controls="tab-p">Paparan</button>
-      <button type="button" role="tab" id="tb-l" aria-selected="false" aria-controls="tab-l">Lapisan</button>
-      <button type="button" role="tab" id="tb-k" aria-selected="false" aria-controls="tab-k">Kemasan</button>
+    <div class="bar">
+      <div class="tabs" role="tablist" aria-label="Kawalan">
+        <button type="button" role="tab" id="tb-p" aria-selected="true" aria-controls="tab-p">Paparan</button>
+        <button type="button" role="tab" id="tb-l" aria-selected="false" aria-controls="tab-l">Lapisan</button>
+        <button type="button" role="tab" id="tb-k" aria-selected="false" aria-controls="tab-k">Kemasan</button>
+      </div>
+      <button type="button" class="tog" id="panelTog" aria-expanded="true" aria-label="Kecilkan panel"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 6l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     </div>
 
     <div class="body" id="tab-p" role="tabpanel">
