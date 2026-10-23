@@ -177,10 +177,10 @@ const RENDERS=[
   {f:'dalam_dapur', t:'Dapur', m:'12:30 tengah hari'},
   {f:'dalam_bilikair1', t:'Bilik Air 1', m:'12:30 tengah hari'}
 ];
-/* Panorama 360° (equirectangular); yaw = arah pandangan awal (darjah) */
+/* Panorama 360° (equirectangular); yaw = arah pandangan awal (darjah): 0 = selatan (+x), −90 = timur (+y), 90 = barat (−y), 180 = utara (−x) */
 const PANOS=[
   {f:'p_tamu', t:'Ruang tamu & makan', yaw:0},
-  {f:'p_bilik1', t:'Bilik 1 (utama)', yaw:0},
-  {f:'p_dapur', t:'Dapur', yaw:0},
+  {f:'p_bilik1', t:'Bilik 1 (utama)', yaw:-90},
+  {f:'p_dapur', t:'Dapur', yaw:-110},
   {f:'p_lanai', t:'Lanai & teres', yaw:0}
 ];
