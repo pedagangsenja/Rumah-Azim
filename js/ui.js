@@ -66,7 +66,7 @@ tourSel.addEventListener('change',()=>{ if(tourSel.value) goRoom(tourSel.value);
 /* ================= Maklumat objek (ketik) ================= */
 function roomInfo(rm){ const f=FIN[rm.f];
   return {t:rm.n,ref:'M1003 · D1001 · D4001',rows:[['Luas',rm.a+' m²'],['Lantai',f.nama+' — '+f.kod+(rm.f!==rm.f0?' (pilihan anda, bukan lukisan)':'')],
-    ['Siling',rm.c?INFO[rm.c].rows[0][1]:'Tiada (terbuka)'],['Tinggi siling',rm.c? (rm.ch===CEILW?'2400 mm dari FFL':'≈2850 mm dari FFL'):'—'],
+    ['Siling',rm.c?INFO[rm.c].rows[0][1]:'Tiada (terbuka)'],['Tinggi siling',rm.c? (rm.ch===CEILW?'2400 mm dari FFL':'2850 mm dari FFL'):'—'],
     ['Aras lantai',rm.lv<.5?'50 mm di bawah FFL (kawasan basah / luar)':'FFL +500 mm dari aras tanah']]}; }
 function showInfo(inf){
   $('infoT').textContent=inf.t; $('infoRef').textContent='Rujukan · '+inf.ref;

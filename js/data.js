@@ -28,7 +28,7 @@ const INFO={
   GD2:{t:'GD2 · Pintu kaca dapur',ref:'D3001',rows:[['Jenis','Pintu kaca aluminium berengsel + panel kaca tetap atas'],['Saiz','900 × 2100 mm (jumlah 2850 dengan panel atas)'],['Kaca','Kaca keselamatan terbaja jernih'],['Lokasi','Ruang makan ke dapur (1)']]},
   WALL:{t:'Dinding',ref:'D7001 · M1006',rows:[['Binaan','Bata 110 mm + lepa simen-pasir 20 mm kedua-dua muka'],['Tebal','≈150 mm'],['Tinggi','FFL ke rasuk bumbung 3300 mm'],['Kemasan','Cat; warna ikut pilihan arkitek']]},
   COL:{t:'Tiang & rasuk konkrit',ref:'M1005',rows:[['Binaan','Konkrit bertetulang 200 × 200 mm'],['Kemasan','Lepa simen-pasir + cat luar'],['Lokasi','Bucu yard, lanai dan teres']]},
-  RAIL:{t:'Pagar besi',ref:'D6001–D6004',rows:[['Tinggi','900 mm dari FFL'],['Bahan','Besi lembut, salutan serbuk hitam matte'],['Susunan','Pemegang atas 50×10 mm; bar isian menegak 40×10 mm @ 100 mm c/c'],['Tapak','Plat asas 100×100×6 mm, 2 bolt sauh (D6002)'],['Lokasi','Yard, lanai (termasuk sisi tangga), balkoni']]},
+  RAIL:{t:'Pagar besi',ref:'D6001–D6004',rows:[['Tinggi','900 mm dari FFL (nota); E3, E4 dan butiran D6001–D6004 tunjuk 850 mm'],['Bahan','Besi lembut, salutan serbuk hitam matte'],['Susunan','Pemegang atas 50×10 mm; bar isian menegak 40×10 mm @ 100 mm c/c'],['Tapak','Plat asas 100×100×6 mm, 2 bolt sauh (D6002)'],['Lokasi','Yard, lanai (termasuk sisi tangga), balkoni']]},
   STEPS:{t:'Anak tangga',ref:'D7006 · D7007',rows:[['Ukuran','Naik 100 mm, jejak 300 mm, stepnose bucu bulat'],['Lanai','3 naik dari lanai, jejak bawah 900 mm, lebar ≈1050 mm'],['Yard','4 jejak × 300 mm, lebar 900 mm'],['Kemasan','Jubin homogenous ±10 mm atas screed 1:3']]},
   ROOF:{t:'Bumbung',ref:'M1004 · M1005 · D5001',rows:[['Bentuk','Limas, dengan gable di atas lanai & teres'],['Jubin','Jubin konkrit interlocking + rabung, bubung & verge sepadan'],['Cerun','30°'],['Aras','Rasuk bumbung +3.80 m; rabung ≈+6.40 m (anggaran maksimum M1005)'],['Cucur atap','725 mm dari muka dinding'],['Lurah (valley)','Talang G.I. 18 gauge, lebar 375 mm'],['Struktur','Kekuda keluli ringan @ 600 mm, foil pemantul di bawah jubin'],['Fascia & sofit','Papan simen gentian; sofit luaran mengikut cerun'],['Warna','Belum ditetapkan dalam lukisan']]},
   GABLE:{t:'Dinding gable teres',ref:'M1005 (E1)',rows:[['Kemasan','Papan mendatar (≈ ikut lukisan E1) dengan bolong udara'],['Kedudukan','Atas rasuk teres, grid 6 + 1200'],['Nota','Bahan tepat tidak dinyatakan']]},
@@ -37,10 +37,10 @@ const INFO={
   TILEW:{t:'Jubin dinding bilik air',ref:'D1001–D1004',rows:[['Jubin','Kimgress Travertine A36TV2LME · 300×600 · Cream · flat satin'],['Susunan','Mendatar, lantai ke siling, semua bilik air']]},
   KITKAT:{t:'Jubin ciri Kit Kat',ref:'D1001 · D1002',rows:[['Jubin','GNG & TTC Kit Kat KBT CT-CZ0919Y · 300×300 · Deep Brown, glazed'],['Lokasi','Bilik Air 1, dinding 2 & 4, dari ≈900 mm ke siling']]},
   SILL:{t:'Ambang tingkap luar',ref:'D3002 · D8001 · D8002',rows:[['Bahan','Aluminium / konkrit'],['Kecerunan','Condong ke luar']]},
-  DRAIN:{t:'Longkang U',ref:'M1002',rows:[['Jenis','Longkang U konkrit pratuang, lebar 300 mm, condong mengalir'],['Kedudukan','Sekeliling rumah di bawah titisan cucur atap (anggaran ≈0.95 m dari grid)'],['Penutup','Papak konkrit di sisi teres']]},
-  APRON:{t:'Apron konkrit',ref:'M1002',rows:[['Aras','+50 mm dari tanah'],['Kedudukan','Antara dinding dan longkang']]},
-  CEIL:{t:'Siling gipsum',ref:'D4001',rows:[['Bahan','Papan gipsum 9 mm pada rangka logam bergalvani tergantung'],['Tinggi','≈2850 mm dari FFL (anggaran daripada keratan)'],['Kemasan','Cat; warna ikut pilihan arkitek']]},
-  CEILMR:{t:'Siling gipsum tahan lembap',ref:'D4001',rows:[['Bahan','Papan gipsum MR 9 mm, cat anti-kulat'],['Tinggi','Bilik air 2400 mm dari FFL; dapur ≈2850 mm'],['Lokasi','Dapur dan bilik air']]},
+  DRAIN:{t:'Longkang U',ref:'M1002',rows:[['Jenis','Longkang U konkrit pratuang, lebar 300 mm, condong mengalir'],['Kedudukan','Apron 600 mm + longkang 300 mm dari muka dinding (keratan M1006); sisi A di luar balkoni ≈'],['Saluran keluar','Tidak ditunjukkan dalam lukisan'],['Penutup','Papak konkrit di sisi teres']]},
+  APRON:{t:'Apron konkrit',ref:'M1002 · M1006',rows:[['Aras','+50 mm dari tanah'],['Lebar','600 mm dari muka dinding']]},
+  CEIL:{t:'Siling gipsum',ref:'D4001',rows:[['Bahan','Papan gipsum 9 mm pada rangka logam bergalvani tergantung'],['Tinggi','2850 mm dari FFL (rantai dimensi keratan 1-2: 1000 + 600 + 1250)'],['Kemasan','Cat; warna ikut pilihan arkitek']]},
+  CEILMR:{t:'Siling gipsum tahan lembap',ref:'D4001',rows:[['Bahan','Papan gipsum MR 9 mm, cat anti-kulat'],['Tinggi','Bilik air 2400 mm dari FFL; dapur 2850 mm'],['Lokasi','Dapur dan bilik air']]},
   SOFFIT:{t:'Siling sofit luar',ref:'M1006',rows:[['Bahan','Panel sofit gred luaran pada rangka ringan'],['Lokasi','Lanai, yard, cucur atap']]},
   DL:{t:'Lampu downlight terbenam',ref:'D9001',rows:[['Jenis','Recess down light'],['Pemasangan','Pada siling gipsum']]},
   FAN:{t:'Titik kipas siling',ref:'D9001 · M1006',rows:[['Pemasangan','Pada anggota keluli kekuda bumbung, bukan pada papan siling'],['Lokasi','Semua bilik tidur, dapur, ruang makan, ruang tamu, lanai']]},
@@ -57,7 +57,8 @@ const INFO={
   WTHS:{t:'Pili dengan semburan tangan',ref:'D2001',rows:[['Model','Sericite SR16012 pili dinding 2 hala + SR12022']]},
   MR:{t:'Cermin LED (Bilik air 1)',ref:'D2001',rows:[['Model','Evans LW03 cermin bujur LED 900 × 500 mm'],['Cahaya','3 warna']]},
   FURN:{t:'Perabot',ref:'M1004',rows:[['Sumber','Susun atur perabot M1004'],['Saiz','Anggaran sahaja — bukan sebahagian kontrak bangunan']]},
-  KIT:{t:'Kabinet dapur',ref:'M1004 · M1006',rows:[['Kaunter','Tinggi ≈900 mm, bentuk L di sepanjang dinding W5'],['Kabinet atas','Di atas tingkap W5'],['Nota','Saiz anggaran daripada pelan perabot']]}
+  KIT:{t:'Kabinet dapur',ref:'M1004 · M1006-4',rows:[['Kaunter','Tinggi 900 mm, bentuk L di dinding W5 dan dinding yard'],['Dapur masak & sinki','Kedua-duanya di bawah tingkap W5 (sinki ikut kedudukan KT)'],['Kabinet atas','Di atas tingkap W5'],['Nota','Saiz anggaran daripada pelan perabot']]},
+  AC:{t:'Penghawa dingin (split)',ref:'D9001',rows:[['Unit dalam','Unit dinding di Bilik 1, 2, 3 dan 4'],['Unit luar','3 kondenser di luar dinding grid C, 1 di luar dinding grid 1'],['Kapasiti','Tidak dinyatakan dalam lukisan']]}
 };
 
 /* ================= Bilik (luas ikut M1003) ================= */
@@ -157,3 +158,9 @@ const UTIL=[
   {k:'pump',x:.14,y:11.16,w:.9,l:.6,h:1.0,t:'Kebuk pam penggalak',rows:[['Saiz dalam','≈900 × 600 × 1000 mm'],['Penutup','Kalis cuaca, bolong udara']]},
   {k:'well',x:11.59,y:12.95,d:1.2,t:'Perigi sedia ada',rows:[['Cadangan','Pam perigi tenggelam (submersible)']]}
 ];
+
+/* ================= Penghawa dingin (D9001, diukur pada skala 1:75) ================= */
+const AC={
+  inside:[[2.705,1.52,2.925,2.4],[5.705,1.45,5.925,2.47],[7.275,1.26,7.495,2.25],[9.975,1.9,10.195,2.9]],
+  outside:[[2.65,-.53,3.38,-.23],[6.23,-.53,6.99,-.23],[9.62,-.53,10.37,-.23],[-.53,2.9,-.15,3.73]]
+};

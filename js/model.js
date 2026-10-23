@@ -35,9 +35,10 @@ function inRoom(x,y){ for(const rm of ROOMS) for(const [x1,y1,x2,y2] of rm.r) if
 /* ================= Apron, plinth & longkang (M1002) ================= */
 const site=new THREE.Group(); scene.add(site);
 /* Longkang U 300 mm di bawah titisan cucur atap: garis tengah (anggaran ≈0.95 m dari grid) */
-const DRAIN=[[-.95,-.95],[15.85,-.95],[15.85,3.15],[17.05,3.15],[17.05,8.95],[-.95,8.95]];
+/* Apron 600 mm + longkang 300 mm dari muka dinding (M1006-4, M1006-5); sisi A di luar balkoni (≈) */
+const DRAIN=[[-.825,-.825],[15.825,-.825],[15.825,3.15],[16.95,3.15],[16.95,8.7],[-.825,8.7]];
 (function(){
-  const APRON=[[-.8,-.8],[15.7,-.8],[15.7,3.3],[16.9,3.3],[16.9,8.8],[-.8,8.8]];
+  const APRON=[[-.675,-.675],[15.675,-.675],[15.675,3.3],[16.8,3.3],[16.8,8.55],[-.675,8.55]];
   const geo=new THREE.ShapeGeometry(new THREE.Shape(APRON.map(([x,y])=>new THREE.Vector2(x,y)))); geo.rotateX(-Math.PI/2);
   const uv=geo.attributes.uv; for(let i=0;i<uv.count;i++) uv.setXY(i,uv.getX(i)/2.5,uv.getY(i)/2.5);
   const ap=new THREE.Mesh(geo,M.apron); ap.position.y=.05; ap.receiveShadow=true; ap.userData.info='APRON'; site.add(ap); pick.push(ap);
@@ -45,7 +46,7 @@ const DRAIN=[[-.95,-.95],[15.85,-.95],[15.85,3.15],[17.05,3.15],[17.05,8.95],[-.
   for(let i=0;i<DRAIN.length;i++){
     const [ax,ay]=DRAIN[i], [bx2,by]=DRAIN[(i+1)%DRAIN.length], horiz=Math.abs(by-ay)<1e-6;
     const lo=horiz?Math.min(ax,bx2)-.15:Math.min(ay,by)-.15, hi=horiz?Math.max(ax,bx2)+.15:Math.max(ay,by)+.15, c=horiz?ay:ax;
-    const covered=!horiz&&ax>17;
+    const covered=!horiz&&ax>16.5;
     const strip=(o1,o2,z1,z2,mat)=>horiz?boxPlan(lo,c+o1,hi,c+o2,z1,z2,mat,dg):boxPlan(c+o1,lo,c+o2,hi,z1,z2,mat,dg);
     strip(-.15,-.1,0,.07,M.cover); strip(.1,.15,0,.07,M.cover); strip(-.1,.1,0,.015,M.drain);
     if(covered) for(let s=lo+.02;s<hi-.3;s+=.6) boxPlan(c-.14,s,c+.14,s+.58,.07,.12,M.cover,dg);
@@ -321,7 +322,7 @@ function chair(parent,px,py,lv,face,mat){ const g=item(parent,px,py,lv,face,'FUR
   for(const [a,b] of [[.18,.18],[.18,-.18],[-.18,.18],[-.18,-.18]]) bx(g,.03,.43,.03,M.wood2,a,.215,b); return g; }
 // Bilik 4
 bed(1.08,1.4,1.6,2.0,'x+',M.throwA); nightstand(.3,.35,'x+'); nightstand(.3,2.45,'x+');
-wardrobe(2.38,.15,2.92,2.9); desk(1.1,3.55,'y-',1.0); chair(furn,1.1,3.0,FFL,'y+');
+wardrobe(2.38,.15,2.92,2.9); desk(.33,3.25,'x+',1.1); chair(furn,.85,3.25,FFL,'x-');
 // Bilik 3
 bed(4.05,.6,.9,1.95,'x+',M.throwB); bed(4.05,2.1,.9,1.95,'x+',M.throwA); nightstand(3.3,1.35,'x+');
 desk(3.75,3.6,'y-',1.0); chair(furn,3.75,3.05,FFL,'y+'); wardrobe(4.3,3.3,5.05,3.82); wardrobe(5.5,1.2,5.92,2.6);
@@ -330,6 +331,7 @@ bed(7.75,1.1,.95,1.95,'y+',M.throwB); nightstand(8.5,.3,'y+'); wardrobe(9.3,1.95
 // Bilik 1
 bed(13.6,2.85,1.8,2.0,'y-',M.throwA); nightstand(12.5,3.6,'y-'); nightstand(14.7,3.6,'y-');
 wardrobe(11.05,.12,12.45,.7); desk(11.4,3.6,'y-',.9); chair(furn,11.4,3.05,FFL,'y+');
+(function(){ const g=tagged(furn,{t:'Kabinet rendah',ref:'M1004',rows:[['Saiz','≈2350 × 470 × 450 mm (anggaran)'],['Nota','Di hadapan tingkap W1 yang berambang 300 mm']]}); boxPlan(12.38,.13,14.73,.6,FFL,FFL+.45,M.wood2,g); })();
 // Ruang makan — meja 6 kerusi
 (function(){ const g=item(furn,6.75,5.85,FFL,'x+',{t:'Meja makan 6 kerusi',ref:'M1004',rows:[['Saiz','≈1800 × 900 mm'],['Sumber','Susun atur perabot M1004']]});
   bx(g,1.8,.04,.9,M.oak,0,.75,0); for(const [a,b] of [[.82,.38],[.82,-.38],[-.82,.38],[-.82,-.38]]) bx(g,.05,.73,.05,M.wood2,a,.365,b);
@@ -339,7 +341,6 @@ wardrobe(11.05,.12,12.45,.7); desk(11.4,3.6,'y-',.9); chair(furn,11.4,3.05,FFL,'
 (function(){ const g=tagged(furn,{t:'Sofa L',ref:'M1004',rows:[['Saiz','≈2700 × 1800 mm (anggaran)'],['Sumber','Susun atur perabot M1004']]});
   boxPlan(8.9,5.4,11.6,6.25,FFL,FFL+.42,M.fabric,g); boxPlan(8.9,5.35,11.6,5.6,FFL,FFL+.82,M.fabric,g);
   boxPlan(10.8,6.25,11.6,7.1,FFL,FFL+.42,M.fabric,g); boxPlan(11.4,6.25,11.65,7.1,FFL,FFL+.62,M.fabric,g); boxPlan(8.85,5.4,9.1,6.25,FFL,FFL+.62,M.fabric,g);
-  const t=tagged(furn,'FURN'); boxPlan(9.4,6.45,10.4,6.95,FFL+.36,FFL+.4,M.oak,t); boxPlan(9.45,6.5,10.35,6.9,FFL,FFL+.36,M.wood2,t);
   const tv=tagged(furn,{t:'Kabinet TV & TV 80"',ref:'M1006-1',rows:[['TV','Maksimum 80" pada dinding antara dua tingkap W2'],['Kabinet','≈1550 × 400 mm']]});
   boxPlan(9.3,7.35,10.85,7.74,FFL,FFL+.45,M.wood2,tv); boxPlan(9.17,7.68,10.97,7.72,FFL+.85,FFL+1.85,M.screen,tv);
 })();
@@ -348,15 +349,14 @@ wardrobe(11.05,.12,12.45,.7); desk(11.4,3.6,'y-',.9); chair(furn,11.4,3.05,FFL,'
   cyl(g,.45,.45,.04,M.oak,0,.74,0,28); cyl(g,.05,.05,.72,M.black,0,.36,0,10);
   for(let k=0;k<4;k++){ const a=k*Math.PI/2+Math.PI/4, c=chair(g,0,0,0,'x+',M.fabric2); c.position.set(Math.cos(a)*.72,0,-Math.sin(a)*.72); c.rotation.y=a+Math.PI; }
 })();
-// Dapur — kaunter L, kabinet atas, hob, sinki, peti sejuk
+// Dapur (M1004, M1006-4) — kaunter L di dinding W5 & dinding yard, hob & sinki di bawah W5, peti sejuk dua pintu di sebelah GD2
 (function(){ const g=tagged(furn,'KIT');
-  boxPlan(1.95,7.2,5.0,7.75,FFL,FFL+.86,M.cab,g); boxPlan(1.93,7.17,5.02,7.75,FFL+.86,FFL+.9,M.counter,g);
-  boxPlan(1.95,6.15,2.55,7.2,FFL,FFL+.86,M.cab,g); boxPlan(1.93,6.12,2.58,7.2,FFL+.86,FFL+.9,M.counter,g);
-  boxPlan(4.35,5.35,5.03,6.45,FFL,FFL+.86,M.cab,g); boxPlan(4.32,5.33,5.03,6.47,FFL+.86,FFL+.9,M.counter,g);
-  boxPlan(1.95,7.42,5.0,7.75,FFL+1.75,FFL+2.45,M.cab,g); boxPlan(4.35,5.35,5.0,6.45,FFL+1.75,FFL+2.45,M.cab,g);
+  boxPlan(1.95,7.1,4.47,7.725,FFL,FFL+.86,M.cab,g); boxPlan(1.93,7.07,4.49,7.725,FFL+.86,FFL+.9,M.counter,g);
+  boxPlan(1.95,6.15,2.55,7.1,FFL,FFL+.86,M.cab,g); boxPlan(1.93,6.12,2.58,7.1,FFL+.86,FFL+.9,M.counter,g);
+  boxPlan(1.95,7.4,4.47,7.725,FFL+1.75,FFL+2.45,M.cab,g);
   boxPlan(2.6,7.3,3.2,7.7,FFL+.9,FFL+.91,M.black,g); boxPlan(2.6,7.35,3.2,7.75,FFL+1.62,FFL+1.75,M.steel,g);
-  boxPlan(3.55,7.32,4.15,7.68,FFL+.86,FFL+.905,M.steel,g); cyl(g,.015,.015,.28,M.chrome,3.85,FFL+1.04,-7.7,8);
-  const fr=tagged(furn,{t:'Peti sejuk',ref:'M1004',rows:[['Saiz','≈700 × 700 × 1800 mm (anggaran)']]}); boxPlan(4.35,6.5,5.0,7.15,FFL,FFL+1.8,M.steel,fr);
+  boxPlan(3.7,7.32,4.3,7.68,FFL+.86,FFL+.905,M.steel,g); cyl(g,.015,.015,.28,M.chrome,4.0,FFL+1.04,-7.62,8);
+  const fr=tagged(furn,{t:'Peti sejuk dua pintu',ref:'M1004 · M1006-4',rows:[['Saiz','≈900 × 700 × 1800 mm (anggaran)'],['Lokasi','Di sebelah pintu GD2']]}); boxPlan(4.33,5.07,5.02,6.0,FFL,FFL+1.8,M.steel,fr); boxPlan(4.32,5.53,4.33,5.54,FFL+.2,FFL+1.7,M.black,fr,false);
   const wm=tagged(furn,{t:'Mesin basuh',ref:'M1004',rows:[['Lokasi','Yard']]}); boxPlan(1.0,6.2,1.62,6.8,.45,1.3,M.porcelain,wm);
 })();
 
@@ -394,6 +394,16 @@ wallBasin(1.35,3.975,'y+','B2');
 shower(1.15,5.025,'y-','SHW2',false);
 (function(){ const g=tagged(san,'SHW2'); boxPlan(1.15,4.65,1.28,4.78,.45,.456,M.steel,g,false); })();
 
+
+/* ================= Penghawa dingin (D9001) ================= */
+(function(){
+  for(const [x1,y1,x2,y2] of AC.inside){ const g=tagged(furn,'AC'); boxPlan(x1,y1,x2,y2,FFL+2.25,FFL+2.55,M.cab,g);
+    const along=x2-x1<y2-y1; along?boxPlan(x1-.002,y1+.04,x2+.002,y2-.04,FFL+2.28,FFL+2.3,M.black,g,false):boxPlan(x1+.04,y1-.002,x2-.04,y2+.002,FFL+2.28,FFL+2.3,M.black,g,false); }
+  for(const [x1,y1,x2,y2] of AC.outside){ const g=tagged(furn,'AC'); boxPlan(x1,y1,x2,y2,.05,.6,M.cab,g);
+    const wide=x2-x1>y2-y1, fan=new THREE.Mesh(new THREE.CircleGeometry(.17,24),M.black);
+    if(wide){ fan.position.set((x1+x2)/2+.12,.33,-(y1-.002)); } else { fan.position.set(x1-.002,.33,-((y1+y2)/2+.12)); fan.rotation.y=-Math.PI/2; }
+    g.add(fan); }
+})();
 
 /* ================= Paip udara VP & papan agihan DB ================= */
 for(const v of VPIPE){

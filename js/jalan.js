@@ -12,7 +12,7 @@ function walkObstacles(){
     let cur=a0-T/2; const add=(s,e)=>{ if(e-s>.01) segs.push(horiz?[s,f,e,f,T/2]:[f,s,f,e,T/2]); };
     for(const [s,e] of gaps){ add(cur,s); cur=e; } add(cur,a1+T/2); }
   for(const [x1,y1,x2,y2] of RAILS) segs.push([x1,y1,x2,y2,.03]);
-  for(const grp of [furn,san]) for(const ch of grp.children){ const b=new THREE.Box3().setFromObject(ch); if(b.isEmpty()||b.max.y-b.min.y<.25) continue;
+  for(const grp of [furn,san]) for(const ch of grp.children){ const b=new THREE.Box3().setFromObject(ch); if(b.isEmpty()||b.max.y-b.min.y<.25||b.min.y>2.2) continue;
     boxes.push([b.min.x,-b.max.z,b.max.x,-b.min.z]); }
   for(const u of UTIL) if(u.k==='tank'||u.k==='pump'||u.k==='well'||u.k==='ist') { const h=(u.d||1)/2+.1; boxes.push([u.x-h,u.y-h,u.x+h,u.y+h]); }
   for(const t of TREES) boxes.push([t.x-.25,t.y-.25,t.x+.25,t.y+.25]);
@@ -22,7 +22,7 @@ function floorAt(x,y){
   const s=stairAt(x,y); if(s!==null) return s;
   const rm=inRoom(x,y); if(rm) return rm.lv;
   if(x>=15&&x<=16.2&&y>=3.9&&y<=7.8) return .06;
-  if(x>=-.8&&x<=16.9&&y>=-.8&&y<=8.8&&!(x>15.7&&y<3.3)) return .05;
+  if(x>=-.675&&x<=16.8&&y>=-.675&&y<=8.55&&!(x>15.675&&y<3.3)) return .05;
   return 0;
 }
 function zoneAt(x,y){
