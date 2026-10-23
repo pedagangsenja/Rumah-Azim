@@ -67,7 +67,7 @@ Fail dimuatkan mengikut turutan `data → core → model → landskap → ui →
 8. **Sisi sempadan selatan (tepi jalan berturap):** M1001 tulis 16.09 m; gambar dron pemilik menandakan ≈19 m. Model ikut M1001.
 9. **Ketinggian bumbung:** M1005 tulis rabung 6400 sebagai *approx. max height*, tetapi elevation E1 pada skala ≈6.2 m. Model guna 6.40 m, cerun 30° dan cucur 725 mm dari muka dinding (D5001), jadi tepi cucur ≈3.69 m.
 10. **Lebar tangga lanai:** E1 tunjuk 1 000, D6002 tunjuk 1 050, D7007 tunjuk 1 200 mm. Model guna ≈1 050.
-11. **W6:** teks jadual D3002 tulis 3 panel sama, tetapi lukisan W6 tunjuk 4 panel. Model ikut teks (3 panel).
+11. **W6:** teks jadual D3002 tulis "3 equal panels", tetapi gambar W6 dalam D3002 dan Elevation 1 (M1005) kedua-duanya tunjuk 4 panel sama. Model ikut gambar (4 panel). Tiada lukisan tunjuk satu kepingan kaca besar.
 12. **Dinding gable teres:** E1 lukis papan mendatar dengan bolong udara, bahan tidak dinyatakan.
 13. **Longkang U 300 mm:** keratan M1006 tulis apron 600 + longkang 300 dari muka dinding. Di sisi A longkang perlu melepasi balkoni (dalam 750 mm), jadi kedudukannya di situ ≈. Saluran keluar ke longkang awam tidak ditunjukkan.
 14. **Jadual luas M1003:** ruang tamu + makan ditulis 30.06 m² (15.21 + 15.39 = 30.60). Jumlah "97.56 m² (1,050 sqft)" tidak sama dengan jumlah baris jadual (118.98 m²) atau jumlah tanpa lanai, yard dan balkoni (≈101.6 m²). Bilik Air 2 ditanda W4, tetapi pelan dan D3002 tunjuk W3.
