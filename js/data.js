@@ -182,5 +182,5 @@ const PANOS=[
   {f:'p_tamu', t:'Ruang tamu & makan', yaw:0},
   {f:'p_bilik1', t:'Bilik 1 (utama)', yaw:-90},
   {f:'p_dapur', t:'Dapur', yaw:-110},
-  {f:'p_lanai', t:'Lanai & teres', yaw:0}
+  {f:'p_lanai', t:'Lanai & teres', yaw:180}
 ];

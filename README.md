@@ -5,7 +5,7 @@ Model 3D interaktif untuk banglo setingkat 4 bilik, 3 bilik air (97.56 m²) di K
 ## Cara buka
 
 - **Komputer:** buka `index.html` dalam pelayar (Chrome, Edge atau Safari).
-- **Telefon / kongsi pautan:** hidupkan GitHub Pages dengan memilih *Settings → Pages → Deploy from branch → `main` / root*. Model akan tersedia di `https://pedagangsenja.github.io/Rumah-Azim/`.
+- **Telefon / kongsi pautan:** `https://pedagangsenja.github.io/Rumah-Azim/` (GitHub Pages daripada cawangan `main`, folder root). Boleh dibuka di Safari iPhone tanpa akaun.
 
 Model memerlukan internet kerana three.js dan fon dimuatkan dari CDN.
 
