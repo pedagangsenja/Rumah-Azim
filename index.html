@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Banglo Azim 3D</title>
+<meta name="description" content="Model 3D interaktif banglo 4 bilik, 3 bilik air — dibina daripada set lukisan AZR.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<canvas id="c" aria-label="Model 3D banglo"></canvas>
+
+<header class="sheet">
+  <div class="eyebrow">AZR · M1001–D9001 · Model 3D</div>
+  <h1>Banglo Azim</h1>
+  <p>Kangar, Perlis · 4 bilik, 3 bilik air · 97.56 m²</p>
+</header>
+
+<div class="panel">
+  <div class="card">
+    <section class="info" id="info" hidden aria-live="polite">
+      <div class="info-head">
+        <div><div class="eyebrow" id="infoRef"></div><h2 id="infoT"></h2></div>
+        <button type="button" class="x" id="infoX" aria-label="Tutup maklumat">×</button>
+      </div>
+      <dl id="infoRows"></dl>
+    </section>
+
+    <div class="tabs" role="tablist" aria-label="Kawalan">
+      <button type="button" role="tab" id="tb-p" aria-selected="true" aria-controls="tab-p">Paparan</button>
+      <button type="button" role="tab" id="tb-l" aria-selected="false" aria-controls="tab-l">Lapisan</button>
+      <button type="button" role="tab" id="tb-k" aria-selected="false" aria-controls="tab-k">Kemasan</button>
+    </div>
+
+    <div class="body" id="tab-p" role="tabpanel">
+      <div class="grp">
+        <div class="lbl">Sudut pandangan</div>
+        <div class="seg">
+          <button type="button" class="btn view" data-view="3d" aria-pressed="true">3D</button>
+          <button type="button" class="btn view" data-view="atas" aria-pressed="false">Pelan atas</button>
+          <button type="button" class="btn view" data-view="depan" aria-pressed="false">Depan</button>
+        </div>
+      </div>
+      <div class="grp">
+        <label class="lbl" for="tour">Lawat bilik</label>
+        <select id="tour"><option value="">Pilih bilik untuk masuk…</option></select>
+      </div>
+    </div>
+
+    <div class="body" id="tab-l" role="tabpanel" hidden>
+      <div class="chips">
+        <button type="button" class="chip" data-layer="roof" aria-pressed="false">Bumbung</button>
+        <button type="button" class="chip" data-layer="cut" aria-pressed="false">Potong dinding</button>
+        <button type="button" class="chip" data-layer="ceil" aria-pressed="true">Siling</button>
+        <button type="button" class="chip" data-layer="light" aria-pressed="true">Lampu &amp; kipas</button>
+        <button type="button" class="chip" data-layer="furn" aria-pressed="true">Perabot</button>
+        <button type="button" class="chip" data-layer="san" aria-pressed="true">Sanitari</button>
+        <button type="button" class="chip" data-layer="label" aria-pressed="true">Label bilik</button>
+      </div>
+      <p class="note">Siling hanya kelihatan dari bawah, jadi ia paling jelas semasa melawat bilik.</p>
+    </div>
+
+    <div class="body" id="tab-k" role="tabpanel" hidden>
+      <div class="grp"><div class="lbl">Bumbung · <span class="swname" id="n-roof"></span></div><div class="sws" id="sw-roof"></div></div>
+      <div class="grp"><div class="lbl">Dinding · <span class="swname" id="n-wall"></span></div><div class="sws" id="sw-wall"></div></div>
+      <div class="grp"><div class="lbl">Bingkai aluminium · <span class="swname" id="n-frame"></span></div><div class="sws" id="sw-frame"></div></div>
+      <div class="grp"><div class="lbl">Daun pintu kayu · <span class="swname" id="n-door"></span></div><div class="sws" id="sw-door"></div></div>
+      <div class="grp">
+        <label class="lbl" for="floorRoom">Lantai bilik</label>
+        <select id="floorRoom"></select>
+        <div class="sws" id="sw-floor"></div>
+        <div class="swname" id="n-floor"></div>
+      </div>
+      <button type="button" class="btn" id="resetFin">Kembali ke kemasan lukisan</button>
+    </div>
+
+    <p class="note">Ketik dinding, tingkap, pintu, sanitari, perabot atau lantai untuk maklumat. Seret untuk putar, cubit untuk zum. Model anggaran; bukan lukisan pembinaan.</p>
+  </div>
+</div>
+<div id="err" hidden>Model 3D tidak dapat dimuatkan. Muat semula halaman.</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="js/data.js"></script>
+<script src="js/core.js"></script>
+<script src="js/model.js"></script>
+<script src="js/ui.js"></script>
+</body>
+</html>

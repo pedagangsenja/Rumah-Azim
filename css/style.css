@@ -1,0 +1,102 @@
+/* Susun atur: kanvas 3D skrin penuh; blok tajuk ala lembaran lukisan di atas; panel bertab (Paparan / Lapisan / Kemasan) di bawah; kad maklumat muncul bila objek diketik */
+:root{
+  --bg:#e3e8e9; --scene:#dce5e8; --ground:#9aad85;
+  --surface:rgba(250,251,250,.95); --line:#c7cfd0; --ink:#1b292d; --muted:#596a6f;
+  --accent:#b3362d; --accent-ink:#ffffff; --chip:#eef1f1; --sel:#e3a21a;
+  --f-ui:"Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121a1d; --scene:#1a2428; --ground:#44543c;
+    --surface:rgba(22,30,33,.94); --line:#2e3c40; --ink:#e2eaeb; --muted:#93a5a9;
+    --accent:#e2695e; --accent-ink:#1d0f0d; --chip:#1f2a2e; --sel:#f0b43c; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121a1d; --scene:#1a2428; --ground:#44543c;
+  --surface:rgba(22,30,33,.94); --line:#2e3c40; --ink:#e2eaeb; --muted:#93a5a9;
+  --accent:#e2695e; --accent-ink:#1d0f0d; --chip:#1f2a2e; --sel:#f0b43c; color-scheme:dark;
+}
+html,body{height:100%}
+[hidden]{display:none!important}
+body{
+  background:var(--bg); color:var(--ink); font-family:var(--f-ui); overflow:hidden;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));
+  padding-right:max(16px, env(safe-area-inset-right, 0px));
+}
+#c{position:fixed; inset:0; width:100%; height:100%; display:block; touch-action:none; outline:none}
+
+.sheet{
+  position:fixed; z-index:5;
+  top:calc(12px + env(safe-area-inset-top, 0px));
+  left:max(16px, env(safe-area-inset-left, 0px));
+  max-width:min(340px, calc(100% - 32px));
+  background:var(--surface); border:1px solid var(--line); border-radius:6px;
+  padding-block:9px; padding-inline:13px;
+  backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+}
+.eyebrow{font-family:var(--f-mono); font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.sheet h1{margin:2px 0 2px; font-size:19px; font-weight:700; letter-spacing:-.01em; text-wrap:balance}
+.sheet p{margin:0; font-size:12px; color:var(--muted); line-height:1.35}
+@media (max-width:520px){ .sheet p{display:none} .sheet h1{font-size:17px} }
+
+.panel{
+  position:fixed; z-index:6; left:0; right:0; bottom:0;
+  padding-left:max(10px, env(safe-area-inset-left, 0px));
+  padding-right:max(10px, env(safe-area-inset-right, 0px));
+  padding-bottom:calc(10px + env(safe-area-inset-bottom, 0px));
+  pointer-events:none;
+}
+.card{
+  pointer-events:auto; margin-inline:auto; max-width:470px;
+  background:var(--surface); border:1px solid var(--line); border-radius:12px;
+  padding-block:8px; padding-inline:8px; display:grid; gap:8px;
+  backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+  box-shadow:0 8px 28px rgba(10,20,24,.14);
+  max-height:calc(62vh - env(safe-area-inset-bottom, 0px)); min-height:0;
+  grid-template-rows:auto auto minmax(0,1fr) auto;
+}
+@media (min-width:900px){ .panel{right:auto; width:450px} .card{margin-inline:0} }
+
+/* Kad maklumat objek */
+.info{border:1px solid var(--line); border-left:3px solid var(--sel); border-radius:8px; padding-block:8px; padding-inline:10px; background:var(--chip); max-height:30vh; overflow:auto}
+.info-head{display:flex; align-items:flex-start; justify-content:space-between; gap:10px}
+.info h2{margin:2px 0 6px; font-size:15px; font-weight:700; text-wrap:balance}
+.info dl{margin:0; display:grid; grid-template-columns:minmax(72px,auto) 1fr; gap:4px 12px; font-size:12.5px}
+.info dt{color:var(--muted)}
+.info dd{margin:0; min-width:0; overflow-wrap:anywhere}
+.x{flex:none; width:30px; height:30px; border-radius:50%; border:1px solid var(--line); background:var(--surface); color:var(--ink); font:600 16px/1 var(--f-ui); cursor:pointer}
+
+.tabs{display:grid; grid-template-columns:repeat(3,1fr); background:var(--chip); border:1px solid var(--line); border-radius:8px; padding:3px; gap:3px}
+.tabs button{font:600 13px/1 var(--f-ui); color:var(--ink); background:transparent; border:0; border-radius:6px; padding-block:9px; cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--accent); color:var(--accent-ink)}
+.body{overflow:auto; min-height:0; display:grid; gap:10px; padding-inline:2px; align-content:start}
+.grp{display:grid; gap:6px}
+.lbl{font-family:var(--f-mono); font-size:10.5px; letter-spacing:.07em; text-transform:uppercase; color:var(--muted)}
+
+.seg{display:grid; grid-template-columns:repeat(3,1fr); gap:6px}
+.btn{
+  font:500 12.5px/1.15 var(--f-ui); color:var(--ink); background:transparent;
+  border:1px solid var(--line); border-radius:8px; padding-block:9px; padding-inline:10px; cursor:pointer; text-align:center;
+}
+.btn[aria-pressed="true"]{border-color:var(--accent); background:color-mix(in srgb, var(--accent) 12%, transparent); font-weight:600}
+select{
+  width:100%; font:500 13px var(--f-ui); color:var(--ink); background:var(--surface);
+  border:1px solid var(--line); border-radius:8px; padding-block:9px; padding-inline:10px;
+}
+.chips{display:flex; flex-wrap:wrap; gap:6px}
+.chip{
+  flex:1 1 auto; font:500 12.5px/1 var(--f-ui); color:var(--ink); background:transparent;
+  border:1px solid var(--line); border-radius:999px; padding-block:8px; padding-inline:11px; cursor:pointer;
+  display:inline-flex; align-items:center; justify-content:center; gap:6px;
+}
+.chip::before{content:""; width:8px; height:8px; border-radius:50%; border:1.5px solid var(--muted)}
+.chip[aria-pressed="true"]::before{background:var(--accent); border-color:var(--accent)}
+.sws{display:flex; flex-wrap:wrap; gap:8px}
+.sw{width:34px; height:34px; border-radius:7px; border:1px solid var(--line); cursor:pointer; padding:0; background-size:cover; background-position:center}
+.sw[aria-pressed="true"]{outline:2px solid var(--accent); outline-offset:2px}
+.swname{font-size:12px; color:var(--muted)}
+button:focus-visible, select:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.note{margin:0; font-size:11px; color:var(--muted); line-height:1.4}
+#err{position:fixed; inset:auto 16px 50% 16px; text-align:center; font-size:14px; color:var(--ink)}
