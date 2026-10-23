@@ -15,7 +15,34 @@
   <div class="eyebrow">AZR · M1001–D9001 · Model 3D</div>
   <h1>Banglo Azim</h1>
   <p>Kangar, Perlis · 4 bilik, 3 bilik air · 97.56 m²</p>
+  <div class="modes" role="group" aria-label="Mod paparan">
+    <button type="button" class="mode" data-mode="3d" aria-pressed="true">Model 3D</button>
+    <button type="button" class="mode" data-mode="galeri" aria-pressed="false">Galeri</button>
+    <button type="button" class="mode" data-mode="pano" aria-pressed="false">360°</button>
+  </div>
 </header>
+
+<section id="galeri" class="ov" hidden aria-label="Galeri render">
+  <div class="g-stage" id="gStage">
+    <img id="gImg" alt="" decoding="async">
+    <button type="button" class="g-nav prev" id="gPrev" aria-label="Gambar sebelum">‹</button>
+    <button type="button" class="g-nav next" id="gNext" aria-label="Gambar seterusnya">›</button>
+  </div>
+  <div class="g-foot">
+    <div class="g-cap"><div><div class="eyebrow" id="gMeta"></div><h2 id="gT"></h2></div><span class="g-count" id="gCount"></span></div>
+    <div class="g-thumbs" id="gThumbs"></div>
+    <p class="g-note">Render Blender Cycles daripada model yang sama. Ukuran ikut lukisan; bahan, perabot, langsir dan landskap ialah ilustrasi.</p>
+  </div>
+</section>
+
+<section id="pano" class="ov" hidden aria-label="Lawatan 360 darjah">
+  <canvas id="pc" aria-label="Panorama 360 darjah"></canvas>
+  <div class="p-load" id="pLoad">Memuatkan panorama…</div>
+  <div class="g-foot p-foot">
+    <div class="chips" id="pChips"></div>
+    <p class="g-note">Seret untuk memandang sekeliling. Cubit atau tatal untuk zum.</p>
+  </div>
+</section>
 
 <div class="panel">
   <div class="card">
@@ -104,5 +131,6 @@
 <script src="js/landskap.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/jalan.js"></script>
+<script src="js/galeri.js"></script>
 </body>
 </html>

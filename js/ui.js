@@ -153,6 +153,7 @@ const ease=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
 let last=performance.now();
 renderer.setAnimationLoop(()=>{
   const now=performance.now(), dt=Math.min(.1,(now-last)/1000); last=now;
+  if(S.pause) return; // galeri / 360° dibuka
   if(tween){ const k=Math.min(1,(now-tween.s)/tween.d), e=ease(k);
     camera.position.lerpVectors(tween.p0,tween.p1,e); controls.target.lerpVectors(tween.t0,tween.t1,e);
     camera.fov=tween.f0+(tween.f1-tween.f0)*e; camera.updateProjectionMatrix(); if(k>=1) tween=null; }

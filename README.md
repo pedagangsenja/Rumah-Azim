@@ -18,6 +18,8 @@ Model memerlukan internet kerana three.js dan fon dimuatkan dari CDN.
 | Jalan | Mod orang pertama pada paras mata 1.6 m. Telefon: seret bulatan untuk berjalan, seret skrin untuk memandang. Komputer: W A S D / anak panah, Shift untuk laju, Esc untuk keluar. Dinding, pagar dan perabot menghalang; tangga dinaiki ikut aras sebenar |
 | Waktu matahari | Kedudukan matahari sebenar untuk Kangar (≈6.44° U, 100.19° T) pada tarikh hari ini, 6:30 pagi hingga 7:30 malam. Bayang-bayang, warna langit dan pantulan kaca ikut waktu |
 | Lapisan | Bumbung, potong dinding, siling, lampu & kipas, perabot, sanitari, label, landskap, sempadan lot |
+| Galeri | Gambar fotorealistik (Blender Cycles) dari luar dan dalam: petang keemasan, tengah hari, senja. Leret atau ketik anak panah |
+| 360° | Panorama 360° ruang tamu & makan, Bilik 1, dapur, lanai & teres. Seret untuk memandang, cubit untuk zum |
 | Panel | Butang anak panah di sebelah tab melipat atau membuka panel. Di telefon panel dilipat secara lalai dan dilipat semula bila skrin diseret; pandangan 3D dialih supaya rumah tidak terlindung |
 | Kemasan | Warna bumbung, dinding, bingkai, pintu; jubin lantai setiap bilik |
 
@@ -33,8 +35,11 @@ Model memerlukan internet kerana three.js dan fon dimuatkan dari CDN.
 | `js/landskap.js` | Tanah, sempadan lot & batu sempadan, jalan, pokok sedia ada, tangki air, tangki septik, kebuk pemeriksaan, perigi |
 | `js/ui.js` | Tab, lapisan, pandangan, waktu matahari, lawatan bilik, kad maklumat, pilihan kemasan, gelung animasi |
 | `js/jalan.js` | Mod jalan orang pertama: kayu bedik, papan kekunci, perlanggaran, aras lantai |
+| `js/galeri.js` | Galeri render dan pemapar panorama 360° |
+| `render/` | Gambar render Blender Cycles dan panorama 360° |
+| `alat/render/` | Skrip untuk menjana semula render: eksport GLB, adegan Cycles, render |
 
-Fail dimuatkan mengikut turutan `data → core → model → landskap → ui → jalan` dan berkongsi pemboleh ubah global.
+Fail dimuatkan mengikut turutan `data → core → model → landskap → ui → jalan → galeri` dan berkongsi pemboleh ubah global.
 
 ## Sistem koordinat
 
@@ -79,4 +84,5 @@ Fail dimuatkan mengikut turutan `data → core → model → landskap → ui →
 - Kedudukan pintu dalaman dan sanitari dibaca daripada pelan; mungkin tersasar beberapa ratus mm.
 - Soket dan suis (D9001) belum dimodelkan.
 - Jalan, ketinggian pokok, rumput dan barisan pokok jauh ialah konteks anggaran. Kedudukan pokok sedia ada, tangki air, tangki septik, kebuk pemeriksaan, sump dan perigi dibaca daripada M1001/M1002.
+- Render Cycles: geometri dan ukuran ikut model; warna bumbung/dinding ikut pilihan lalai (belum ditetapkan arkitek); bahan, perabot, langsir (di pelmet D4001), rumput, pokok dan langit ialah ilustrasi. Kedudukan matahari dikira untuk Kangar pada 23 Okt.
 - Ini model visual, bukan lukisan pembinaan.

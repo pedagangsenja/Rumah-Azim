@@ -99,12 +99,12 @@ const WALLS=[
   [15,0,15,3.9,[op('W2',1.275),op('W2',2.025),op('W2',2.775)]],
   [1.8,7.8,12.3,7.8,[op('W5',1.65),op('GD1',4.95),op('W2',7.275),op('W2',9.75)]],
   [0,0,0,5.1,[op('W4',4.5)]],
-  [0,3.9,6.0,3.9,[op('D2',2.45),op('D2',5.55,-1)]],
+  [0,3.9,6.0,3.9,[op('D2',2.45,-1),op('D2',5.55,-1)]],
   [7.2,3.9,15,3.9,[op('D2',.55,-1),op('D2',3.2,-1)]],
   [3,0,3,3.9],[6,0,6,3.9],[7.2,0,7.2,3.9],
   [6,1.8,7.2,1.8,[op('D3',.45)]],
   [9.3,0,9.3,1.8],[9.3,1.8,10.95,1.8],[10.95,0,10.95,1.8,[op('D3',1.35,-1)]],[9.9,1.8,9.9,3.9],
-  [1.8,3.9,1.8,7.8,[op('D3',.75,-1),op('D1',1.75,-1)]],
+  [1.8,3.9,1.8,7.8,[op('D3',.75,-1),op('D1',1.75)]],
   [0,5.1,1.8,5.1],
   [5.1,3.9,5.1,7.8,[op('GD2',.55)]],
   [12.3,3.9,12.3,7.8,[op('MD1',.8,1),op('W6',2.625)]]
@@ -164,3 +164,23 @@ const AC={
   inside:[[2.705,1.52,2.925,2.4],[5.705,1.45,5.925,2.47],[7.275,1.26,7.495,2.25],[9.975,1.9,10.195,2.9]],
   outside:[[2.65,-.53,3.38,-.23],[6.23,-.53,6.99,-.23],[9.62,-.53,10.37,-.23],[-.53,2.9,-.15,3.73]]
 };
+
+/* ================= Render fotorealistik (Blender Cycles, 23 Okt, kedudukan matahari Kangar) ================= */
+const RENDERS=[
+  {f:'luar_petang', t:'Pandangan dari barat daya', m:'5:30 petang'},
+  {f:'lanai_petang', t:'Lanai dan pintu masuk utama', m:'5:15 petang'},
+  {f:'luar_jalan', t:'Hadapan dari jalan berturap', m:'12:45 tengah hari'},
+  {f:'luar_udara', t:'Pandangan udara', m:'11:30 pagi'},
+  {f:'luar_senja', t:'Senja, lampu menyala', m:'7:12 malam'},
+  {f:'dalam_tamu', t:'Ruang tamu ke ruang makan', m:'4:30 petang'},
+  {f:'dalam_bilik1', t:'Bilik 1 (utama)', m:'4:30 petang'},
+  {f:'dalam_dapur', t:'Dapur', m:'12:30 tengah hari'},
+  {f:'dalam_bilikair1', t:'Bilik Air 1', m:'12:30 tengah hari'}
+];
+/* Panorama 360° (equirectangular); yaw = arah pandangan awal (darjah) */
+const PANOS=[
+  {f:'p_tamu', t:'Ruang tamu & makan', yaw:0},
+  {f:'p_bilik1', t:'Bilik 1 (utama)', yaw:0},
+  {f:'p_dapur', t:'Dapur', yaw:0},
+  {f:'p_lanai', t:'Lanai & teres', yaw:0}
+];

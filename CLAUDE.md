@@ -8,8 +8,13 @@ Model 3D three.js (r128, global `THREE` dari CDN) untuk banglo setingkat milik p
 - **Sumber data:** Semua dimensi dan maklumat datang daripada lukisan. Jangan reka nilai. Jika sesuatu dianggarkan, tandakan "anggaran" atau "≈" dalam teks maklumat dan sebutkan dalam README (bahagian *Perkara yang perlu disahkan*).
 - **Data vs kod:** Data (bilik, bukaan, jadual, kemasan) diletakkan dalam `js/data.js`. Kod binaan diletakkan dalam `js/model.js`. Jangan campurkan.
 - **Privasi:** Repo ini awam. Jangan tambah PDF lukisan, alamat lot, nombor lot atau nama penuh pemilik.
-- **Turutan skrip:** `data.js → core.js → model.js → landskap.js → ui.js → jalan.js`. Semua skrip klasik berkongsi `const` peringkat atas, jadi elakkan nama berulang antara fail.
+- **Turutan skrip:** `data.js → core.js → model.js → landskap.js → ui.js → jalan.js → galeri.js`. Semua skrip klasik berkongsi `const` peringkat atas, jadi elakkan nama berulang antara fail.
 - **Telefon:** Pemilik kebanyakannya menggunakan telefon. Pastikan susun atur berfungsi pada lebar ~400 px dan sentuhan (ketik / seret / cubit) masih berfungsi.
+
+## Render fotorealistik
+- `render/` mengandungi gambar Blender Cycles (pegun 1600×900, panorama 360° 3072×1536, lakaran kecil dalam `render/kecil/`). Senarai & kapsyen dalam `RENDERS` / `PANOS` (`js/data.js`).
+- Jana semula dengan `alat/render/`: `eksport.js` (GLB daripada adegan three.js) → `adegan.py` (adegan Cycles) → `render.py <syot>` (Blender sebagai modul Python `bpy`).
+- Jika geometri model berubah, render perlu dijana semula supaya gambar sepadan.
 
 ## Koordinat
 - Pelan: x = grid 1→6 (m), y = grid C→A (m). Utara = −x, timur = +y.
