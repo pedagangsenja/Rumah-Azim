@@ -2,7 +2,13 @@
 'use strict';
 
 for(const k in FIN) FIN[k].tex=makeTex(FIN[k]);
-
+/* Jubin dinding bilik air: Travertine disusun lurus (mendatar), Kit Kat Deep Brown (D1001) */
+const WFIN={
+  trav:{tex:makeTex({base:'#e9dcbf',grout:'#b8a985',speck:true,band:true,seed:31}), pw:1.2, ph:.6},
+  kit:{tex:makeTex({kind:'kitkat',base:'#5a2a1c',grout:'#3a1a10',seed:37}), pw:.6, ph:.6}
+};
+M.tileW=new THREE.MeshStandardMaterial({map:WFIN.trav.tex,roughness:.35,side:THREE.DoubleSide});
+M.kitkat=new THREE.MeshStandardMaterial({map:WFIN.kit.tex,roughness:.15,envMapIntensity:1.3,side:THREE.DoubleSide});
 
 /* ================= Pembantu geometri ================= */
 const pick=[];
@@ -12,17 +18,41 @@ function boxPlan(x1,y1,x2,y2,z1,z2,mat,g,shadow=true){
   m.position.set((x1+x2)/2,(z1+z2)/2,-(y1+y2)/2); m.castShadow=m.receiveShadow=shadow; g.add(m); return m;
 }
 function bx(g,w,h,d,mat,x,y,z){ const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat); m.position.set(x,y,z); m.castShadow=m.receiveShadow=true; g.add(m); return m; }
-function cyl(g,rt,rb,h,mat,x,y,z,seg=20){ const m=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,seg),mat); m.position.set(x,y,z); m.castShadow=true; g.add(m); return m; }
+function cyl(g,rt,rb,h,mat,x,y,z,seg=20){ const m=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,seg),mat); m.position.set(x,y,z); m.castShadow=true; m.receiveShadow=true; g.add(m); return m; }
 const FACE={'x+':0,'x-':Math.PI,'y+':Math.PI/2,'y-':-Math.PI/2};
 function item(parent,px,py,lv,face,info){ const g=new THREE.Group(); g.position.set(px,lv,-py); g.rotation.y=FACE[face||'x+']; g.userData.info=info; parent.add(g); pick.push(g); return g; }
 function tagged(parent,info){ const g=new THREE.Group(); g.userData.info=info; parent.add(g); pick.push(g); return g; }
+/* Segi empat bebas: titik [x,aras,y pelan] + uv, dua muka */
+function quad(g,pts,uvs,mat,shadow=true){
+  const geo=new THREE.BufferGeometry(), pos=[], uv=[];
+  for(const i of [0,1,2,0,2,3]){ const p=pts[i]; pos.push(p[0],p[1],-p[2]); uv.push(...uvs[i]); }
+  geo.setAttribute('position',new THREE.Float32BufferAttribute(pos,3)); geo.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2)); geo.computeVertexNormals();
+  const m=new THREE.Mesh(geo,mat); m.castShadow=shadow; m.receiveShadow=true; g.add(m); return m;
+}
+/* Garis dalam bilik? (untuk menentukan sisi luar dinding) */
+function inRoom(x,y){ for(const rm of ROOMS) for(const [x1,y1,x2,y2] of rm.r) if(x>x1&&x<x2&&y>y1&&y<y2) return rm; return null; }
 
-/* Tapak */
-const ground=new THREE.Mesh(new THREE.CircleGeometry(90,48),M.ground);
-ground.rotation.x=-Math.PI/2; ground.position.set(CX,0,CZ); ground.receiveShadow=true; scene.add(ground);
-boxPlan(-0.9,-0.9,17.1,8.7,-0.02,0.05,M.apron,house);
-[[0.9,0,13.8,7.8],[0,0,0.9,6.6],[13.8,0,15,4.25],[13.8,5.2,15,7.8]].forEach(r=>boxPlan(r[0],r[1],r[2],r[3],0.05,0.44,M.plinth,house)); // plinth, ruang dibiarkan untuk anak tangga
-boxPlan(5.1,7.8,8.4,8.55,0.05,0.44,M.plinth,house);
+/* ================= Apron, plinth & longkang (M1002) ================= */
+const site=new THREE.Group(); scene.add(site);
+/* Longkang U 300 mm di bawah titisan cucur atap: garis tengah (anggaran ≈0.95 m dari grid) */
+const DRAIN=[[-.95,-.95],[15.85,-.95],[15.85,3.15],[17.05,3.15],[17.05,8.95],[-.95,8.95]];
+(function(){
+  const APRON=[[-.8,-.8],[15.7,-.8],[15.7,3.3],[16.9,3.3],[16.9,8.8],[-.8,8.8]];
+  const geo=new THREE.ShapeGeometry(new THREE.Shape(APRON.map(([x,y])=>new THREE.Vector2(x,y)))); geo.rotateX(-Math.PI/2);
+  const uv=geo.attributes.uv; for(let i=0;i<uv.count;i++) uv.setXY(i,uv.getX(i)/2.5,uv.getY(i)/2.5);
+  const ap=new THREE.Mesh(geo,M.apron); ap.position.y=.05; ap.receiveShadow=true; ap.userData.info='APRON'; site.add(ap); pick.push(ap);
+  const dg=tagged(site,'DRAIN');
+  for(let i=0;i<DRAIN.length;i++){
+    const [ax,ay]=DRAIN[i], [bx2,by]=DRAIN[(i+1)%DRAIN.length], horiz=Math.abs(by-ay)<1e-6;
+    const lo=horiz?Math.min(ax,bx2)-.15:Math.min(ay,by)-.15, hi=horiz?Math.max(ax,bx2)+.15:Math.max(ay,by)+.15, c=horiz?ay:ax;
+    const covered=!horiz&&ax>17;
+    const strip=(o1,o2,z1,z2,mat)=>horiz?boxPlan(lo,c+o1,hi,c+o2,z1,z2,mat,dg):boxPlan(c+o1,lo,c+o2,hi,z1,z2,mat,dg);
+    strip(-.15,-.1,0,.07,M.cover); strip(.1,.15,0,.07,M.cover); strip(-.1,.1,0,.015,M.drain);
+    if(covered) for(let s=lo+.02;s<hi-.3;s+=.6) boxPlan(c-.14,s,c+.14,s+.58,.07,.12,M.cover,dg);
+  }
+})();
+[[0.9,0,13.5,7.8],[0,0,0.9,6.6],[13.5,0,15,4.25],[13.5,5.3,15,7.8],[5.1,7.8,8.4,8.55]].forEach(r=>boxPlan(r[0],r[1],r[2],r[3],0.05,0.44,M.plinth,house)); // plinth; ruang dibiarkan untuk anak tangga
+boxPlan(15,3.9,16.2,7.8,.05,.06,M.apron,house); // lantai teres, lepa simen
 
 /* ================= Bilik & lantai (luas ikut M1003) ================= */
 ROOMS.forEach(rm=>{ rm.f0=rm.f; rm.meshes=[]; rm.full=rm.full||rm.r[0]; });
@@ -37,24 +67,38 @@ for(const rm of ROOMS){
 }
 function setFloor(rm,key){ rm.f=key; for(const o of rm.meshes){ if(o.top.map) o.top.map.dispose(); o.top.map=texFor(key,o.w,o.d); o.top.roughness=FIN[key].rough; o.top.needsUpdate=true; } }
 
-/* Anak tangga — di dalam lanai menurun ke teres, dan di dalam yard menurun ke apron */
+/* ================= Anak tangga (D7006, D7007): jejak 300, naik 100, stepnose bucu bulat ================= */
 const steps=tagged(house,'STEPS');
-for(let i=0;i<4;i++){ boxPlan(13.8+0.3*i,4.25,14.1+0.3*i,5.2,0.05,0.35-0.1*i,M.apron,steps); }
-for(let i=0;i<4;i++){ boxPlan(0,6.6+0.3*i,0.9,6.9+0.3*i,0.05,0.35-0.1*i,M.apron,steps); }
+const stepMat=new THREE.MeshStandardMaterial({map:texFor('orche',.6,.3),roughness:.8});
+function stairAt(x,y){
+  for(const s of STAIRS){ if(x<s.x1||x>s.x2||y<s.y1||y>s.y2) continue;
+    let a=s.dir==='x+'?x-s.x1:y-s.y1; for(let i=0;i<s.d.length;i++){ if(a<=s.d[i]) return s.h[i]; a-=s.d[i]; } return s.h[s.h.length-1]; }
+  return null;
+}
+for(const s of STAIRS){ let a=0;
+  s.d.forEach((d,i)=>{ const h=s.h[i];
+    const r=s.dir==='x+'?[s.x1+a,s.y1,s.x1+a+d,s.y2]:[s.x1,s.y1+a,s.x2,s.y1+a+d];
+    boxPlan(r[0],r[1],r[2],r[3],.05,h-.012,M.apron,steps); boxPlan(r[0],r[1],r[2],r[3],h-.012,h,stepMat,steps);
+    const n=s.dir==='x+'?[r[2]-.03,r[1],r[2]+.008,r[3]]:[r[0],r[3]-.03,r[2],r[3]+.008];
+    boxPlan(n[0],n[1],n[2],n[3],h-.02,h+.004,M.black,steps,false); // stepnose
+    a+=d; });
+}
 
 /* ================= Dinding & bukaan ================= */
+const WTOP=PLATE+.12; // dinding naik sedikit ke dalam ruang bumbung supaya tiada celah di bawah sofit
 let wallGroup=null;
 function buildWalls(top){
   if(wallGroup){ house.remove(wallGroup); const i=pick.indexOf(wallGroup); if(i>=0) pick.splice(i,1);
     wallGroup.traverse(o=>{ if(o.geometry) o.geometry.dispose(); const j=pick.indexOf(o); if(j>=0) pick.splice(j,1); }); }
+  const full=top>=PLATE-0.01; if(full) top=WTOP;
   const g=tagged(house,'WALL');
   for(const [x1,y1,x2,y2,ops] of WALLS){
     const horiz=Math.abs(y2-y1)<1e-6, a0=horiz?Math.min(x1,x2):Math.min(y1,y2);
     const len=Math.abs(horiz?x2-x1:y2-y1), fx=horiz?y1:x1, L=len+T, st=a0-T/2;
-    const piece=(s,e,z1,z2,mat=M.wall,th=T,grp=g)=>{
+    const piece=(s,e,z1,z2,mat=M.wall,th=T,grp=g,off=0)=>{
       if(e-s<0.004||z2-z1<0.004) return;
-      const a1=st+s, a2=st+e;
-      return horiz? boxPlan(a1,fx-th/2,a2,fx+th/2,z1,z2,mat,grp) : boxPlan(fx-th/2,a1,fx+th/2,a2,z1,z2,mat,grp);
+      const a1=st+s, a2=st+e, c=fx+off;
+      return horiz? boxPlan(a1,c-th/2,a2,c+th/2,z1,z2,mat,grp) : boxPlan(c-th/2,a1,c+th/2,a2,z1,z2,mat,grp);
     };
     const list=(ops||[]).map(o=>Object.assign({},o,{s:o.c-o.w/2+T/2,e:o.c+o.w/2+T/2,zs:FFL+o.sill,zh:FFL+o.sill+o.h})).sort((p,q)=>p.s-q.s);
     let cur=0;
@@ -63,18 +107,25 @@ function buildWalls(top){
       const sub=tagged(g,o.type), zt=Math.min(o.zh,top), f=0.045;
       const frameRect=(s,e,z1,z2,div,tr,glassMat)=>{
         if(z2-z1<0.02) return;
-        piece(s,e,z1,z2,glassMat,0.02,sub);
-        for(let i=0;i<=div;i++){ const p=s+i*(e-s)/div; piece(Math.max(s,p-f/2),Math.min(e,p+f/2),z1,z2,M.frame,0.06,sub); }
-        piece(s,e,z1,Math.min(z2,z1+f),M.frame,0.06,sub);
-        if(o.zh<=top) piece(s,e,z2-f,z2,M.frame,0.06,sub);
-        for(const t of (tr||[])){ const zz=z1+t; if(zz<z2-0.02) piece(s,e,zz-f/2,zz+f/2,M.frame,0.06,sub); }
+        piece(s,e,z1,z2,glassMat,0.012,sub);
+        for(let i=0;i<=div;i++){ const p=s+i*(e-s)/div; piece(Math.max(s,p-f/2),Math.min(e,p+f/2),z1,z2,M.frame,0.07,sub); }
+        piece(s,e,z1,Math.min(z2,z1+f),M.frame,0.07,sub);
+        if(o.zh<=top) piece(s,e,z2-f,z2,M.frame,0.07,sub);
+        for(const t of (tr||[])){ const zz=z1+t; if(zz<z2-0.02) piece(s,e,zz-f/2,zz+f/2,M.frame,0.07,sub); }
       };
       const pivot=(at,ang)=>{ const pv=new THREE.Group(); if(horiz){ pv.position.set(st+at,0,-fx); pv.rotation.y=ang; } else { pv.position.set(fx,0,-(st+at)); pv.rotation.y=Math.PI/2+ang; } sub.add(pv); return pv; };
+      /* Ambang luar untuk tingkap pada dinding luar (aluminium/konkrit, D3002) */
+      if(o.k==='win'&&o.sill>0&&o.zs<top){
+        const mid=a0+o.c, p1=horiz?[mid,fx-.3]:[fx-.3,mid], p2=horiz?[mid,fx+.3]:[fx+.3,mid];
+        const out=!inRoom(...p1)?-1:(!inRoom(...p2)?1:0);
+        if(out){ const sl=tagged(sub,'SILL'); piece(o.s-.03,o.e+.03,o.zs-.035,o.zs,M.frame,.1,sl,out*(T/2+.035)); }
+      }
       if(o.k==='win'){ frameRect(o.s,o.e,o.zs,zt,o.div,o.tr,o.frost?M.frost:M.glass); }
       else if(o.k==='door'||o.k==='gdoor'){
         const leafH=Math.min(2.1,top-FFL)-0.02, w=o.w-0.04; if(leafH<=0.05) continue;
+        piece(o.s,o.s+.04,FFL,FFL+Math.min(o.h,top-FFL),M.frame,.16,sub); piece(o.e-.04,o.e,FFL,FFL+Math.min(o.h,top-FFL),M.frame,.16,sub);
         const pv=pivot(o.s+0.02,o.open*1.15);
-        if(o.k==='door'){ const lf=bx(pv,w,leafH,0.045,M.door,w/2,FFL+leafH/2,0);
+        if(o.k==='door'){ bx(pv,w,leafH,0.045,M.door,w/2,FFL+leafH/2,0);
           bx(pv,0.14,0.02,0.05,M.chrome,w-0.1,FFL+1.0,0.03); bx(pv,0.14,0.02,0.05,M.chrome,w-0.1,FFL+1.0,-0.03); }
         else { bx(pv,w,leafH,0.015,M.glass,w/2,FFL+leafH/2,0);
           for(const [ww,hh,xx,yy] of [[w,0.05,w/2,FFL+0.025],[w,0.05,w/2,FFL+leafH-0.025],[0.05,leafH,0.025,FFL+leafH/2],[0.05,leafH,w-0.025,FFL+leafH/2],[w,0.03,w/2,FFL+1.0]]) bx(pv,ww,hh,0.05,M.frame,xx,yy,0);
@@ -90,57 +141,135 @@ function buildWalls(top){
     piece(cur,L,BASE,top);
   }
   const cg=tagged(g,'COL');
-  for(const [x,y] of [[0,7.8],[15,7.8],[16.1,7.7],[16.1,3.9]]) boxPlan(x-.1,y-.1,x+.1,y+.1,0.05,top,M.wall,cg);
-  if(top>=PLATE-0.01){
-    const z1=3.45,z2=PLATE;
-    [[-.1,5.1,.1,7.8],[0,7.7,1.8,7.9],[12.3,7.7,15,7.9],[14.9,3.9,15.1,7.8],[16.0,3.9,16.2,7.7],[15,7.6,16.2,7.8],[15,3.8,16.2,4.0]].forEach(r=>boxPlan(r[0],r[1],r[2],r[3],z1,z2,M.wall,cg));
+  for(const [x,y] of COLS) boxPlan(x-.1,y-.1,x+.1,y+.1,0.05,top,M.wall,cg);
+  if(full){
+    const z1=3.45;
+    [[-.1,5.1,.1,7.8],[0,7.7,1.8,7.9],[12.3,7.7,15,7.9],[14.9,3.9,15.1,7.8],[16.0,3.9,16.2,7.7],[15,7.6,16.2,7.8],[15,3.8,16.2,4.0]].forEach(r=>boxPlan(r[0],r[1],r[2],r[3],z1,WTOP,M.wall,cg));
   }
   wallGroup=g;
 }
 
-/* ================= Pagar ================= */
+/* ================= Jubin dinding bilik air (D1001–D1004) ================= */
+const tileG=new THREE.Group(); house.add(tileG);
+(function(){
+  const holesOn=(horiz,f,lo,hi)=>{ const out=[];
+    for(const [x1,y1,x2,y2,ops] of WALLS){ const h2=Math.abs(y2-y1)<1e-6; if(h2!==horiz) continue;
+      if(Math.abs((horiz?y1:x1)-f)>1e-6) continue; const a0=horiz?Math.min(x1,x2):Math.min(y1,y2);
+      for(const o of (ops||[])){ const s=a0+o.c-o.w/2, e=a0+o.c+o.w/2; if(e>lo&&s<hi) out.push([s,e,FFL+o.sill,FFL+o.sill+o.h]); } }
+    return out.sort((p,q)=>p[0]-q[0]); };
+  for(const id in WTILE){
+    const rm=ROOMS.find(r=>r.id===id), [x1,y1,x2,y2]=rm.r[0], cfg=WTILE[id], z0=rm.lv, zc=rm.ch;
+    const sides={y1:[true,y1,x1,x2,1],y2:[true,y2,x1,x2,-1],x1:[false,x1,y1,y2,1],x2:[false,x2,y1,y2,-1]};
+    for(const k in sides){
+      const [horiz,f,lo0,hi0,inward]=sides[k], lo=lo0+T/2, hi=hi0-T/2, face=f+inward*(T/2+.004);
+      const kit=(cfg.kit||[]).includes(k), kz=z0+(cfg.kz||0);
+      const g=tagged(tileG,kit?'KITKAT':'TILEW');
+      const panel=(a,b,za,zb)=>{
+        if(b-a<.005||zb-za<.005) return;
+        const bands=kit&&za<kz&&zb>kz?[[za,kz],[kz,zb]]:[[za,zb]];
+        for(const [p,q] of bands){ const isKit=kit&&p>=kz-1e-6, W=isKit?WFIN.kit:WFIN.trav;
+          const P=(s,z)=>horiz?[s,z,face]:[face,z,s];
+          quad(g,[P(a,p),P(b,p),P(b,q),P(a,q)],[[a/W.pw,(p-z0)/W.ph],[b/W.pw,(p-z0)/W.ph],[b/W.pw,(q-z0)/W.ph],[a/W.pw,(q-z0)/W.ph]],isKit?M.kitkat:M.tileW,false); }
+      };
+      let cur=lo;
+      for(const [s,e,zs,zh] of holesOn(horiz,f,lo,hi)){ const S=Math.max(s,lo), E=Math.min(e,hi);
+        panel(cur,S,z0,zc); panel(S,E,z0,Math.min(zs,zc)); if(zh<zc) panel(S,E,zh,zc); cur=E; }
+      panel(cur,hi,z0,zc);
+    }
+  }
+})();
+
+/* ================= Pagar (D6001–D6004) ================= */
 const railG=tagged(house,'RAIL'); const barMats=[]; const dummy=new THREE.Object3D();
 function railing(x1,y1,x2,y2,base){
   const horiz=Math.abs(y2-y1)<1e-6, len=Math.hypot(x2-x1,y2-y1), H=0.9;
   if(horiz) boxPlan(Math.min(x1,x2),y1-.025,Math.max(x1,x2),y1+.025,base+H-.012,base+H,M.rail,railG);
   else boxPlan(x1-.025,Math.min(y1,y2),x1+.025,Math.max(y1,y2),base+H-.012,base+H,M.rail,railG);
+  if(horiz) boxPlan(Math.min(x1,x2),y1-.02,Math.max(x1,x2),y1+.02,base+.05,base+.062,M.rail,railG);
+  else boxPlan(x1-.02,Math.min(y1,y2),x1+.02,Math.max(y1,y2),base+.05,base+.062,M.rail,railG);
   const n=Math.floor(len/0.1);
-  for(let i=0;i<=n;i++){ const t=i/n, x=x1+(x2-x1)*t, y=y1+(y2-y1)*t; dummy.position.set(x,base+0.43,-y); dummy.updateMatrix(); barMats.push(dummy.matrix.clone()); }
-  for(const p of [0,1]){ const x=x1+(x2-x1)*p, y=y1+(y2-y1)*p; boxPlan(x-.025,y-.025,x+.025,y+.025,base,base+H,M.rail,railG); }
+  for(let i=0;i<=n;i++){ const t=i/n, x=x1+(x2-x1)*t, y=y1+(y2-y1)*t; dummy.position.set(x,base+0.475,-y); dummy.updateMatrix(); barMats.push(dummy.matrix.clone()); }
+  const posts=Math.max(1,Math.round(len/0.9));
+  for(let p=0;p<=posts;p++){ const x=x1+(x2-x1)*p/posts, y=y1+(y2-y1)*p/posts;
+    boxPlan(x-.025,y-.025,x+.025,y+.025,base,base+H,M.rail,railG); boxPlan(x-.05,y-.05,x+.05,y+.05,base,base+.006,M.rail,railG,false); }
 }
-railing(0,5.1,0,7.8,.45); railing(0.9,7.8,1.8,7.8,.45);
-railing(15,5.2,15,7.8,.45); railing(12.3,7.8,15,7.8,.45); railing(15,3.9,15,4.25,.45);
-railing(5.1,8.55,8.4,8.55,.45); railing(5.1,7.8,5.1,8.55,.45); railing(8.4,7.8,8.4,8.55,.45);
-const bars=new THREE.InstancedMesh(new THREE.BoxGeometry(0.012,0.85,0.012),M.rail,barMats.length);
+RAILS.forEach(r=>railing(...r));
+const bars=new THREE.InstancedMesh(new THREE.BoxGeometry(0.01,0.84,0.04),M.rail,barMats.length);
 barMats.forEach((m,i)=>bars.setMatrixAt(i,m)); bars.castShadow=true; railG.add(bars);
 
-/* ================= Bumbung limas 30° ================= */
+/* ================= Bumbung (M1004): limas + gable atas lanai & teres, cerun 30° ================= */
 const roof=tagged(scene,'ROOF');
-const roofMat=new THREE.MeshStandardMaterial({color:0x5f6265,roughness:.8,side:THREE.DoubleSide,
-  map:canvasTex(256,(g,S)=>{ const r=rnd(5);
-    for(let j=0;j<2;j++) for(let i=-1;i<2;i++){ const x=i*S/2+(j%2?S/4:0), y=j*S/2;
-      g.fillStyle=shade('#d9d9d9',1+(r()-.5)*.1); g.fillRect(x,y,S/2,S/2);
-      const gr=g.createLinearGradient(0,y,0,y+S/2); gr.addColorStop(0,'rgba(255,255,255,.12)'); gr.addColorStop(1,'rgba(0,0,0,.32)'); g.fillStyle=gr; g.fillRect(x,y,S/2,S/2);
-      g.fillStyle='rgba(0,0,0,.45)'; g.fillRect(x,y,2,S/2); } },[1/0.6,1/0.66])});
-(function(){
-  const e=0.6, x0=-e, x1=16.2+e, yS=-e, yN=7.8+e, half=(yN-yS)/2, rise=half*Math.tan(Math.PI/6), zr=PLATE+rise;
-  const V=(x,y,h)=>[x,h,-y];
-  const A=V(x0,yS,PLATE), B=V(x1,yS,PLATE), C=V(x1,yN,PLATE), D=V(x0,yN,PLATE), R1=V(x0+half,(yS+yN)/2,zr), R2=V(x1-half,(yS+yN)/2,zr);
-  const pos=[], uv=[];
-  const face=(pts,mode)=>{ for(const p of pts){ pos.push(...p); uv.push(mode==='x'?p[0]:p[2],(p[1]-PLATE)/Math.sin(Math.PI/6)); } };
-  face([A,B,R2,A,R2,R1],'x'); face([C,D,R1,C,R1,R2],'x'); face([D,A,R1],'z'); face([B,C,R2],'z');
-  const geo=new THREE.BufferGeometry(); geo.setAttribute('position',new THREE.Float32BufferAttribute(pos,3)); geo.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2)); geo.computeVertexNormals();
-  const m=new THREE.Mesh(geo,roofMat); m.castShadow=m.receiveShadow=true; roof.add(m);
-  const cap=(p,q)=>{ const a=new THREE.Vector3(...p), b=new THREE.Vector3(...q), len=a.distanceTo(b);
-    const c=new THREE.Mesh(new THREE.CylinderGeometry(.07,.07,len,10),M.cap); c.position.copy(a).add(b).multiplyScalar(.5);
-    c.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),b.clone().sub(a).normalize()); c.castShadow=true; roof.add(c); };
-  cap(R1,R2); cap(A,R1); cap(D,R1); cap(B,R2); cap(C,R2);
-  const fz=[PLATE-.2,PLATE+.02];
-  boxPlan(x0,yS-.02,x1,yS+.02,fz[0],fz[1],M.fascia,roof); boxPlan(x0,yN-.02,x1,yN+.02,fz[0],fz[1],M.fascia,roof);
-  boxPlan(x0-.02,yS,x0+.02,yN,fz[0],fz[1],M.fascia,roof); boxPlan(x1-.02,yS,x1+.02,yN,fz[0],fz[1],M.fascia,roof);
-  const sof=new THREE.Mesh(new THREE.PlaneGeometry(x1-x0,yN-yS),M.soffit); sof.rotation.x=Math.PI/2; sof.position.set((x0+x1)/2,PLATE-.01,-(yS+yN)/2); roof.add(sof);
+function roofCanvas(bump){ return (g,S)=>{ const r=rnd(5), tw=S/2, ch=S/2;
+  for(let j=0;j<2;j++) for(let i=-1;i<3;i++){ const x=i*tw+(j%2?tw/2:0), y=j*ch, tone=1+(r()-.5)*.12;
+    for(let px=0;px<tw;px++){ const v=.5+.5*Math.cos(px/tw*Math.PI*4);
+      if(bump){ const l=Math.round(70+150*v); g.fillStyle=`rgb(${l},${l},${l})`; }
+      else g.fillStyle=shade('#d4d4d2',tone*(.84+.24*v));
+      g.fillRect(x+px,y,1,ch); }
+    const gr=g.createLinearGradient(0,y,0,y+ch); gr.addColorStop(0,bump?'rgba(0,0,0,.35)':'rgba(0,0,0,.22)'); gr.addColorStop(.25,'rgba(0,0,0,0)'); gr.addColorStop(.92,'rgba(255,255,255,.06)'); gr.addColorStop(1,bump?'rgba(255,255,255,.4)':'rgba(255,255,255,.12)');
+    g.fillStyle=gr; g.fillRect(x,y,tw,ch);
+    g.fillStyle=bump?'rgba(0,0,0,.9)':'rgba(0,0,0,.5)'; g.fillRect(x,y,tw,3); g.fillRect(x,y,1.5,ch); } }; }
+const roofMat=new THREE.MeshStandardMaterial({color:0x5f6265,roughness:.72,map:canvasTex(256,roofCanvas(false)),bumpMap:canvasTex(256,roofCanvas(true),null,true),bumpScale:.05});
+const capMat=std(0x5f6265,{roughness:.7});
+const ROOFT=Math.tan(RF.pitch), ROOFHE=RF.ridge-(RF.y1-RF.y0)/2*ROOFT;
+const ROOFP=(function(){
+  const {x0,x1,y0,y1,gx,gy}=RF, half=(y1-y0)/2, ry=(y0+y1)/2, xr0=x0+half, xr1=x1-half, gy0=2*gy-y1, jx=gy+(xr1-ry);
+  return {gy0,jx,xr0,xr1,ry,planes:[
+    {d:[0,-1],e0:-y0,poly:[[x0,y0],[x1,y0],[xr1,ry],[xr0,ry]]},
+    {d:[-1,0],e0:-x0,poly:[[x0,y0],[xr0,ry],[x0,y1]]},
+    {d:[0,1],e0:y1,poly:[[x0,y1],[xr0,ry],[xr1,ry],[jx,gy],[gx,gy],[gx,y1]]},
+    {d:[1,0],e0:x1,poly:[[x1,y0],[x1,gy0],[jx,gy],[xr1,ry]]},
+    {d:[0,-1],e0:-gy0,poly:[[x1,gy0],[gx,gy0],[gx,gy],[jx,gy]]}]};
 })();
-roof.visible=false;
+const planeH=(P,x,y)=>ROOFHE+(P.e0-(x*P.d[0]+y*P.d[1]))*ROOFT;
+function roofTop(x,y){ let best=null; for(const P of ROOFP.planes){ const c=P.poly.map(p=>new THREE.Vector2(p[0],p[1]));
+    if(THREE.ShapeUtils.isClockWise(c)) c.reverse();
+    let inside=false; for(let i=0,j=c.length-1;i<c.length;j=i++){ if(((c[i].y>y)!==(c[j].y>y))&&(x<(c[j].x-c[i].x)*(y-c[i].y)/(c[j].y-c[i].y)+c[i].x)) inside=!inside; }
+    if(inside){ const h=planeH(P,x,y); best=best===null?h:Math.max(best,h); } }
+  return best; }
+(function(){
+  const dep=RF.depth, slope=1/Math.cos(RF.pitch);
+  const surf=(P,off,mat,up)=>{
+    const c=P.poly.map(p=>new THREE.Vector2(p[0],p[1])), tris=THREE.ShapeUtils.triangulateShape(c,[]);
+    const pos=[], uv=[], tx=-P.d[1], ty=P.d[0];
+    for(const t of tris){ const idx=up?t:[t[0],t[2],t[1]];
+      for(const i of idx){ const [x,y]=P.poly[i], h=planeH(P,x,y)-off; pos.push(x,h,-y); uv.push((x*tx+y*ty)/.6,(P.e0-(x*P.d[0]+y*P.d[1]))*slope/.68); } }
+    const geo=new THREE.BufferGeometry(); geo.setAttribute('position',new THREE.Float32BufferAttribute(pos,3)); geo.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2)); geo.computeVertexNormals();
+    if(geo.attributes.normal.getY(0)*(up?1:-1)<0){ const a=geo.attributes.position.array; for(let i=0;i<a.length;i+=9) for(let k=0;k<3;k++){ const t=a[i+3+k]; a[i+3+k]=a[i+6+k]; a[i+6+k]=t; }
+      const u=geo.attributes.uv.array; for(let i=0;i<u.length;i+=6) for(let k=0;k<2;k++){ const t=u[i+2+k]; u[i+2+k]=u[i+4+k]; u[i+4+k]=t; } geo.computeVertexNormals(); }
+    const m=new THREE.Mesh(geo,mat); m.castShadow=true; m.receiveShadow=true; roof.add(m); return m;
+  };
+  for(const P of ROOFP.planes){
+    surf(P,0,roofMat,true); surf(P,dep,M.soffit,false);
+    /* fascia pada cucur & papan verge pada hujung gable */
+    const n=P.poly.length;
+    for(let i=0;i<n;i++){ const a=P.poly[i], b=P.poly[(i+1)%n];
+      const eave=Math.abs(a[0]*P.d[0]+a[1]*P.d[1]-P.e0)<1e-6&&Math.abs(b[0]*P.d[0]+b[1]*P.d[1]-P.e0)<1e-6;
+      const verge=Math.abs(a[0]-RF.gx)<1e-6&&Math.abs(b[0]-RF.gx)<1e-6;
+      if(!eave&&!verge) continue;
+      const ha=planeH(P,...a), hb=planeH(P,...b);
+      quad(roof,[[a[0],ha-dep,a[1]],[b[0],hb-dep,b[1]],[b[0],hb-.02,b[1]],[a[0],ha-.02,a[1]]],[[0,0],[1,0],[1,1],[0,1]],M.fascia);
+      if(verge){ const L=Math.hypot(b[1]-a[1],hb-ha), vb=new THREE.Mesh(new THREE.BoxGeometry(.09,.08,L),capMat);
+        vb.position.set(a[0]-.02,(ha+hb)/2+.02,-(a[1]+b[1])/2); vb.rotation.x=Math.atan2(hb-ha,b[1]-a[1]); vb.castShadow=true; roof.add(vb); }
+    }
+  }
+  /* bubung, rabung & lurah */
+  const {gy0,jx,xr0,xr1,ry}=ROOFP, {x0,x1,y0,y1,gx,gy}=RF, gh=planeH(ROOFP.planes[4],gx,gy);
+  const L3=(x,y,h)=>new THREE.Vector3(x,h,-y);
+  const cap=(a,b,r=.1)=>{ const len=a.distanceTo(b), c=new THREE.Mesh(new THREE.CylinderGeometry(r,r,len,12),capMat); c.position.copy(a).add(b).multiplyScalar(.5);
+    c.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),b.clone().sub(a).normalize()); c.castShadow=true; roof.add(c); };
+  const R0=L3(xr0,ry,RF.ridge), R1=L3(xr1,ry,RF.ridge), J=L3(jx,gy,gh);
+  cap(R0,R1); cap(L3(x0,y0,ROOFHE),R0); cap(L3(x0,y1,ROOFHE),R0); cap(L3(x1,y0,ROOFHE),R1); cap(R1,J); cap(J,L3(gx,gy,gh));
+  const v=new THREE.Mesh(new THREE.BoxGeometry(.3,.012,L3(x1,gy0,ROOFHE).distanceTo(J)),M.metal), va=L3(x1,gy0,ROOFHE);
+  v.position.copy(va).add(J).multiplyScalar(.5); v.lookAt(J); v.position.y+=.015; roof.add(v);
+  /* Dinding gable teres (E1): papan mendatar + bolong udara */
+  const gxw=RF.gableX, uG=planeH(ROOFP.planes[4],gxw,3.9)-dep, uA=planeH(ROOFP.planes[2],gxw,7.8)-dep, ua=gh-dep;
+  const sh=new THREE.Shape([new THREE.Vector2(3.9,PLATE),new THREE.Vector2(7.8,PLATE),new THREE.Vector2(7.8,uA),new THREE.Vector2(gy,ua),new THREE.Vector2(3.9,uG)]);
+  const geo=new THREE.ShapeGeometry(sh); const uv=geo.attributes.uv, p=geo.attributes.position;
+  for(let i=0;i<p.count;i++){ uv.setXY(i,p.getX(i)/1.2,p.getY(i)/.6); }
+  const gm=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({map:sidingTex,roughness:.85,side:THREE.DoubleSide}));
+  gm.rotation.y=Math.PI/2; gm.position.set(gxw,0,0); gm.castShadow=gm.receiveShadow=true; gm.userData.info='GABLE'; roof.add(gm); pick.push(gm);
+  const vent=new THREE.Mesh(new THREE.BoxGeometry(.04,.42,.3),M.louvre); vent.position.set(gxw,ua-.75,-gy); roof.add(vent);
+})();
 
 /* ================= Siling, lampu & kipas (D4001, D9001) ================= */
 const ceilG=new THREE.Group(); scene.add(ceilG);
@@ -265,6 +394,15 @@ wallBasin(1.35,3.975,'y+','B2');
 shower(1.15,5.025,'y-','SHW2',false);
 (function(){ const g=tagged(san,'SHW2'); boxPlan(1.15,4.65,1.28,4.78,.45,.456,M.steel,g,false); })();
 
+
+/* ================= Paip udara VP & papan agihan DB ================= */
+for(const v of VPIPE){
+  const top=(roofTop(v.x,v.y)||PLATE)+.9, g=item(house,v.x,v.y,0,'x+','VP');
+  cyl(g,.055,.055,top,M.pvc,0,top/2,0,14); cyl(g,.085,.085,.12,M.pvc,0,top+.08,0,14); cyl(g,.03,.06,.06,M.pvc,0,top+.17,0,14);
+  for(const z of [1.2,2.4,3.4]) cyl(g,.07,.07,.03,M.metal,0,z,0,12);
+}
+(function(){ const g=item(house,14.1,3.9+T/2+.05,FFL+1.4,'y+','DB'); bx(g,.1,.5,.38,M.cab,0,.25,0); bx(g,.012,.46,.34,M.metal,.055,.25,0); })();
+
 /* ================= Kompas & label ================= */
 (function(){
   const t=canvasTex(256,(g,S)=>{ g.strokeStyle='rgba(30,40,44,.7)'; g.lineWidth=5; g.beginPath(); g.arc(S/2,S/2,S/2-8,0,Math.PI*2); g.stroke();
@@ -272,7 +410,7 @@ shower(1.15,5.025,'y-','SHW2',false);
     g.fillStyle='rgba(30,40,44,.8)'; g.font='700 52px "Instrument Sans", sans-serif'; g.textAlign='center'; g.fillText('U',S/2,S-34); });
   t.wrapS=t.wrapT=THREE.ClampToEdgeWrapping;
   const p=new THREE.Mesh(new THREE.PlaneGeometry(2.2,2.2),new THREE.MeshBasicMaterial({map:t,transparent:true,depthWrite:false}));
-  p.rotation.x=-Math.PI/2; const w=new THREE.Group(); w.add(p); w.rotation.y=Math.PI/2; w.position.set(-3.2,0.06,-3.9); scene.add(w);
+  p.rotation.x=-Math.PI/2; const w=new THREE.Group(); w.add(p); w.rotation.y=Math.PI/2; w.position.set(19.3,0.03,3.6); scene.add(w); // anak panah ke −x (utara)
 })();
 const labels=new THREE.Group(); scene.add(labels);
 function label(main,sub,x,y,h,s){
@@ -282,9 +420,8 @@ function label(main,sub,x,y,h,s){
   g.fillStyle='#1b292d'; g.textAlign='center'; g.font='700 54px "Instrument Sans", system-ui, sans-serif'; g.fillText(main,280,78);
   g.fillStyle='#596a6f'; g.font='500 34px "JetBrains Mono", ui-monospace, monospace'; g.fillText(sub,280,128);
   const t=new THREE.CanvasTexture(cv); t.encoding=THREE.sRGBEncoding; t.anisotropy=ANISO;
-  const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:t,depthTest:false,transparent:true}));
+  const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:t,depthTest:false,transparent:true,fog:false}));
   const k=s||1; sp.scale.set(2.1*k,0.64*k,1); sp.position.set(x,h,-y); sp.renderOrder=10; labels.add(sp);
 }
-function buildLabels(){ for(const rm of ROOMS){ const [x1,y1,x2,y2]=rm.full, at=rm.at||[(x1+x2)/2,(y1+y2)/2]; label(rm.n,rm.a+' m²',at[0],at[1],2.6+(rm.lift||0),rm.s); } label('Teres','lepa simen',15.6,1.9,1.4,.75); }
+function buildLabels(){ for(const rm of ROOMS){ const [x1,y1,x2,y2]=rm.full, at=rm.at||[(x1+x2)/2,(y1+y2)/2]; label(rm.n,rm.a+' m²',at[0],at[1],2.6+(rm.lift||0),rm.s); } label('Teres','lepa simen',15.6,4.7,1.5,.75); }
 (document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(buildLabels,buildLabels);
-
