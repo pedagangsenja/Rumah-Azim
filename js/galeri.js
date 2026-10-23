@@ -60,7 +60,7 @@ function stopPano(){ if(PV.r&&PV.run){ PV.r.setAnimationLoop(null); PV.run=false
 function sizePano(){ const c=$('pano').getBoundingClientRect(); PV.r.setSize(c.width,c.height,false); PV.cam.aspect=c.width/c.height; PV.cam.updateProjectionMatrix(); }
 function loadPano(i){
   PV.i=i; const p=PANOS[i]; $('pChips').querySelectorAll('.chip').forEach((b,j)=>b.setAttribute('aria-pressed',j===i?'true':'false'));
-  PV.lon=180+p.yaw; PV.lat=0; PV.fov=75; PV.cam.fov=PV.fov; PV.cam.updateProjectionMatrix();
+  PV.lon=180+p.yaw; PV.lat=-10; PV.fov=75; PV.cam.fov=PV.fov; PV.cam.updateProjectionMatrix();
   const use=t=>{ PV.mesh.material.dispose(); PV.mesh.material=new THREE.MeshBasicMaterial({map:t}); $('pLoad').hidden=true; };
   if(PV.tex[p.f]){ use(PV.tex[p.f]); return; }
   $('pLoad').hidden=false; $('pLoad').textContent='Memuatkan panorama…';
