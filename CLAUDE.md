@@ -17,7 +17,7 @@ Model 3D three.js (r128, global `THREE` dari CDN) untuk banglo setingkat milik p
 - Jika geometri model berubah, render perlu dijana semula supaya gambar sepadan.
 
 ## Koordinat
-- Pelan: x = grid 1→6 (m), y = grid C→A (m). Utara = −x, timur = +y.
+- Pelan: x = grid 1→6 (m), y = grid C→A (m). Utara ≈ +x (jalan; utara sebenar = +x diputar `UTARA` 8.9° ke arah +y), timur ≈ −y (lorong).
 - Three.js: `(x, aras, -y)`. Gunakan `boxPlan(x1,y1,x2,y2,z1,z2,mat,group)`.
 - Aras dari tanah:
   - FFL 0.50

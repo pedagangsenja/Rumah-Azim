@@ -420,11 +420,11 @@ for(const v of VPIPE){
 /* ================= Kompas & label ================= */
 (function(){
   const t=canvasTex(256,(g,S)=>{ g.strokeStyle='rgba(30,40,44,.7)'; g.lineWidth=5; g.beginPath(); g.arc(S/2,S/2,S/2-8,0,Math.PI*2); g.stroke();
-    g.fillStyle='#b3362d'; g.beginPath(); g.moveTo(S/2,26); g.lineTo(S/2+30,S/2+18); g.lineTo(S/2,S/2); g.lineTo(S/2-30,S/2+18); g.closePath(); g.fill();
-    g.fillStyle='rgba(30,40,44,.8)'; g.font='700 52px "Instrument Sans", sans-serif'; g.textAlign='center'; g.fillText('U',S/2,S-34); });
+    g.fillStyle='#b3362d'; g.beginPath(); g.moveTo(S/2,84); g.lineTo(S/2+30,S/2+60); g.lineTo(S/2,S/2+40); g.lineTo(S/2-30,S/2+60); g.closePath(); g.fill();
+    g.fillStyle='rgba(30,40,44,.8)'; g.font='700 52px "Instrument Sans", sans-serif'; g.textAlign='center'; g.fillText('U',S/2,74); }); // 'U' di hujung anak panah
   t.wrapS=t.wrapT=THREE.ClampToEdgeWrapping;
   const p=new THREE.Mesh(new THREE.PlaneGeometry(2.2,2.2),new THREE.MeshBasicMaterial({map:t,transparent:true,depthWrite:false}));
-  p.rotation.x=-Math.PI/2; const w=new THREE.Group(); w.add(p); w.rotation.y=Math.PI/2; w.position.set(19.3,0.03,3.6); scene.add(w); // anak panah ke −x (utara)
+  p.rotation.x=-Math.PI/2; const w=new THREE.Group(); w.add(p); w.rotation.y=(UTARA-90)*Math.PI/180; w.position.set(19.3,0.03,3.6); scene.add(w); // anak panah ke utara sebenar
 })();
 const labels=new THREE.Group(); scene.add(labels);
 function label(main,sub,x,y,h,s){

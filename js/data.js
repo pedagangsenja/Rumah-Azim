@@ -169,10 +169,12 @@ const WTILE={ba1:{kit:['y1','y2'],kz:.9}, ba2:{}, ba3:{}};
 const VPIPE=[{n:'VP1',x:9.4,y:-.13},{n:'VP2',x:6.15,y:-.13},{n:'VP3',x:-.13,y:4.05}];
 
 /* ================= Tapak (M1001, M1002) ================= */
-/* Utara = −x (ke arah grid 1). Sempadan ikut bering & jarak M1001 (dilalui ikut arah jam).
-   Grid 1 → sempadan utara 3 000 (bertulis); grid A → sempadan timur ≈ 1.52 m (diukur pada skala 1:100). */
+/* Utara ke arah jalan berturap (+x), seperti anak panah semua helaian. Bering M1001 dirujuk pada sisi rumah keluarga (0°);
+   utara sebenar (Google Earth) ialah paksi +x diputar 8.9° ke arah +y. Sempadan ikut bering & jarak M1001 (dilalui lawan arah jam).
+   Grid 1 → sempadan selatan (bendang) 3 000 (bertulis); grid A → sempadan barat (rumah keluarga) ≈ 1.52 m (diukur pada skala 1:100). */
+const UTARA=8.9; // darjah: sudut utara sebenar dari paksi +x pelan, lawan arah jam (ke arah +y)
 const LOT=[[-3,9.322],[23.94,9.322],[24.534,-6.757],[-3,-2.678]];
-const LOT_SIDES=[['Timur','26.94 m','S 0°00′00″ W','jiran'],['Selatan','16.09 m','S 87°52′59″ W','jalan berturap'],['Barat','27.83 m','N 8°26′09″ E','jalan dalam'],['Utara','12.00 m','N 90°00′00″ E','']];
+const LOT_SIDES=[['Barat','26.94 m','S 0°00′00″ W','rumah keluarga'],['Utara','16.09 m','S 87°52′59″ W','jalan berturap'],['Timur','27.83 m','N 8°26′09″ E','jalan dalam'],['Selatan','12.00 m','N 90°00′00″ E','bendang']];
 /* Jalan: konteks sahaja, lebar anggaran. off = jarak tepi dalam dari sempadan, w = lebar */
 const ROADS=[{side:1,off:.6,w:3.4,ext:[30,30],k:'asphalt',n:'Jalan berturap'},{side:2,off:.4,w:3.0,ext:[4,25],k:'laterite',n:'Jalan dalam (tanah)'}];
 /* Pokok sedia ada (M1001): pusat & jejari kanopi pada pelan */
@@ -199,7 +201,7 @@ const AC={
 
 /* ================= Render fotorealistik (Blender Cycles, 23 Okt, kedudukan matahari Kangar) ================= */
 const RENDERS=[
-  {f:'luar_petang', t:'Pandangan dari barat daya', m:'5:30 petang'},
+  {f:'luar_pagi', t:'Pandangan dari timur laut (lorong)', m:'8:00 pagi'},
   {f:'lanai_petang', t:'Lanai dan pintu masuk utama', m:'5:15 petang'},
   {f:'luar_jalan', t:'Hadapan dari jalan berturap', m:'12:45 tengah hari'},
   {f:'luar_udara', t:'Pandangan udara', m:'11:30 pagi'},
@@ -209,7 +211,7 @@ const RENDERS=[
   {f:'dalam_dapur', t:'Dapur', m:'12:30 tengah hari'},
   {f:'dalam_bilikair1', t:'Bilik Air 1', m:'12:30 tengah hari'}
 ];
-/* Panorama 360° (equirectangular); yaw = arah pandangan awal (darjah): 0 = selatan (+x), −90 = timur (+y), 90 = barat (−y), 180 = utara (−x) */
+/* Panorama 360° (equirectangular); yaw = arah pandangan awal (darjah): 0 = utara (+x, jalan), −90 = barat (+y, rumah keluarga), 90 = timur (−y, lorong), 180 = selatan (−x, bendang) */
 const PANOS=[
   {f:'p_tamu', t:'Ruang tamu & makan', yaw:0},
   {f:'p_bilik1', t:'Bilik 1 (utama)', yaw:-90},

@@ -65,7 +65,7 @@ Object.assign(sun.shadow.camera,{left:-22,right:22,top:22,bottom:-22,near:1,far:
 sun.shadow.bias=-0.0003; sun.shadow.normalBias=0.03;
 sun.target.position.copy(SUN_T); scene.add(sun,sun.target);
 
-/* Kedudukan matahari: Kangar ≈ 6.44° U, 100.19° T, UTC+8. Utara = −x pelan, timur = +y pelan (three: z = −y). */
+/* Kedudukan matahari: Kangar ≈ 6.44° U, 100.19° T, UTC+8. Utara = paksi +x pelan diputar UTARA° ke arah +y; timur ≈ −y (three: z = −y). */
 const LAT=6.44*Math.PI/180, LON=100.19, TZ=8;
 function sunAt(hour){
   const d=new Date(), N=Math.floor((d-new Date(d.getFullYear(),0,0))/864e5);
@@ -75,7 +75,8 @@ function sunAt(hour){
   const alt=Math.asin(Math.sin(LAT)*Math.sin(dec)+Math.cos(LAT)*Math.cos(dec)*Math.cos(H));
   let az=Math.acos(Math.max(-1,Math.min(1,(Math.sin(dec)-Math.sin(alt)*Math.sin(LAT))/(Math.cos(alt)*Math.cos(LAT)))));
   if(H>0) az=2*Math.PI-az;
-  return {alt, az, dir:new THREE.Vector3(-Math.cos(az)*Math.cos(alt),Math.sin(alt),-Math.sin(az)*Math.cos(alt))};
+  const r=az-UTARA*Math.PI/180;
+  return {alt, az, dir:new THREE.Vector3(Math.cos(r)*Math.cos(alt),Math.sin(alt),Math.sin(r)*Math.cos(alt))};
 }
 const smooth=(a,b,x)=>{ const t=Math.max(0,Math.min(1,(x-a)/(b-a))); return t*t*(3-2*t); };
 const lin=h=>new THREE.Color(h).convertSRGBToLinear();

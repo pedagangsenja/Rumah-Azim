@@ -13,6 +13,7 @@ sc = bpy.context.scene
 
 # Kedudukan matahari: Kangar ≈ 6.44° U, 100.19° T, UTC+8, tarikh 23 Okt 2026 (sama seperti model web)
 LAT = math.radians(6.44); LON = 100.19; TZ = 8
+UTARA = 8.9   # darjah: utara sebenar dari paksi +x pelan ke arah +y (Google Earth); sama dengan UTARA dalam js/data.js
 def sun_at(hour, day=datetime.date(2026, 10, 23)):
     N = (day - datetime.date(day.year, 1, 1)).days + 1
     B = 2 * math.pi * (N - 81) / 364; eot = 9.87 * math.sin(2 * B) - 7.53 * math.cos(B) - 1.5 * math.sin(B)
@@ -25,7 +26,7 @@ def sun_at(hour, day=datetime.date(2026, 10, 23)):
 
 SHOTS = {
   # nama: (jam, lebar, tinggi, sampel, dedahan)
-  'luar_petang': (17.5, 1600, 900, 160, 0.0),
+  'luar_pagi': (8.0, 1600, 900, 160, 0.0),
   'luar_jalan': (12.75, 1600, 900, 128, -0.3),
   'luar_udara': (11.5, 1600, 900, 128, -0.3),
   'luar_senja': (19.2, 1600, 900, 192, 1.3),
@@ -44,7 +45,8 @@ world = sc.world; sky = next(n for n in world.node_tree.nodes if n.type == 'TEX_
 sun = bpy.data.objects['matahari']
 def set_time(hour):
     alt, az = sun_at(hour)
-    d = Vector((-math.cos(az) * math.cos(alt), math.sin(az) * math.cos(alt), math.sin(alt)))   # arah ke matahari (Blender)
+    r = az - math.radians(UTARA)
+    d = Vector((math.cos(r) * math.cos(alt), -math.sin(r) * math.cos(alt), math.sin(alt)))   # arah ke matahari (Blender); utara = +x diputar UTARA° ke +y
     sun.rotation_euler = (-d).to_track_quat('-Z', 'Y').to_euler()
     a = math.degrees(alt)
     sun.data.energy = max(0.0, min(1.0, (a + 1) / 6)) * 4.2

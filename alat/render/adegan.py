@@ -1,5 +1,5 @@
 # Bina adegan Cycles Banglo Azim daripada banglo.glb dan simpan sebagai banglo.blend
-# Koordinat Blender = (x pelan, y pelan, aras). Utara = -x, timur = +y.
+# Koordinat Blender = (x pelan, y pelan, aras). Utara ≈ +x (diputar 8.9° ke arah +y), timur ≈ -y.
 import bpy, bmesh, math, random, os, sys
 from mathutils import Vector
 
@@ -165,7 +165,7 @@ UTIL = [(-1.97, -0.95, 1.0), (3.01, -1.95, .4), (-1.57, 2.92, .4), (-2.29, 5.12,
 def grassy(x, y):
     if -1.05 < x < 17.25 and -1.05 < y < 9.0: return False
     if x > 24.0 and x < 28.6: return False                      # jalan berturap (≈)
-    # jalan dalam di luar sempadan barat
+    # jalan dalam di luar sempadan timur
     d = (y - (-2.678 + (x + 3) * (-4.079 / 27.534)))
     if -3.6 < d < -0.3: return False
     for ux, uy, r in UTIL:
@@ -239,7 +239,7 @@ def cam(name, pos, look, lens=24, pano=False):
         c.shift_y = 0.0
     c.clip_start = 0.05; c.clip_end = 600
     return o
-cam('luar_petang', (24.0, -9.0, 1.7), (10.0, 3.2, 2.0), 26)
+cam('luar_pagi', (24.0, -9.0, 1.7), (10.0, 3.2, 2.0), 26)
 cam('luar_jalan', (26.0, 6.2, 1.6), (13.0, 4.6, 2.3), 26)
 cam('luar_udara', (31.0, -15.0, 17.0), (8.6, 3.6, 0.8), 40)
 cam('luar_senja', (22.5, -7.0, 1.6), (9.5, 3.4, 2.0), 26)
