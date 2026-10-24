@@ -22,7 +22,7 @@ function floorAt(x,y){
   const s=stairAt(x,y); if(s!==null) return s;
   const rm=inRoom(x,y); if(rm) return rm.lv;
   if(x>=15&&x<=16.2&&y>=3.9&&y<=7.8) return .06;
-  if(x>=-.675&&x<=16.8&&y>=-.675&&y<=8.55&&!(x>15.675&&y<3.3)) return .05;
+  if(x>=-.675&&x<=16.8&&y>=-.675&&y<=8.475&&!(x>15.675&&y<3.3)) return .05;
   return 0;
 }
 function zoneAt(x,y){

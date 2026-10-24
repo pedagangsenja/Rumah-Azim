@@ -35,10 +35,10 @@ function inRoom(x,y){ for(const rm of ROOMS) for(const [x1,y1,x2,y2] of rm.r) if
 /* ================= Apron, plinth & longkang (M1002) ================= */
 const site=new THREE.Group(); scene.add(site);
 /* Longkang U 300 mm di bawah titisan cucur atap: garis tengah (anggaran ≈0.95 m dari grid) */
-/* Apron 600 mm + longkang 300 mm dari muka dinding (M1006-4, M1006-5); sisi A di luar balkoni (≈) */
-const DRAIN=[[-.825,-.825],[15.825,-.825],[15.825,3.15],[16.95,3.15],[16.95,8.7],[-.825,8.7]];
+/* Apron 600 mm + longkang 300 mm dari muka dinding (M1006-4, M1006-5); papak balkoni mengunjur di atas apron (D6004) */
+const DRAIN=[[-.825,-.825],[15.825,-.825],[15.825,3.15],[16.95,3.15],[16.95,8.625],[-.825,8.625]];
 (function(){
-  const APRON=[[-.675,-.675],[15.675,-.675],[15.675,3.3],[16.8,3.3],[16.8,8.55],[-.675,8.55]];
+  const APRON=[[-.675,-.675],[15.675,-.675],[15.675,3.3],[16.8,3.3],[16.8,8.475],[-.675,8.475]];
   const geo=new THREE.ShapeGeometry(new THREE.Shape(APRON.map(([x,y])=>new THREE.Vector2(x,y)))); geo.rotateX(-Math.PI/2);
   const uv=geo.attributes.uv; for(let i=0;i<uv.count;i++) uv.setXY(i,uv.getX(i)/2.5,uv.getY(i)/2.5);
   const ap=new THREE.Mesh(geo,M.apron); ap.position.y=.05; ap.receiveShadow=true; ap.userData.info='APRON'; site.add(ap); pick.push(ap);
@@ -52,7 +52,8 @@ const DRAIN=[[-.825,-.825],[15.825,-.825],[15.825,3.15],[16.95,3.15],[16.95,8.7]
     if(covered) for(let s=lo+.02;s<hi-.3;s+=.6) boxPlan(c-.14,s,c+.14,s+.58,.07,.12,M.cover,dg);
   }
 })();
-[[0.9,0,13.5,7.8],[0,0,0.9,6.6],[13.5,0,15,4.25],[13.5,5.3,15,7.8],[5.1,7.8,8.4,8.55]].forEach(r=>boxPlan(r[0],r[1],r[2],r[3],0.05,0.44,M.plinth,house)); // plinth; ruang dibiarkan untuk anak tangga
+[[0.9,0,13.5,7.8],[0,0,0.9,6.6],[13.5,0,15,4.25],[13.5,5.3,15,7.8]].forEach(r=>boxPlan(r[0],r[1],r[2],r[3],0.05,0.44,M.plinth,house)); // plinth; ruang dibiarkan untuk anak tangga
+boxPlan(5.1,7.8,8.4,8.1,0.29,0.44,M.plinth,house); // papak balkoni tergantung 150 mm di luar grid A (D6004)
 boxPlan(15,3.9,16.2,7.8,.05,.06,M.apron,house); // lantai teres, lepa simen
 
 /* ================= Bilik & lantai (luas ikut M1003) ================= */
@@ -146,6 +147,7 @@ function buildWalls(top){
   if(full){
     const z1=3.45;
     [[-.1,5.1,.1,7.8],[0,7.7,1.8,7.9],[12.3,7.7,15,7.9],[14.9,3.9,15.1,7.8],[16.0,3.9,16.2,7.7],[15,7.6,16.2,7.8],[15,3.8,16.2,4.0]].forEach(r=>boxPlan(r[0],r[1],r[2],r[3],z1,WTOP,M.wall,cg));
+    boxPlan(5.1,7.725,8.4,7.875,CEIL,WTOP,M.wall,cg); // rasuk grid A di atas ceruk balkoni (keratan 2-1)
   }
   wallGroup=g;
 }
@@ -197,6 +199,9 @@ function railing(x1,y1,x2,y2,base){
 RAILS.forEach(r=>railing(...r));
 const bars=new THREE.InstancedMesh(new THREE.BoxGeometry(0.01,0.84,0.04),M.rail,barMats.length);
 barMats.forEach((m,i)=>bars.setMatrixAt(i,m)); bars.castShadow=true; railG.add(bars);
+
+/* Papak kanopi balkoni (keratan 2-1) */
+boxPlan(KANOPI[0],KANOPI[1],KANOPI[2],KANOPI[3],FFL+2.4,FFL+2.5,M.wall,tagged(house,'KANOPI'));
 
 /* ================= Bumbung (M1004): limas + gable atas lanai & teres, cerun 30° ================= */
 const roof=tagged(scene,'ROOF');
@@ -281,14 +286,13 @@ for(const rm of ROOMS){ if(!rm.c) continue;
     const p=new THREE.Mesh(new THREE.PlaneGeometry(x2-x1,y2-y1),M.ceil); p.rotation.x=Math.PI/2; p.position.set((x1+x2)/2,rm.ch,-(y1+y2)/2);
     p.userData.info=rm.c; ceilG.add(p); pick.push(p);
   }
-  const [x1,y1,x2,y2]=rm.full, w=x2-x1, d=y2-y1, area=w*d;
-  const nx=area<3?1:(w>3.2?3:2), ny=area<3?1:2;
-  for(let i=0;i<nx;i++) for(let j=0;j<ny;j++){
-    const lx=x1+w*(i+.5)/nx, ly=y1+d*(j+.5)/ny;
-    const dl=item(lightG,lx,ly,rm.ch-0.012,'x+','DL'); cyl(dl,.065,.065,.02,M.lamp,0,0,0,16);
-  }
 }
-for(const [x,y] of [[6.6,2.4],[6.6,3.3]]){ const dl=item(lightG,x,y,CEIL-0.012,'x+','DL'); cyl(dl,.065,.065,.02,M.lamp,0,0,0,16); }
+for(const [x1,y1,x2,y2] of SOFIT){
+  const p=new THREE.Mesh(new THREE.PlaneGeometry(x2-x1,y2-y1),M.ceil); p.rotation.x=Math.PI/2; p.position.set((x1+x2)/2,CEIL,-(y1+y2)/2);
+  p.userData.info='SOFFIT'; ceilG.add(p); pick.push(p);
+}
+for(const [x,y] of DLS){ const rm=inRoom(x,y), h=rm&&rm.ch?rm.ch:(rm&&rm.id==='balkoni'?FFL+2.4:CEIL);
+  const dl=item(lightG,x,y,h-0.012,'x+','DL'); cyl(dl,.065,.065,.02,M.lamp,0,0,0,16); }
 for(const [x,y,ch] of [[3.48,6.27,CEIL],[6.78,5.84,CEIL],[10.33,5.84,CEIL],[13.62,6.45,CEIL],[1.5,1.95,CEIL],[4.5,1.95,CEIL],[8.55,2.8,CEIL],[12.95,1.95,CEIL]]){
   const f=item(lightG,x,y,ch,'x+','FAN');
   cyl(f,.012,.012,.32,M.chrome,0,-.16,0,8); cyl(f,.11,.13,.12,M.cab,0,-.38,0,24);
@@ -296,7 +300,7 @@ for(const [x,y,ch] of [[3.48,6.27,CEIL],[6.78,5.84,CEIL],[10.33,5.84,CEIL],[13.6
   for(let k=0;k<3;k++){ const a=k*Math.PI*2/3, b=bx(rot,.62,.012,.13,M.cab,Math.cos(a)*.42,0,-Math.sin(a)*.42); b.rotation.y=a; }
   fans.push(rot);
 }
-for(const [x1,y1,x2,y2,ch] of [[8.6,7.55,12.1,7.6,CEIL],[12.0,5.3,12.05,7.55,CEIL],[5.3,7.55,8.2,7.6,CEIL],[12.4,.22,14.6,.27,CEIL],[14.72,.9,14.77,3.0,CEIL],[9.4,.17,10.85,.22,CEILW]]){
+for(const [x1,y1,x2,y2,ch] of PELMET){
   const g=tagged(lightG,'LED'); boxPlan(x1,y1,x2,y2,ch-.06,ch-.03,M.led,g,false);
 }
 for(const [x,y,face] of [[.35,-.08,'y-'],[5.7,-.08,'y-'],[12.4,-.08,'y-'],[15.08,3.15,'x+'],[15.08,.65,'x+'],[16.2,7.7,'x+'],[16.2,3.9,'x+']]){

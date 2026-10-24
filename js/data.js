@@ -24,7 +24,8 @@ const INFO={
   D1:{t:'D1 · Pintu dapur ke yard',ref:'D3001',rows:[['Jenis','Pintu kayu pejal satu daun'],['Saiz','900 × 2100 mm'],['Ambang','Batu tumit konkrit 100 mm'],['Lokasi','Dapur ke yard (1)']]},
   D2:{t:'D2 · Pintu bilik tidur',ref:'D3001',rows:[['Jenis','Pintu flush kayu satu daun'],['Saiz','900 × 2100 mm'],['Daun','Papan lapis 38 mm, lipping kayu keras'],['Bingkai','Keluli lembut tekan, salutan serbuk'],['Kuantiti','4 (semua bilik tidur)']]},
   D3:{t:'D3 · Pintu bilik air',ref:'D3001',rows:[['Jenis','Pintu lipat (bi-fold) panel komposit aluminium, corak louver'],['Saiz','750 mm pada pelan (jadual tulis 900) × 2100 mm — perlu sahkan'],['Ambang','Batu tumit konkrit 100 mm'],['Kuantiti','3 (Bilik air 1, 2, 3)']]},
-  GD1:{t:'GD1 · Pintu kaca lipat balkoni',ref:'D3001',rows:[['Jenis','Pintu kaca lipat aluminium 4 panel + panel tetap atas 300 mm'],['Saiz','2700 × 2100 mm (jumlah 2400 dengan panel atas)'],['Kaca','Kaca keselamatan terbaja berwarna'],['Lokasi','Ruang makan ke balkoni (1)']]},
+  GD1:{t:'GD1 · Pintu kaca lipat balkoni',ref:'D3001',rows:[['Jenis','Pintu kaca lipat aluminium 4 panel + panel tetap atas 300 mm'],['Saiz','2700 × 2100 mm (jumlah 2400 dengan panel atas)'],['Kaca','Kaca keselamatan terbaja berwarna'],['Lokasi','Ruang makan ke balkoni (1); 450 mm ke dalam dari grid A, 375 mm dari grid 3 (M1003, D3002, keratan 2-1)']]},
+  KANOPI:{t:'Papak kanopi balkoni',ref:'M1006 (keratan 2-1)',rows:[['Binaan','Papak konkrit bertetulang tergantung 100 mm'],['Aras','Bawah papak pada kepala GD1 (FFL + 2400)'],['Unjuran','≈ 950 mm dari muka GD1 (diukur pada skala 1:50)'],['Lampu','2 downlight di bawah papak (D9001)']]},
   GD2:{t:'GD2 · Pintu kaca dapur',ref:'D3001',rows:[['Jenis','Pintu kaca aluminium berengsel + panel kaca tetap atas'],['Saiz','900 × 2100 mm (jumlah 2850 dengan panel atas)'],['Kaca','Kaca keselamatan terbaja jernih'],['Lokasi','Ruang makan ke dapur (1)']]},
   WALL:{t:'Dinding',ref:'D7001 · M1006',rows:[['Binaan','Bata 110 mm + lepa simen-pasir 20 mm kedua-dua muka'],['Tebal','≈150 mm'],['Tinggi','FFL ke rasuk bumbung 3300 mm'],['Kemasan','Cat; warna ikut pilihan arkitek']]},
   COL:{t:'Tiang & rasuk konkrit',ref:'M1005',rows:[['Binaan','Konkrit bertetulang 200 × 200 mm'],['Kemasan','Lepa simen-pasir + cat luar'],['Lokasi','Bucu yard, lanai dan teres']]},
@@ -37,7 +38,7 @@ const INFO={
   TILEW:{t:'Jubin dinding bilik air',ref:'D1001–D1004',rows:[['Jubin','Kimgress Travertine A36TV2LME · 300×600 · Cream · flat satin'],['Susunan','Mendatar, lantai ke siling, semua bilik air']]},
   KITKAT:{t:'Jubin ciri Kit Kat',ref:'D1001 · D1002',rows:[['Jubin','GNG & TTC Kit Kat KBT CT-CZ0919Y · 300×300 · Deep Brown, glazed'],['Lokasi','Bilik Air 1, dinding 2 & 4, dari ≈900 mm ke siling']]},
   SILL:{t:'Ambang tingkap luar',ref:'D3002 · D8001 · D8002',rows:[['Bahan','Aluminium / konkrit'],['Kecerunan','Condong ke luar']]},
-  DRAIN:{t:'Longkang U',ref:'M1002',rows:[['Jenis','Longkang U konkrit pratuang, lebar 300 mm, condong mengalir'],['Kedudukan','Apron 600 mm + longkang 300 mm dari muka dinding (keratan M1006); sisi A di luar balkoni ≈'],['Saluran keluar','Tidak ditunjukkan dalam lukisan'],['Penutup','Papak konkrit di sisi teres']]},
+  DRAIN:{t:'Longkang U',ref:'M1002',rows:[['Jenis','Longkang U konkrit pratuang, lebar 300 mm, condong mengalir'],['Kedudukan','Apron 600 mm + longkang 300 mm dari muka dinding (keratan M1006); papak balkoni mengunjur 300 mm di atas apron (D6004)'],['Saluran keluar','Tidak ditunjukkan dalam lukisan'],['Penutup','Papak konkrit di sisi teres']]},
   APRON:{t:'Apron konkrit',ref:'M1002 · M1006',rows:[['Aras','+50 mm dari tanah'],['Lebar','600 mm dari muka dinding']]},
   CEIL:{t:'Siling gipsum',ref:'D4001',rows:[['Bahan','Papan gipsum 9 mm pada rangka logam bergalvani tergantung'],['Tinggi','2850 mm dari FFL (rantai dimensi keratan 1-2: 1000 + 600 + 1250)'],['Kemasan','Cat; warna ikut pilihan arkitek']]},
   CEILMR:{t:'Siling gipsum tahan lembap',ref:'D4001',rows:[['Bahan','Papan gipsum MR 9 mm, cat anti-kulat'],['Tinggi','Bilik air 2400 mm dari FFL; dapur 2850 mm'],['Lokasi','Dapur dan bilik air']]},
@@ -66,10 +67,10 @@ const ROOMS=[
   {id:'yard', n:'Yard', a:'4.86', f:'orche', lv:.45, r:[[0,5.1,1.8,6.6],[0.9,6.6,1.8,7.8]], full:[0,5.1,1.8,7.8], c:'SOFFIT', ch:CEIL},
   {id:'ba3', n:'Bilik Air 3', a:'2.16', f:'trav', lv:.45, r:[[0,3.9,1.8,5.1]], s:.75, c:'CEILMR', ch:CEILW},
   {id:'dapur', n:'Dapur', a:'12.87', f:'castello', lv:.5, r:[[1.8,3.9,5.1,7.8]], c:'CEILMR', ch:CEIL},
-  {id:'makan', n:'Ruang Makan', a:'15.39', f:'padova', lv:.5, r:[[5.1,3.9,8.4,7.8],[6,1.8,7.2,3.9]], at:[6.75,5.9], c:'CEIL', ch:CEIL},
+  {id:'makan', n:'Ruang Makan', a:'15.39', f:'padova', lv:.5, r:[[5.1,3.9,8.4,7.35],[6,1.8,7.2,3.9]], at:[6.75,5.9], c:'CEIL', ch:CEIL},
   {id:'tamu', n:'Ruang Tamu', a:'15.21', f:'padova', lv:.5, r:[[8.4,3.9,12.3,7.8]], c:'CEIL', ch:CEIL},
   {id:'lanai', n:'Lanai', a:'10.53', f:'orche', lv:.45, r:[[12.3,3.9,13.5,7.8],[13.5,3.9,15,4.25],[13.5,5.3,15,7.8]], full:[12.3,3.9,15,7.8], at:[13.65,6.1], c:'SOFFIT', ch:CEIL},
-  {id:'balkoni', n:'Balkoni', a:'2.52', f:'orche', lv:.45, r:[[5.1,7.8,8.4,8.55]], s:.7, lift:.2, c:null},
+  {id:'balkoni', n:'Balkoni', a:'2.52', f:'orche', lv:.45, r:[[5.1,7.35,8.4,8.1]], s:.7, lift:.2, c:null},
   {id:'b4', n:'Bilik 4', a:'11.70', f:'norwich', lv:.5, r:[[0,0,3,3.9]], c:'CEIL', ch:CEIL},
   {id:'b3', n:'Bilik 3', a:'11.70', f:'norwich', lv:.5, r:[[3,0,6,3.9]], c:'CEIL', ch:CEIL},
   {id:'ba2', n:'Bilik Air 2', a:'2.16', f:'trav', lv:.45, r:[[6,0,7.2,1.8]], s:.75, c:'CEILMR', ch:CEILW},
@@ -97,7 +98,9 @@ const op=(type,c,open)=>Object.assign({type,c,open:open||1},TYPES[type]);
 const WALLS=[
   [0,0,15,0,[op('W1',1.425),op('W1',4.425),op('W3',6.525),op('W1',8.175),op('W3',9.675),op('W1',13.5)]],
   [15,0,15,3.9,[op('W2',1.275),op('W2',2.025),op('W2',2.775)]],
-  [1.8,7.8,12.3,7.8,[op('W5',1.65),op('GD1',4.95),op('W2',7.275),op('W2',9.75)]],
+  [1.8,7.8,5.1,7.8,[op('W5',1.65)]],[8.4,7.8,12.3,7.8,[op('W2',.675),op('W2',3.15)]],
+  /* Balkoni separuh ke dalam (M1003, D6004, keratan 2-1): GD1 450 mm ke dalam dari grid A; tiada dinding pada grid A antara grid 3 dan 4 */
+  [5.1,7.35,8.4,7.35,[op('GD1',1.725)]],[8.4,7.35,8.4,7.8],
   [0,0,0,5.1,[op('W4',4.5)]],
   [0,3.9,6.0,3.9,[op('D2',2.45,-1),op('D2',5.55,-1)]],
   [7.2,3.9,15,3.9,[op('D2',.55,-1),op('D2',3.2,-1)]],
@@ -120,9 +123,38 @@ const STAIRS=[
 const RAILS=[
   [0,5.1,0,7.8,.45],[.9,7.8,1.8,7.8,.45],
   [15,5.3,15,7.8,.45],[12.3,7.8,15,7.8,.45],[15,3.9,15,4.25,.45],[13.5,5.3,15,5.3,.45],
-  [5.1,8.55,8.4,8.55,.45],[5.1,7.8,5.1,8.55,.45],[8.4,7.8,8.4,8.55,.45]
+  [5.1,8.1,8.4,8.1,.45],[5.1,7.875,5.1,8.1,.45],[8.4,7.875,8.4,8.1,.45]
 ];
 const COLS=[[0,7.8],[15,7.8],[16.1,7.7],[16.1,3.9]];
+/* Papak kanopi 100 mm di atas balkoni pada kepala GD1 (keratan 2-1, unjuran diukur pada skala ≈) */
+const KANOPI=[5.1,7.35,8.4,8.3];
+
+/* ================= Siling tambahan, pelmet & downlight (D4001, D9001) ================= */
+/* Sofit rata selain bilik: ceruk balkoni di bawah rasuk grid A, dan teres (keratan A-A) */
+const SOFIT=[[5.1,7.35,8.4,7.725],[15.075,3.9,16.2,7.8]];
+/* Pelmet langsir berjalur LED [x1,y1,x2,y2,aras siling]: 250 mm dari muka dinding (D4001) */
+const PELMET=[
+  [5.175,7.03,8.48,7.08,CEIL],[8.43,7.05,8.48,7.5,CEIL],[8.45,7.45,9.45,7.5,CEIL],   // ruang makan (selari GD1) & W2 pertama ruang tamu
+  [11.25,7.45,12.0,7.5,CEIL],[11.95,5.46,12.0,7.5,CEIL],                              // W2 kedua & W6 ruang tamu
+  [12.4,.22,14.6,.27,CEIL],[14.72,.9,14.77,3.0,CEIL],                                  // Bilik 1
+  [9.4,.17,10.85,.22,CEILW]                                                            // cove Bilik Air 1
+];
+/* Downlight terbenam (D9001, diukur pada skala 1:75) */
+const DLS=[
+  [.93,6.46],[.93,4.49],                                       // yard, Bilik Air 3
+  [2.5,6.66],[4.44,6.66],[2.5,4.56],[4.44,4.56],               // dapur
+  [5.78,6.36],[7.72,6.36],[5.78,4.56],[7.72,4.56],[6.61,2.84], // ruang makan & laluan
+  [5.78,7.7],[7.72,7.7],                                       // balkoni (bawah kanopi)
+  [9.08,7.12],[11.64,7.12],[9.08,4.56],[11.64,4.56],           // ruang tamu
+  [12.98,7.12],[12.98,5.94],[12.98,4.77],[14.34,4.77],         // lanai
+  [15.59,7.12],[15.59,5.94],[15.59,4.77],                      // teres
+  [.71,2.92],[2.33,2.92],[.71,.97],[2.33,.97],                 // Bilik 4
+  [3.69,2.92],[5.32,2.92],[3.69,.97],[5.32,.97],               // Bilik 3
+  [6.61,.94],                                                  // Bilik Air 2
+  [7.89,2.92],[9.24,2.92],[7.89,.97],                          // Bilik 2
+  [10.13,.93],                                                 // Bilik Air 1
+  [10.51,2.92],[11.94,2.92],[14.03,2.92],[11.94,.97],[14.03,.97] // Bilik 1
+];
 
 /* ================= Bumbung (M1004, M1005, D5001) ================= */
 /* Cucur 725 mm dari muka dinding = 0.80 m dari grid. Cerun 30°. Rabung utama ≈ +6.40 m (anggaran maksimum M1005).
