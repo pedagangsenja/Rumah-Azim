@@ -257,7 +257,7 @@ const GAYA=[
 const AKSEN=[{h:true,f:7.8,a1:8.4,a2:12.3,sg:-1}];
 /* Syot render untuk gaya earth tone (render/gaya/<id>/); set Arkitek kekal dalam render/.
    GAYA_SEDIA = gaya yang rendernya sudah ada; gaya lain memaparkan set Arkitek dengan nota. */
-const GAYA_SEDIA=[];
+const GAYA_SEDIA=['tropika','japandi','bali'];
 const RENDER_GAYA=['luar_pagi','lanai_petang','luar_senja','dalam_tamu','dalam_bilik1','dalam_dapur'];
 const PANO_GAYA=['p_tamu'];
 /* Panorama 360° (equirectangular); yaw = arah pandangan awal (darjah): 0 = utara (+x, jalan), −90 = barat (+y, rumah keluarga), 90 = timur (−y, lorong), 180 = selatan (−x, bendang) */
