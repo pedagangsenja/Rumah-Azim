@@ -88,5 +88,5 @@ Fail dimuatkan mengikut turutan `data → core → model → landskap → ui →
 - Soket dan suis (D9001) belum dimodelkan.
 - Jalan, ketinggian pokok, rumput dan barisan pokok jauh ialah konteks anggaran. Kedudukan pokok sedia ada, tangki air, tangki septik, kebuk pemeriksaan, sump dan perigi dibaca daripada M1001/M1002.
 - Render Cycles: geometri dan ukuran ikut model; warna bumbung/dinding ikut pilihan lalai (belum ditetapkan arkitek); bahan, perabot, langsir (di pelmet D4001), rumput, pokok dan langit ialah ilustrasi. Kedudukan matahari dikira untuk Kangar pada 23 Okt.
-- Render Galeri dan 360° dijana pada 23 Okt, sebelum W6 ditukar kepada 4 panel dan balkoni/GD1 dibetulkan. Gambar yang menunjukkan W6 atau GD1 perlu dijana semula dengan `alat/render/`.
+- Render Galeri dan 360° dijana semula pada 24 Okt selepas W6 (4 panel), balkoni/GD1 dan downlight D9001 dibetulkan. Pandangan udara dan Bilik Air 1 kekal daripada 23 Okt (tiada perubahan yang kelihatan).
 - Ini model visual, bukan lukisan pembinaan.
