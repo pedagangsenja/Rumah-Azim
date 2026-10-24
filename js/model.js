@@ -58,7 +58,7 @@ const DRAIN=[[-.825,-.825],[15.825,-.825],[15.825,3.15],[16.95,3.15],[16.95,8.62
     if(covered) for(let s=lo+.02;s<hi-.3;s+=.6) boxPlan(c-.14,s,c+.14,s+.58,.07,.12,M.cover,dg);
   }
 })();
-[[0.9,0,13.5,7.8],[0,0,0.9,6.6],[13.5,0,15,4.25],[13.5,5.3,15,7.8]].forEach(r=>boxPlan(r[0],r[1],r[2],r[3],0.05,0.44,M.plinth,house)); // plinth; ruang dibiarkan untuk anak tangga
+[[0.9,0,13.5,7.8],[0,0,0.9,6.9],[13.5,0,15,4.275],[13.5,5.325,15,7.8]].forEach(r=>boxPlan(r[0],r[1],r[2],r[3],0.05,0.44,M.plinth,house)); // plinth; ruang dibiarkan untuk anak tangga
 boxPlan(5.1,7.8,8.4,8.1,0.29,0.44,M.plinth,house); // papak balkoni tergantung 150 mm di luar grid A (D6004)
 boxPlan(15,3.9,16.2,7.8,.05,.06,M.apron,house); // lantai teres, lepa simen
 
@@ -159,7 +159,7 @@ function buildWalls(top){
   const cg=tagged(g,'COL');
   for(const [x,y] of COLS) boxPlan(x-.1,y-.1,x+.1,y+.1,0.05,top,M.col,cg);
   if(full){
-    const z1=3.45;
+    const z1=CEIL+.003; // bawah rasuk rata dengan sofit (keratan A-A, E1: rasuk 450 dari +3.35 ke +3.80)
     [[-.1,5.1,.1,7.8],[0,7.7,1.8,7.9],[12.3,7.7,15,7.9],[14.9,3.9,15.1,7.8],[16.0,3.9,16.2,7.7],[15,7.6,16.2,7.8],[15,3.8,16.2,4.0]].forEach(r=>boxPlan(r[0],r[1],r[2],r[3],z1,WTOP,M.col,cg));
     boxPlan(5.1,7.725,8.4,7.875,CEIL,WTOP,M.col,cg); // rasuk grid A di atas ceruk balkoni (keratan 2-1)
   }
@@ -207,8 +207,8 @@ function railing(x1,y1,x2,y2,base){
   const n=Math.floor(len/0.1);
   for(let i=0;i<=n;i++){ const t=i/n, x=x1+(x2-x1)*t, y=y1+(y2-y1)*t; dummy.position.set(x,base+0.475,-y); dummy.updateMatrix(); barMats.push(dummy.matrix.clone()); }
   const posts=Math.max(1,Math.round(len/0.9));
-  for(let p=0;p<=posts;p++){ const x=x1+(x2-x1)*p/posts, y=y1+(y2-y1)*p/posts;
-    boxPlan(x-.025,y-.025,x+.025,y+.025,base,base+H,M.rail,railG); boxPlan(x-.05,y-.05,x+.05,y+.05,base,base+.006,M.rail,railG,false); }
+  for(let p=0;p<=posts;p++){ const x=x1+(x2-x1)*p/posts, y=y1+(y2-y1)*p/posts, st=stairAt(x,y), b0=st!==null&&st<base?st:base; // tiang di sisi tangga turun ke jejak
+    boxPlan(x-.025,y-.025,x+.025,y+.025,b0,base+H,M.rail,railG); boxPlan(x-.05,y-.05,x+.05,y+.05,b0,b0+.006,M.rail,railG,false); }
 }
 RAILS.forEach(r=>railing(...r));
 const bars=new THREE.InstancedMesh(new THREE.BoxGeometry(0.01,0.84,0.04),M.rail,barMats.length);
@@ -295,16 +295,17 @@ function roofTop(x,y){ let best=null; for(const P of ROOFP.planes){ const c=P.po
 const ceilG=new THREE.Group(); scene.add(ceilG);
 const lightG=new THREE.Group(); scene.add(lightG);
 const fans=[];
+/* luar: sofit luaran juga diberi muka atas (dalam kumpulan bumbung) supaya tidak tembus pandang dari bawah cucur */
+function siling(x1,y1,x2,y2,h,info,luar){
+  const p=new THREE.Mesh(new THREE.PlaneGeometry(x2-x1,y2-y1),M.ceil); p.rotation.x=Math.PI/2; p.position.set((x1+x2)/2,h,-(y1+y2)/2);
+  p.userData.info=info; ceilG.add(p); pick.push(p);
+  if(luar){ const q=p.clone(); q.rotation.x=-Math.PI/2; q.position.y=h+.004; roof.add(q); }
+}
+/* Bilik bertangga (lanai, yard): siling penuh termasuk di atas tangga (D4001) */
 for(const rm of ROOMS){ if(!rm.c) continue;
-  for(const [x1,y1,x2,y2] of rm.r){
-    const p=new THREE.Mesh(new THREE.PlaneGeometry(x2-x1,y2-y1),M.ceil); p.rotation.x=Math.PI/2; p.position.set((x1+x2)/2,rm.ch,-(y1+y2)/2);
-    p.userData.info=rm.c; ceilG.add(p); pick.push(p);
-  }
+  for(const r of (STAIRS.some(s=>s.id===rm.id)?[rm.full]:rm.r)) siling(...r,rm.ch,rm.c,LUARAN.has(rm.id));
 }
-for(const [x1,y1,x2,y2] of SOFIT){
-  const p=new THREE.Mesh(new THREE.PlaneGeometry(x2-x1,y2-y1),M.ceil); p.rotation.x=Math.PI/2; p.position.set((x1+x2)/2,CEIL,-(y1+y2)/2);
-  p.userData.info='SOFFIT'; ceilG.add(p); pick.push(p);
-}
+for(const r of SOFIT) siling(...r,CEIL,'SOFFIT',true);
 for(const [x,y] of DLS){ const rm=inRoom(x,y), h=rm&&rm.ch?rm.ch:(rm&&rm.id==='balkoni'?FFL+2.4:CEIL);
   const dl=item(lightG,x,y,h-0.012,'x+','DL'); cyl(dl,.065,.065,.02,M.lamp,0,0,0,16); }
 for(const [x,y,ch] of [[3.48,6.27,CEIL],[6.78,5.84,CEIL],[10.33,5.84,CEIL],[13.62,6.45,CEIL],[1.5,1.95,CEIL],[4.5,1.95,CEIL],[8.55,2.8,CEIL],[12.95,1.95,CEIL]]){

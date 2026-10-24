@@ -39,7 +39,7 @@ const INFO={
   WALL:{t:'Dinding',ref:'D7001 · M1006',rows:[['Binaan','Bata 110 mm + lepa simen-pasir 20 mm kedua-dua muka'],['Tebal','≈150 mm'],['Tinggi','FFL ke rasuk bumbung 3300 mm'],['Kemasan','Cat; warna ikut pilihan arkitek']]},
   COL:{t:'Tiang & rasuk konkrit',ref:'M1005',rows:[['Binaan','Konkrit bertetulang 200 × 200 mm'],['Kemasan','Lepa simen-pasir + cat luar'],['Lokasi','Bucu yard, lanai dan teres']]},
   RAIL:{t:'Pagar besi',ref:'D6001–D6004',rows:[['Tinggi','900 mm dari FFL (nota); E3, E4 dan butiran D6001–D6004 tunjuk 850 mm'],['Bahan','Besi lembut, salutan serbuk hitam matte'],['Susunan','Pemegang atas 50×10 mm; bar isian menegak 40×10 mm @ 100 mm c/c'],['Tapak','Plat asas 100×100×6 mm, 2 bolt sauh (D6002)'],['Lokasi','Yard, lanai (termasuk sisi tangga), balkoni']]},
-  STEPS:{t:'Anak tangga',ref:'D7006 · D7007',rows:[['Ukuran','Naik 100 mm, jejak 300 mm, stepnose bucu bulat'],['Lanai','3 naik dari lanai, jejak bawah 900 mm, lebar ≈1050 mm'],['Yard','4 jejak × 300 mm, lebar 900 mm'],['Kemasan','Jubin homogenous ±10 mm atas screed 1:3']]},
+  STEPS:{t:'Anak tangga',ref:'D7006 · D7007',rows:[['Ukuran','Naik 100 mm, jejak 300 mm, stepnose bucu bulat'],['Lanai','3 naik dari lanai, jejak bawah 900 mm, lebar 1 050 mm selepas pier 300 mm (D6002)'],['Yard','3 naik dari yard, jejak 300 mm, lebar 900 mm, dalam 900 mm terakhir sebelum apron (D6001, D7006)'],['Kemasan','Jubin homogenous ±10 mm atas screed 1:3']]},
   ROOF:{t:'Bumbung',ref:'M1004 · M1005 · D5001',rows:[['Bentuk','Limas, dengan gable di atas lanai & teres'],['Jubin','Jubin konkrit interlocking + rabung, bubung & verge sepadan'],['Cerun','30°'],['Aras','Rasuk bumbung +3.80 m; rabung ≈+6.40 m (anggaran maksimum M1005)'],['Cucur atap','725 mm dari muka dinding'],['Lurah (valley)','Talang G.I. 18 gauge, lebar 375 mm'],['Struktur','Kekuda keluli ringan @ 600 mm, foil pemantul di bawah jubin'],['Fascia & sofit','Papan simen gentian; sofit luaran mengikut cerun'],['Warna','Belum ditetapkan dalam lukisan']]},
   GABLE:{t:'Dinding gable teres',ref:'M1005 (E1)',rows:[['Kemasan','Papan mendatar (≈ ikut lukisan E1) dengan bolong udara'],['Kedudukan','Atas rasuk teres, grid 6 + 1200'],['Nota','Bahan tepat tidak dinyatakan']]},
   VP:{t:'Paip udara (VP)',ref:'M1001 · M1002',rows:[['Saiz','uPVC Ø100 mm'],['Ketinggian','Sekurang-kurangnya 600 mm (M1001) / 900 mm (M1002) di atas bumbung, dengan cowl'],['Lokasi','VP1 Bilik Air 1, VP2 Bilik Air 2, VP3 Bilik Air 3']]},
@@ -73,12 +73,12 @@ const INFO={
 
 /* ================= Bilik (luas ikut M1003) ================= */
 const ROOMS=[
-  {id:'yard', n:'Yard', a:'4.86', f:'orche', lv:.45, r:[[0,5.1,1.8,6.6],[0.9,6.6,1.8,7.8]], full:[0,5.1,1.8,7.8], c:'SOFFIT', ch:CEIL},
+  {id:'yard', n:'Yard', a:'4.86', f:'orche', lv:.45, r:[[0,5.1,1.8,6.9],[0.9,6.9,1.8,7.8]], full:[0,5.1,1.8,7.8], c:'SOFFIT', ch:CEIL},
   {id:'ba3', n:'Bilik Air 3', a:'2.16', f:'trav', lv:.45, r:[[0,3.9,1.8,5.1]], s:.75, c:'CEILMR', ch:CEILW},
   {id:'dapur', n:'Dapur', a:'12.87', f:'castello', lv:.5, r:[[1.8,3.9,5.1,7.8]], c:'CEILMR', ch:CEIL},
   {id:'makan', n:'Ruang Makan', a:'15.39', f:'padova', lv:.5, r:[[5.1,3.9,8.4,7.35],[6,1.8,7.2,3.9]], at:[6.75,5.9], c:'CEIL', ch:CEIL},
   {id:'tamu', n:'Ruang Tamu', a:'15.21', f:'padova', lv:.5, r:[[8.4,3.9,12.3,7.8]], c:'CEIL', ch:CEIL},
-  {id:'lanai', n:'Lanai', a:'10.53', f:'orche', lv:.45, r:[[12.3,3.9,13.5,7.8],[13.5,3.9,15,4.25],[13.5,5.3,15,7.8]], full:[12.3,3.9,15,7.8], at:[13.65,6.1], c:'SOFFIT', ch:CEIL},
+  {id:'lanai', n:'Lanai', a:'10.53', f:'orche', lv:.45, r:[[12.3,3.9,13.5,7.8],[13.5,3.9,15,4.275],[13.5,5.325,15,7.8]], full:[12.3,3.9,15,7.8], at:[13.65,6.1], c:'SOFFIT', ch:CEIL},
   {id:'balkoni', n:'Balkoni', a:'2.52', f:'orche', lv:.45, r:[[5.1,7.35,8.4,8.1]], s:.7, lift:.2, c:null},
   {id:'b4', n:'Bilik 4', a:'11.70', f:'norwich', lv:.5, r:[[0,0,3,3.9]], c:'CEIL', ch:CEIL},
   {id:'b3', n:'Bilik 3', a:'11.70', f:'norwich', lv:.5, r:[[3,0,6,3.9]], c:'CEIL', ch:CEIL},
@@ -106,7 +106,7 @@ const TYPES={
 const op=(type,c,open)=>Object.assign({type,c,open:open||1},TYPES[type]);
 const WALLS=[
   [0,0,15,0,[op('W1',1.425),op('W1',4.425),op('W3',6.525),op('W1',8.175),op('W3',9.675),op('W1',13.5)]],
-  [15,0,15,3.9,[op('W2',1.275),op('W2',2.025),op('W2',2.775)]],
+  [15,0,15,4.2,[op('W2',1.275),op('W2',2.025),op('W2',2.775)]], // dinding Bilik 1 diteruskan 300 ke lanai sebagai pier penuh (D6002, E1 '300')
   [1.8,7.8,5.1,7.8,[op('W5',1.65)]],[8.4,7.8,12.3,7.8,[op('W2',.675),op('W2',3.15)]],
   /* Balkoni separuh ke dalam (M1003, D6004, keratan 2-1): GD1 450 mm ke dalam dari grid A; tiada dinding pada grid A antara grid 3 dan 4 */
   [5.1,7.35,8.4,7.35,[op('GD1',1.725)]],[8.4,7.35,8.4,7.8],
@@ -125,13 +125,13 @@ const WALLS=[
 /* ================= Anak tangga & pagar (D6001–D6004, D7006, D7007) ================= */
 /* Jejak mengikut arah turun: 'x+' = turun ke arah +x. h = aras atas setiap jejak (m dari tanah). */
 const STAIRS=[
-  {id:'lanai', x1:13.5, y1:4.25, x2:15, y2:5.3, dir:'x+', d:[.3,.3,.9], h:[.35,.25,.15]},
-  {id:'yard',  x1:0,    y1:6.6,  x2:.9, y2:7.8, dir:'y+', d:[.3,.3,.3,.3], h:[.35,.25,.15,.05]}
+  {id:'lanai', x1:13.5, y1:4.275, x2:15, y2:5.325, dir:'x+', d:[.3,.3,.9], h:[.35,.25,.15]}, // D6002: selepas pier 300, lebar 1 050
+  {id:'yard',  x1:0,    y1:6.9,   x2:.9, y2:7.8,   dir:'y+', d:[.3,.3,.3],  h:[.35,.25,.15]}  // D7006/D6001: 3 jejak dalam 900 terakhir, naik 100 ke apron
 ];
-/* [x1,y1,x2,y2,aras tapak] */
+/* [x1,y1,x2,y2,aras tapak]. Pagar sisi tangga lanai pada y 5.4 (zon 150 selepas tangga, D6002), aras atas rata (D6003) */
 const RAILS=[
   [0,5.1,0,7.8,.45],[.9,7.8,1.8,7.8,.45],
-  [15,5.3,15,7.8,.45],[12.3,7.8,15,7.8,.45],[15,3.9,15,4.25,.45],[13.5,5.3,15,5.3,.45],
+  [15,5.4,15,7.8,.45],[12.3,7.8,15,7.8,.45],[13.6,5.4,15,5.4,.45],
   [5.1,8.1,8.4,8.1,.45],[5.1,7.875,5.1,8.1,.45],[8.4,7.875,8.4,8.1,.45]
 ];
 const COLS=[[0,7.8],[15,7.8],[16.1,7.7],[16.1,3.9]];
