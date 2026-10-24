@@ -31,6 +31,12 @@ function quad(g,pts,uvs,mat,shadow=true){
 }
 /* Garis dalam bilik? (untuk menentukan sisi luar dinding) */
 function inRoom(x,y){ for(const rm of ROOMS) for(const [x1,y1,x2,y2] of rm.r) if(x>x1&&x<x2&&y>y1&&y<y2) return rm; return null; }
+/* Sisi dinding: 'e' = luar (tiada bilik, atau yard / lanai / balkoni), 'i' = dalam */
+const LUARAN=new Set(['yard','lanai','balkoni']);
+function sisiDinding(x,y){ const rm=inRoom(x,y); return !rm||LUARAN.has(rm.id)?'e':'i'; }
+/* Bahan setiap muka kotak dinding (urutan BoxGeometry: +x, −x, +y, −y, +z, −z; +z three = sisi −y pelan) */
+function bahanDinding(horiz,neg,pos){ const m=c=>c==='e'?M.wall:c==='a'?M.aksen:M.wallIn, end=neg==='e'||pos==='e'?M.wall:M.wallIn;
+  return horiz?[end,end,end,end,m(neg),m(pos)]:[m(pos),m(neg),end,end,end,end]; }
 
 /* ================= Apron, plinth & longkang (M1002) ================= */
 const site=new THREE.Group(); scene.add(site);
@@ -52,7 +58,7 @@ const DRAIN=[[-.825,-.825],[15.825,-.825],[15.825,3.15],[16.95,3.15],[16.95,8.62
     if(covered) for(let s=lo+.02;s<hi-.3;s+=.6) boxPlan(c-.14,s,c+.14,s+.58,.07,.12,M.cover,dg);
   }
 })();
-[[0.9,0,13.5,7.8],[0,0,0.9,6.6],[13.5,0,15,4.25],[13.5,5.3,15,7.8]].forEach(r=>boxPlan(r[0],r[1],r[2],r[3],0.05,0.44,M.plinth,house)); // plinth; ruang dibiarkan untuk anak tangga
+[[0.9,0,13.5,7.8],[0,0,0.9,6.9],[13.5,0,15,4.275],[13.5,5.325,15,7.8]].forEach(r=>boxPlan(r[0],r[1],r[2],r[3],0.05,0.44,M.plinth,house)); // plinth; ruang dibiarkan untuk anak tangga
 boxPlan(5.1,7.8,8.4,8.1,0.29,0.44,M.plinth,house); // papak balkoni tergantung 150 mm di luar grid A (D6004)
 boxPlan(15,3.9,16.2,7.8,.05,.06,M.apron,house); // lantai teres, lepa simen
 
@@ -97,10 +103,18 @@ function buildWalls(top){
   for(const [x1,y1,x2,y2,ops] of WALLS){
     const horiz=Math.abs(y2-y1)<1e-6, a0=horiz?Math.min(x1,x2):Math.min(y1,y2);
     const len=Math.abs(horiz?x2-x1:y2-y1), fx=horiz?y1:x1, L=len+T, st=a0-T/2;
-    const piece=(s,e,z1,z2,mat=M.wall,th=T,grp=g,off=0)=>{
+    const box=(a1,a2,z1,z2,mat,th,grp,c)=>horiz? boxPlan(a1,c-th/2,a2,c+th/2,z1,z2,mat,grp) : boxPlan(c-th/2,a1,c+th/2,a2,z1,z2,mat,grp);
+    const sisi=(a,sg)=>{ const k=horiz?sisiDinding(a,fx+sg*.3):sisiDinding(fx+sg*.3,a);
+      return k==='i'&&AKSEN.some(w=>w.h===horiz&&Math.abs(w.f-fx)<1e-6&&w.sg===sg&&a>w.a1&&a<w.a2)?'a':k; };
+    const piece=(s,e,z1,z2,mat=null,th=T,grp=g,off=0)=>{
       if(e-s<0.004||z2-z1<0.004) return;
       const a1=st+s, a2=st+e, c=fx+off;
-      return horiz? boxPlan(a1,c-th/2,a2,c+th/2,z1,z2,mat,grp) : boxPlan(c-th/2,a1,c+th/2,a2,z1,z2,mat,grp);
+      if(mat) return box(a1,a2,z1,z2,mat,th,grp,c);
+      // dinding biasa: dipecah di tempat sisi luar/dalam bertukar supaya warna dinding luar & dalam boleh berbeza
+      let p0=a1, k0=sisi(a1+.025,-1)+sisi(a1+.025,1);
+      for(let a=a1+.05;a<a2;a+=.05){ const k=sisi(Math.min(a+.025,a2-.001),-1)+sisi(Math.min(a+.025,a2-.001),1);
+        if(k!==k0){ box(p0,a,z1,z2,bahanDinding(horiz,k0[0],k0[1]),th,grp,c); p0=a; k0=k; } }
+      return box(p0,a2,z1,z2,bahanDinding(horiz,k0[0],k0[1]),th,grp,c);
     };
     const list=(ops||[]).map(o=>Object.assign({},o,{s:o.c-o.w/2+T/2,e:o.c+o.w/2+T/2,zs:FFL+o.sill,zh:FFL+o.sill+o.h})).sort((p,q)=>p.s-q.s);
     let cur=0;
@@ -143,11 +157,11 @@ function buildWalls(top){
     piece(cur,L,BASE,top);
   }
   const cg=tagged(g,'COL');
-  for(const [x,y] of COLS) boxPlan(x-.1,y-.1,x+.1,y+.1,0.05,top,M.wall,cg);
+  for(const [x,y] of COLS) boxPlan(x-.1,y-.1,x+.1,y+.1,0.05,top,M.col,cg);
   if(full){
-    const z1=3.45;
-    [[-.1,5.1,.1,7.8],[0,7.7,1.8,7.9],[12.3,7.7,15,7.9],[14.9,3.9,15.1,7.8],[16.0,3.9,16.2,7.7],[15,7.6,16.2,7.8],[15,3.8,16.2,4.0]].forEach(r=>boxPlan(r[0],r[1],r[2],r[3],z1,WTOP,M.wall,cg));
-    boxPlan(5.1,7.725,8.4,7.875,CEIL,WTOP,M.wall,cg); // rasuk grid A di atas ceruk balkoni (keratan 2-1)
+    const z1=CEIL+.003; // bawah rasuk rata dengan sofit (keratan A-A, E1: rasuk 450 dari +3.35 ke +3.80)
+    [[-.1,5.1,.1,7.8],[0,7.7,1.8,7.9],[12.3,7.7,15,7.9],[14.9,3.9,15.1,7.8],[16.0,3.9,16.2,7.7],[15,7.6,16.2,7.8],[15,3.8,16.2,4.0]].forEach(r=>boxPlan(r[0],r[1],r[2],r[3],z1,WTOP,M.col,cg));
+    boxPlan(5.1,7.725,8.4,7.875,CEIL,WTOP,M.col,cg); // rasuk grid A di atas ceruk balkoni (keratan 2-1)
   }
   wallGroup=g;
 }
@@ -193,15 +207,15 @@ function railing(x1,y1,x2,y2,base){
   const n=Math.floor(len/0.1);
   for(let i=0;i<=n;i++){ const t=i/n, x=x1+(x2-x1)*t, y=y1+(y2-y1)*t; dummy.position.set(x,base+0.475,-y); dummy.updateMatrix(); barMats.push(dummy.matrix.clone()); }
   const posts=Math.max(1,Math.round(len/0.9));
-  for(let p=0;p<=posts;p++){ const x=x1+(x2-x1)*p/posts, y=y1+(y2-y1)*p/posts;
-    boxPlan(x-.025,y-.025,x+.025,y+.025,base,base+H,M.rail,railG); boxPlan(x-.05,y-.05,x+.05,y+.05,base,base+.006,M.rail,railG,false); }
+  for(let p=0;p<=posts;p++){ const x=x1+(x2-x1)*p/posts, y=y1+(y2-y1)*p/posts, st=stairAt(x,y), b0=st!==null&&st<base?st:base; // tiang di sisi tangga turun ke jejak
+    boxPlan(x-.025,y-.025,x+.025,y+.025,b0,base+H,M.rail,railG); boxPlan(x-.05,y-.05,x+.05,y+.05,b0,b0+.006,M.rail,railG,false); }
 }
 RAILS.forEach(r=>railing(...r));
 const bars=new THREE.InstancedMesh(new THREE.BoxGeometry(0.01,0.84,0.04),M.rail,barMats.length);
 barMats.forEach((m,i)=>bars.setMatrixAt(i,m)); bars.castShadow=true; railG.add(bars);
 
 /* Papak kanopi balkoni (keratan 2-1) */
-boxPlan(KANOPI[0],KANOPI[1],KANOPI[2],KANOPI[3],FFL+2.4,FFL+2.5,M.wall,tagged(house,'KANOPI'));
+boxPlan(KANOPI[0],KANOPI[1],KANOPI[2],KANOPI[3],FFL+2.4,FFL+2.5,M.col,tagged(house,'KANOPI'));
 
 /* ================= Bumbung (M1004): limas + gable atas lanai & teres, cerun 30° ================= */
 const roof=tagged(scene,'ROOF');
@@ -272,7 +286,7 @@ function roofTop(x,y){ let best=null; for(const P of ROOFP.planes){ const c=P.po
   const sh=new THREE.Shape([new THREE.Vector2(3.9,PLATE),new THREE.Vector2(7.8,PLATE),new THREE.Vector2(7.8,uA),new THREE.Vector2(gy,ua),new THREE.Vector2(3.9,uG)]);
   const geo=new THREE.ShapeGeometry(sh); const uv=geo.attributes.uv, p=geo.attributes.position;
   for(let i=0;i<p.count;i++){ uv.setXY(i,p.getX(i)/1.2,p.getY(i)/.6); }
-  const gm=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({map:sidingTex,roughness:.85,side:THREE.DoubleSide}));
+  const gm=new THREE.Mesh(geo,M.siding);
   gm.rotation.y=Math.PI/2; gm.position.set(gxw,0,0); gm.castShadow=gm.receiveShadow=true; gm.userData.info='GABLE'; roof.add(gm); pick.push(gm);
   const vent=new THREE.Mesh(new THREE.BoxGeometry(.04,.42,.3),M.louvre); vent.position.set(gxw,ua-.75,-gy); roof.add(vent);
 })();
@@ -281,16 +295,17 @@ function roofTop(x,y){ let best=null; for(const P of ROOFP.planes){ const c=P.po
 const ceilG=new THREE.Group(); scene.add(ceilG);
 const lightG=new THREE.Group(); scene.add(lightG);
 const fans=[];
+/* luar: sofit luaran juga diberi muka atas (dalam kumpulan bumbung) supaya tidak tembus pandang dari bawah cucur */
+function siling(x1,y1,x2,y2,h,info,luar){
+  const p=new THREE.Mesh(new THREE.PlaneGeometry(x2-x1,y2-y1),M.ceil); p.rotation.x=Math.PI/2; p.position.set((x1+x2)/2,h,-(y1+y2)/2);
+  p.userData.info=info; ceilG.add(p); pick.push(p);
+  if(luar){ const q=p.clone(); q.rotation.x=-Math.PI/2; q.position.y=h+.004; roof.add(q); }
+}
+/* Bilik bertangga (lanai, yard): siling penuh termasuk di atas tangga (D4001) */
 for(const rm of ROOMS){ if(!rm.c) continue;
-  for(const [x1,y1,x2,y2] of rm.r){
-    const p=new THREE.Mesh(new THREE.PlaneGeometry(x2-x1,y2-y1),M.ceil); p.rotation.x=Math.PI/2; p.position.set((x1+x2)/2,rm.ch,-(y1+y2)/2);
-    p.userData.info=rm.c; ceilG.add(p); pick.push(p);
-  }
+  for(const r of (STAIRS.some(s=>s.id===rm.id)?[rm.full]:rm.r)) siling(...r,rm.ch,rm.c,LUARAN.has(rm.id));
 }
-for(const [x1,y1,x2,y2] of SOFIT){
-  const p=new THREE.Mesh(new THREE.PlaneGeometry(x2-x1,y2-y1),M.ceil); p.rotation.x=Math.PI/2; p.position.set((x1+x2)/2,CEIL,-(y1+y2)/2);
-  p.userData.info='SOFFIT'; ceilG.add(p); pick.push(p);
-}
+for(const r of SOFIT) siling(...r,CEIL,'SOFFIT',true);
 for(const [x,y] of DLS){ const rm=inRoom(x,y), h=rm&&rm.ch?rm.ch:(rm&&rm.id==='balkoni'?FFL+2.4:CEIL);
   const dl=item(lightG,x,y,h-0.012,'x+','DL'); cyl(dl,.065,.065,.02,M.lamp,0,0,0,16); }
 for(const [x,y,ch] of [[3.48,6.27,CEIL],[6.78,5.84,CEIL],[10.33,5.84,CEIL],[13.62,6.45,CEIL],[1.5,1.95,CEIL],[4.5,1.95,CEIL],[8.55,2.8,CEIL],[12.95,1.95,CEIL]]){
@@ -355,9 +370,9 @@ wardrobe(11.05,.12,12.45,.7); desk(11.4,3.6,'y-',.9); chair(furn,11.4,3.05,FFL,'
 })();
 // Dapur (M1004, M1006-4) — kaunter L di dinding W5 & dinding yard, hob & sinki di bawah W5, peti sejuk dua pintu di sebelah GD2
 (function(){ const g=tagged(furn,'KIT');
-  boxPlan(1.95,7.1,4.47,7.725,FFL,FFL+.86,M.cab,g); boxPlan(1.93,7.07,4.49,7.725,FFL+.86,FFL+.9,M.counter,g);
-  boxPlan(1.95,6.15,2.55,7.1,FFL,FFL+.86,M.cab,g); boxPlan(1.93,6.12,2.58,7.1,FFL+.86,FFL+.9,M.counter,g);
-  boxPlan(1.95,7.4,4.47,7.725,FFL+1.75,FFL+2.45,M.cab,g);
+  boxPlan(1.95,7.1,4.47,7.725,FFL,FFL+.86,M.kcab,g); boxPlan(1.93,7.07,4.49,7.725,FFL+.86,FFL+.9,M.counter,g);
+  boxPlan(1.95,6.15,2.55,7.1,FFL,FFL+.86,M.kcab,g); boxPlan(1.93,6.12,2.58,7.1,FFL+.86,FFL+.9,M.counter,g);
+  boxPlan(1.95,7.4,4.47,7.725,FFL+1.75,FFL+2.45,M.kcab2,g);
   boxPlan(2.6,7.3,3.2,7.7,FFL+.9,FFL+.91,M.black,g); boxPlan(2.6,7.35,3.2,7.75,FFL+1.62,FFL+1.75,M.steel,g);
   boxPlan(3.7,7.32,4.3,7.68,FFL+.86,FFL+.905,M.steel,g); cyl(g,.015,.015,.28,M.chrome,4.0,FFL+1.04,-7.62,8);
   const fr=tagged(furn,{t:'Peti sejuk dua pintu',ref:'M1004 · M1006-4',rows:[['Saiz','≈900 × 700 × 1800 mm (anggaran)'],['Lokasi','Di sebelah pintu GD2']]}); boxPlan(4.33,5.07,5.02,6.0,FFL,FFL+1.8,M.steel,fr); boxPlan(4.32,5.53,4.33,5.54,FFL+.2,FFL+1.7,M.black,fr,false);
@@ -420,11 +435,11 @@ for(const v of VPIPE){
 /* ================= Kompas & label ================= */
 (function(){
   const t=canvasTex(256,(g,S)=>{ g.strokeStyle='rgba(30,40,44,.7)'; g.lineWidth=5; g.beginPath(); g.arc(S/2,S/2,S/2-8,0,Math.PI*2); g.stroke();
-    g.fillStyle='#b3362d'; g.beginPath(); g.moveTo(S/2,26); g.lineTo(S/2+30,S/2+18); g.lineTo(S/2,S/2); g.lineTo(S/2-30,S/2+18); g.closePath(); g.fill();
-    g.fillStyle='rgba(30,40,44,.8)'; g.font='700 52px "Instrument Sans", sans-serif'; g.textAlign='center'; g.fillText('U',S/2,S-34); });
+    g.fillStyle='#b3362d'; g.beginPath(); g.moveTo(S/2,84); g.lineTo(S/2+30,S/2+60); g.lineTo(S/2,S/2+40); g.lineTo(S/2-30,S/2+60); g.closePath(); g.fill();
+    g.fillStyle='rgba(30,40,44,.8)'; g.font='700 52px "Instrument Sans", sans-serif'; g.textAlign='center'; g.fillText('U',S/2,74); }); // 'U' di hujung anak panah
   t.wrapS=t.wrapT=THREE.ClampToEdgeWrapping;
   const p=new THREE.Mesh(new THREE.PlaneGeometry(2.2,2.2),new THREE.MeshBasicMaterial({map:t,transparent:true,depthWrite:false}));
-  p.rotation.x=-Math.PI/2; const w=new THREE.Group(); w.add(p); w.rotation.y=Math.PI/2; w.position.set(19.3,0.03,3.6); scene.add(w); // anak panah ke −x (utara)
+  p.rotation.x=-Math.PI/2; const w=new THREE.Group(); w.add(p); w.rotation.y=(UTARA-90)*Math.PI/180; w.position.set(19.3,0.03,3.6); scene.add(w); // anak panah ke utara sebenar
 })();
 const labels=new THREE.Group(); scene.add(labels);
 function label(main,sub,x,y,h,s){

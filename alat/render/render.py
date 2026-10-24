@@ -1,5 +1,5 @@
 # Render satu atau lebih syot daripada banglo.blend
-# Guna: python render.py <syot>[,<syot>...] [--uji]
+# Guna: python render.py <syot>[,<syot>...] [--uji] [--gaya=<id>] [--spp=<n>]  (gaya: banglo_<id>.blend → out/gaya/<id>/)
 import bpy, math, os, sys, datetime, time
 from mathutils import Vector
 
@@ -8,11 +8,14 @@ argv = sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else sys.argv[1:]
 shots = argv[0].split(',') if argv else []
 TEST = '--uji' in argv
 SKYROT = float(next((a.split('=')[1] for a in argv if a.startswith('--skyrot=')), '0'))
-bpy.ops.wm.open_mainfile(filepath=os.path.join(D, 'banglo.blend'))
+GY = next((a.split('=')[1] for a in argv if a.startswith('--gaya=')), '')
+SPP = int(next((a.split('=')[1] for a in argv if a.startswith('--spp=')), '0'))   # 0 = sampel lalai syot
+bpy.ops.wm.open_mainfile(filepath=os.path.join(D, 'banglo' + ('_' + GY if GY else '') + '.blend'))
 sc = bpy.context.scene
 
 # Kedudukan matahari: Kangar ≈ 6.44° U, 100.19° T, UTC+8, tarikh 23 Okt 2026 (sama seperti model web)
 LAT = math.radians(6.44); LON = 100.19; TZ = 8
+UTARA = 8.9   # darjah: utara sebenar dari paksi +x pelan ke arah +y (Google Earth); sama dengan UTARA dalam js/data.js
 def sun_at(hour, day=datetime.date(2026, 10, 23)):
     N = (day - datetime.date(day.year, 1, 1)).days + 1
     B = 2 * math.pi * (N - 81) / 364; eot = 9.87 * math.sin(2 * B) - 7.53 * math.cos(B) - 1.5 * math.sin(B)
@@ -25,7 +28,7 @@ def sun_at(hour, day=datetime.date(2026, 10, 23)):
 
 SHOTS = {
   # nama: (jam, lebar, tinggi, sampel, dedahan)
-  'luar_petang': (17.5, 1600, 900, 160, 0.0),
+  'luar_pagi': (8.0, 1600, 900, 160, 0.0),
   'luar_jalan': (12.75, 1600, 900, 128, -0.3),
   'luar_udara': (11.5, 1600, 900, 128, -0.3),
   'luar_senja': (19.2, 1600, 900, 192, 1.3),
@@ -44,7 +47,8 @@ world = sc.world; sky = next(n for n in world.node_tree.nodes if n.type == 'TEX_
 sun = bpy.data.objects['matahari']
 def set_time(hour):
     alt, az = sun_at(hour)
-    d = Vector((-math.cos(az) * math.cos(alt), math.sin(az) * math.cos(alt), math.sin(alt)))   # arah ke matahari (Blender)
+    r = az - math.radians(UTARA)
+    d = Vector((math.cos(r) * math.cos(alt), -math.sin(r) * math.cos(alt), math.sin(alt)))   # arah ke matahari (Blender); utara = +x diputar UTARA° ke +y
     sun.rotation_euler = (-d).to_track_quat('-Z', 'Y').to_euler()
     a = math.degrees(alt)
     sun.data.energy = max(0.0, min(1.0, (a + 1) / 6)) * 4.2
@@ -53,15 +57,16 @@ def set_time(hour):
     world.node_tree.nodes['Background'].inputs['Strength'].default_value = 0.25 if a > 2 else 0.6
     return a
 
-os.makedirs(os.path.join(D, 'out'), exist_ok=True)
+OUT = os.path.join(D, 'out', 'gaya', GY) if GY else os.path.join(D, 'out')
+os.makedirs(OUT, exist_ok=True)
 for name in shots:
     hour, w, h, spp, ev = SHOTS[name]
     a = set_time(hour)
     sc.camera = bpy.data.objects[name]
     sc.render.resolution_x, sc.render.resolution_y = (w // 4, h // 4) if TEST else (w, h)
     sc.render.resolution_percentage = 100
-    sc.cycles.samples = 24 if TEST else spp
+    sc.cycles.samples = 24 if TEST else (SPP or spp)
     sc.view_settings.exposure = ev
-    sc.render.filepath = os.path.join(D, 'out', name + ('_uji' if TEST else '') + '.jpg')
+    sc.render.filepath = os.path.join(OUT, name + ('_uji' if TEST else '') + '.jpg')
     t = time.time(); bpy.ops.render.render(write_still=True)
     print(f'SYOT {name} matahari {a:.1f}° {time.time() - t:.0f}s -> {sc.render.filepath}', flush=True)

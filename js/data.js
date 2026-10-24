@@ -10,7 +10,16 @@ const FIN={
   timber:  {kind:'timber',pw:1.088,ph:2.6,seed:17,rough:.7, nama:'Spotted Gum', kod:'Ekowood · jalur kayu lebar 136 mm · matt'},
   norwich: {base:'#eae8e2',grout:'#cdcac2',pw:0.6,ph:1.2,seed:19,rough:.75, nama:'Norwich White', kod:'Kimgress SS-NOW1N6 · 300×600 · natural matt'},
   orche:   {base:'#b87945',grout:'#7e4f2a',pw:1.2,ph:0.6,wood:true,stagger:true,seed:23,rough:.8, nama:'Wood Collection Orche', kod:'Kimgress A36AHV2DMBN · 300×600 · structured matt'},
-  trav:    {base:'#e7dabe',grout:'#c8b994',pw:1.2,ph:0.6,speck:true,stagger:true,seed:29,rough:.6, nama:'Travertine Cream', kod:'Kimgress A36TV2LME · 300×600 · flat satin'}
+  trav:    {base:'#e7dabe',grout:'#c8b994',pw:1.2,ph:0.6,speck:true,stagger:true,seed:29,rough:.6, nama:'Travertine Cream', kod:'Kimgress A36TV2LME · 300×600 · flat satin'},
+  /* Jubin untuk gaya earth tone (cadangan pemilik, bukan dalam lukisan). Warna ≈ daripada carian; sahkan dengan sampel sebenar. */
+  sx05:    {base:'#cdbb9e',grout:'#b3a284',pw:1.2,ph:1.2,speck:true,seed:31,rough:.6, nama:'Stone X Lime', kod:'Feruni SX05M · 600×600 · matt (≈)'},
+  ls02:    {base:'#b9aa8c',grout:'#9e9073',pw:1.2,ph:.6,speck:true,stagger:true,seed:33,rough:.75, nama:'Limestone 2.0 Beige', kod:'Feruni LS02 · 300×600 · Griptech (≈)'},
+  blitzen: {base:'#d9d2c4',grout:'#c2baab',pw:2.4,ph:1.2,speck:true,seed:35,rough:.55, nama:'Blitzen Stone Bright', kod:'Niro Granite GGBZ01 · 600×1200 · matt (≈)'},
+  ls01:    {base:'#d3c8b3',grout:'#b8ad97',pw:1.2,ph:.6,speck:true,stagger:true,seed:37,rough:.75, nama:'Limestone 2.0 Almond', kod:'Feruni LS01 · 300×600 · Griptech (≈)'},
+  oakstrip:{base:'#c9a77c',grout:'#a8875f',pw:2.4,ph:.272,wood:true,stagger:true,seed:39,rough:.5, nama:'Strip oak cerah', kod:'Lantai kayu oak cerah, jalur 136 mm (≈)'},
+  tv02:    {base:'#dccba8',grout:'#c2b190',pw:1.2,ph:1.2,speck:true,band:true,seed:41,rough:.6, nama:'Travertino 2.0 Beige', kod:'Feruni TV02MH · 600×600 · matt berlubang (≈)'},
+  merbau:  {base:'#6a3f27',grout:'#4c2c1a',pw:2.4,ph:.272,wood:true,stagger:true,seed:43,rough:.45, nama:'Strip merbau gelap', kod:'Lantai kayu merbau, jalur 136 mm (≈)'},
+  terra:   {base:'#b5653f',grout:'#8a4b2e',pw:.6,ph:.6,speck:true,seed:47,rough:.8, nama:'Terracotta Vietnam', kod:'GNG Tiles · 300×300 · tidak berkilat, perlu sealer (≈)'}
 };
 /* ================= Data maklumat (jadual lukisan) ================= */
 const INFO={
@@ -30,7 +39,7 @@ const INFO={
   WALL:{t:'Dinding',ref:'D7001 · M1006',rows:[['Binaan','Bata 110 mm + lepa simen-pasir 20 mm kedua-dua muka'],['Tebal','≈150 mm'],['Tinggi','FFL ke rasuk bumbung 3300 mm'],['Kemasan','Cat; warna ikut pilihan arkitek']]},
   COL:{t:'Tiang & rasuk konkrit',ref:'M1005',rows:[['Binaan','Konkrit bertetulang 200 × 200 mm'],['Kemasan','Lepa simen-pasir + cat luar'],['Lokasi','Bucu yard, lanai dan teres']]},
   RAIL:{t:'Pagar besi',ref:'D6001–D6004',rows:[['Tinggi','900 mm dari FFL (nota); E3, E4 dan butiran D6001–D6004 tunjuk 850 mm'],['Bahan','Besi lembut, salutan serbuk hitam matte'],['Susunan','Pemegang atas 50×10 mm; bar isian menegak 40×10 mm @ 100 mm c/c'],['Tapak','Plat asas 100×100×6 mm, 2 bolt sauh (D6002)'],['Lokasi','Yard, lanai (termasuk sisi tangga), balkoni']]},
-  STEPS:{t:'Anak tangga',ref:'D7006 · D7007',rows:[['Ukuran','Naik 100 mm, jejak 300 mm, stepnose bucu bulat'],['Lanai','3 naik dari lanai, jejak bawah 900 mm, lebar ≈1050 mm'],['Yard','4 jejak × 300 mm, lebar 900 mm'],['Kemasan','Jubin homogenous ±10 mm atas screed 1:3']]},
+  STEPS:{t:'Anak tangga',ref:'D7006 · D7007',rows:[['Ukuran','Naik 100 mm, jejak 300 mm, stepnose bucu bulat'],['Lanai','3 naik dari lanai, jejak bawah 900 mm, lebar 1 050 mm selepas pier 300 mm (D6002)'],['Yard','3 naik dari yard, jejak 300 mm, lebar 900 mm, dalam 900 mm terakhir sebelum apron (D6001, D7006)'],['Kemasan','Jubin homogenous ±10 mm atas screed 1:3']]},
   ROOF:{t:'Bumbung',ref:'M1004 · M1005 · D5001',rows:[['Bentuk','Limas, dengan gable di atas lanai & teres'],['Jubin','Jubin konkrit interlocking + rabung, bubung & verge sepadan'],['Cerun','30°'],['Aras','Rasuk bumbung +3.80 m; rabung ≈+6.40 m (anggaran maksimum M1005)'],['Cucur atap','725 mm dari muka dinding'],['Lurah (valley)','Talang G.I. 18 gauge, lebar 375 mm'],['Struktur','Kekuda keluli ringan @ 600 mm, foil pemantul di bawah jubin'],['Fascia & sofit','Papan simen gentian; sofit luaran mengikut cerun'],['Warna','Belum ditetapkan dalam lukisan']]},
   GABLE:{t:'Dinding gable teres',ref:'M1005 (E1)',rows:[['Kemasan','Papan mendatar (≈ ikut lukisan E1) dengan bolong udara'],['Kedudukan','Atas rasuk teres, grid 6 + 1200'],['Nota','Bahan tepat tidak dinyatakan']]},
   VP:{t:'Paip udara (VP)',ref:'M1001 · M1002',rows:[['Saiz','uPVC Ø100 mm'],['Ketinggian','Sekurang-kurangnya 600 mm (M1001) / 900 mm (M1002) di atas bumbung, dengan cowl'],['Lokasi','VP1 Bilik Air 1, VP2 Bilik Air 2, VP3 Bilik Air 3']]},
@@ -64,12 +73,12 @@ const INFO={
 
 /* ================= Bilik (luas ikut M1003) ================= */
 const ROOMS=[
-  {id:'yard', n:'Yard', a:'4.86', f:'orche', lv:.45, r:[[0,5.1,1.8,6.6],[0.9,6.6,1.8,7.8]], full:[0,5.1,1.8,7.8], c:'SOFFIT', ch:CEIL},
+  {id:'yard', n:'Yard', a:'4.86', f:'orche', lv:.45, r:[[0,5.1,1.8,6.9],[0.9,6.9,1.8,7.8]], full:[0,5.1,1.8,7.8], c:'SOFFIT', ch:CEIL},
   {id:'ba3', n:'Bilik Air 3', a:'2.16', f:'trav', lv:.45, r:[[0,3.9,1.8,5.1]], s:.75, c:'CEILMR', ch:CEILW},
   {id:'dapur', n:'Dapur', a:'12.87', f:'castello', lv:.5, r:[[1.8,3.9,5.1,7.8]], c:'CEILMR', ch:CEIL},
   {id:'makan', n:'Ruang Makan', a:'15.39', f:'padova', lv:.5, r:[[5.1,3.9,8.4,7.35],[6,1.8,7.2,3.9]], at:[6.75,5.9], c:'CEIL', ch:CEIL},
   {id:'tamu', n:'Ruang Tamu', a:'15.21', f:'padova', lv:.5, r:[[8.4,3.9,12.3,7.8]], c:'CEIL', ch:CEIL},
-  {id:'lanai', n:'Lanai', a:'10.53', f:'orche', lv:.45, r:[[12.3,3.9,13.5,7.8],[13.5,3.9,15,4.25],[13.5,5.3,15,7.8]], full:[12.3,3.9,15,7.8], at:[13.65,6.1], c:'SOFFIT', ch:CEIL},
+  {id:'lanai', n:'Lanai', a:'10.53', f:'orche', lv:.45, r:[[12.3,3.9,13.5,7.8],[13.5,3.9,15,4.275],[13.5,5.325,15,7.8]], full:[12.3,3.9,15,7.8], at:[13.65,6.1], c:'SOFFIT', ch:CEIL},
   {id:'balkoni', n:'Balkoni', a:'2.52', f:'orche', lv:.45, r:[[5.1,7.35,8.4,8.1]], s:.7, lift:.2, c:null},
   {id:'b4', n:'Bilik 4', a:'11.70', f:'norwich', lv:.5, r:[[0,0,3,3.9]], c:'CEIL', ch:CEIL},
   {id:'b3', n:'Bilik 3', a:'11.70', f:'norwich', lv:.5, r:[[3,0,6,3.9]], c:'CEIL', ch:CEIL},
@@ -97,7 +106,7 @@ const TYPES={
 const op=(type,c,open)=>Object.assign({type,c,open:open||1},TYPES[type]);
 const WALLS=[
   [0,0,15,0,[op('W1',1.425),op('W1',4.425),op('W3',6.525),op('W1',8.175),op('W3',9.675),op('W1',13.5)]],
-  [15,0,15,3.9,[op('W2',1.275),op('W2',2.025),op('W2',2.775)]],
+  [15,0,15,4.2,[op('W2',1.275),op('W2',2.025),op('W2',2.775)]], // dinding Bilik 1 diteruskan 300 ke lanai sebagai pier penuh (D6002, E1 '300')
   [1.8,7.8,5.1,7.8,[op('W5',1.65)]],[8.4,7.8,12.3,7.8,[op('W2',.675),op('W2',3.15)]],
   /* Balkoni separuh ke dalam (M1003, D6004, keratan 2-1): GD1 450 mm ke dalam dari grid A; tiada dinding pada grid A antara grid 3 dan 4 */
   [5.1,7.35,8.4,7.35,[op('GD1',1.725)]],[8.4,7.35,8.4,7.8],
@@ -116,13 +125,13 @@ const WALLS=[
 /* ================= Anak tangga & pagar (D6001–D6004, D7006, D7007) ================= */
 /* Jejak mengikut arah turun: 'x+' = turun ke arah +x. h = aras atas setiap jejak (m dari tanah). */
 const STAIRS=[
-  {id:'lanai', x1:13.5, y1:4.25, x2:15, y2:5.3, dir:'x+', d:[.3,.3,.9], h:[.35,.25,.15]},
-  {id:'yard',  x1:0,    y1:6.6,  x2:.9, y2:7.8, dir:'y+', d:[.3,.3,.3,.3], h:[.35,.25,.15,.05]}
+  {id:'lanai', x1:13.5, y1:4.275, x2:15, y2:5.325, dir:'x+', d:[.3,.3,.9], h:[.35,.25,.15]}, // D6002: selepas pier 300, lebar 1 050
+  {id:'yard',  x1:0,    y1:6.9,   x2:.9, y2:7.8,   dir:'y+', d:[.3,.3,.3],  h:[.35,.25,.15]}  // D7006/D6001: 3 jejak dalam 900 terakhir, naik 100 ke apron
 ];
-/* [x1,y1,x2,y2,aras tapak] */
+/* [x1,y1,x2,y2,aras tapak]. Pagar sisi tangga lanai pada y 5.4 (zon 150 selepas tangga, D6002), aras atas rata (D6003) */
 const RAILS=[
   [0,5.1,0,7.8,.45],[.9,7.8,1.8,7.8,.45],
-  [15,5.3,15,7.8,.45],[12.3,7.8,15,7.8,.45],[15,3.9,15,4.25,.45],[13.5,5.3,15,5.3,.45],
+  [15,5.4,15,7.8,.45],[12.3,7.8,15,7.8,.45],[13.6,5.4,15,5.4,.45],
   [5.1,8.1,8.4,8.1,.45],[5.1,7.875,5.1,8.1,.45],[8.4,7.875,8.4,8.1,.45]
 ];
 const COLS=[[0,7.8],[15,7.8],[16.1,7.7],[16.1,3.9]];
@@ -169,10 +178,12 @@ const WTILE={ba1:{kit:['y1','y2'],kz:.9}, ba2:{}, ba3:{}};
 const VPIPE=[{n:'VP1',x:9.4,y:-.13},{n:'VP2',x:6.15,y:-.13},{n:'VP3',x:-.13,y:4.05}];
 
 /* ================= Tapak (M1001, M1002) ================= */
-/* Utara = −x (ke arah grid 1). Sempadan ikut bering & jarak M1001 (dilalui ikut arah jam).
-   Grid 1 → sempadan utara 3 000 (bertulis); grid A → sempadan timur ≈ 1.52 m (diukur pada skala 1:100). */
+/* Utara ke arah jalan berturap (+x), seperti anak panah semua helaian. Bering M1001 dirujuk pada sisi rumah keluarga (0°);
+   utara sebenar (Google Earth) ialah paksi +x diputar 8.9° ke arah +y. Sempadan ikut bering & jarak M1001 (dilalui lawan arah jam).
+   Grid 1 → sempadan selatan (bendang) 3 000 (bertulis); grid A → sempadan barat (rumah keluarga) ≈ 1.52 m (diukur pada skala 1:100). */
+const UTARA=8.9; // darjah: sudut utara sebenar dari paksi +x pelan, lawan arah jam (ke arah +y)
 const LOT=[[-3,9.322],[23.94,9.322],[24.534,-6.757],[-3,-2.678]];
-const LOT_SIDES=[['Timur','26.94 m','S 0°00′00″ W','jiran'],['Selatan','16.09 m','S 87°52′59″ W','jalan berturap'],['Barat','27.83 m','N 8°26′09″ E','jalan dalam'],['Utara','12.00 m','N 90°00′00″ E','']];
+const LOT_SIDES=[['Barat','26.94 m','S 0°00′00″ W','rumah keluarga'],['Utara','16.09 m','S 87°52′59″ W','jalan berturap'],['Timur','27.83 m','N 8°26′09″ E','jalan dalam'],['Selatan','12.00 m','N 90°00′00″ E','bendang']];
 /* Jalan: konteks sahaja, lebar anggaran. off = jarak tepi dalam dari sempadan, w = lebar */
 const ROADS=[{side:1,off:.6,w:3.4,ext:[30,30],k:'asphalt',n:'Jalan berturap'},{side:2,off:.4,w:3.0,ext:[4,25],k:'laterite',n:'Jalan dalam (tanah)'}];
 /* Pokok sedia ada (M1001): pusat & jejari kanopi pada pelan */
@@ -197,9 +208,9 @@ const AC={
   outside:[[2.65,-.53,3.38,-.23],[6.23,-.53,6.99,-.23],[9.62,-.53,10.37,-.23],[-.53,2.9,-.15,3.73]]
 };
 
-/* ================= Render fotorealistik (Blender Cycles, 23 Okt, kedudukan matahari Kangar) ================= */
+/* ================= Render fotorealistik (Blender Cycles, 24 Okt, kedudukan matahari Kangar) ================= */
 const RENDERS=[
-  {f:'luar_petang', t:'Pandangan dari barat daya', m:'5:30 petang'},
+  {f:'luar_pagi', t:'Pandangan dari timur laut (lorong)', m:'8:00 pagi'},
   {f:'lanai_petang', t:'Lanai dan pintu masuk utama', m:'5:15 petang'},
   {f:'luar_jalan', t:'Hadapan dari jalan berturap', m:'12:45 tengah hari'},
   {f:'luar_udara', t:'Pandangan udara', m:'11:30 pagi'},
@@ -209,7 +220,47 @@ const RENDERS=[
   {f:'dalam_dapur', t:'Dapur', m:'12:30 tengah hari'},
   {f:'dalam_bilikair1', t:'Bilik Air 1', m:'12:30 tengah hari'}
 ];
-/* Panorama 360° (equirectangular); yaw = arah pandangan awal (darjah): 0 = selatan (+x), −90 = timur (+y), 90 = barat (−y), 180 = utara (−x) */
+/* ================= Gaya kemasan (pilihan pemilik; BUKAN sebahagian lukisan arkitek) =================
+   'arkitek' = kemasan ikut lukisan (lalai). Gaya lain menukar warna bahan & jubin sahaja; geometri tidak berubah.
+   warna: kunci bahan M (core.js) · roof = jubin & bubung · frame = bingkai & louvre. lantai: id bilik → kunci FIN. */
+const GAYA=[
+  {id:'arkitek', n:'Arkitek', t:'Ikut lukisan AZR', sw:['#f2f0eb','#5f6265'], nota:'Kemasan dan warna ikut set lukisan arkitek (D1001–D1006). Pilih gaya lain untuk melihat cadangan earth tone; lukisan tidak berubah.'},
+  {id:'tropika', n:'Tropika', t:'Tropika moden · Nippon Paint', sw:['#dcc4ae','#5a4334'],
+   nota:'Dinding pasir hangat, aksen tanah liat pada tiang dan gable, plinth gelap untuk percikan hujan. Cat luar Nippon Weatherbond (anti-kulat). Kod warna ≈ daripada carian; sahkan dengan kad warna sebenar.',
+   warna:{aksen:'#ad664b',wall:'#dcc4ae',wallIn:'#f1e6d6',col:'#ad664b',siding:'#ad664b',plinth:'#79544b',fascia:'#79544b',soffit:'#f1e6d6',ceil:'#f3ede1',roof:'#5a4334',frame:'#4a3c30',door:'#7b4f2c',rail:'#1e1e1e',
+          kcab:'#6b4a33',kcab2:'#ede3d1',counter:'#d9cbb3',wood2:'#6b4a33',oak:'#8a5a3b',fabric:'#cbb89a',fabric2:'#8a6a4f',linen:'#ede3d1',throwA:'#ad664b',throwB:'#79544b'},
+   lantai:{tamu:'sx05',makan:'sx05',dapur:'sx05',b2:'sx05',b3:'sx05',b4:'sx05',lanai:'ls02',balkoni:'ls02',yard:'ls02'}, langsir:'#ede3d1',
+   butiran:[['Dinding TV','Nippon Good Earth NP YO 2415D','#ad664b'],['Dinding luar','Nippon Basket Beige NP N 1879P · LRV 58','#dcc4ae'],['Dinding dalam','Nippon Almond Bits NP OW 2204P','#f1e6d6'],['Tiang & gable','Nippon Good Earth NP YO 2415D','#ad664b'],
+     ['Plinth & fascia','Nippon Red Earth NP R 1379A','#79544b'],['Siling','Nippon Cotton White NP OW 2200P','#f3ede1'],['Bumbung','Monier Elabana Tropical · Mocha Brown','#5a4334'],
+     ['Bingkai','Aluminium dark bronze','#4a3c30'],['Pintu utama','Kayu chengal / merbau, minyak semula jadi','#7b4f2c'],['Lantai dalam','Feruni Stone X Lime SX05M · 600×600 matt','#cdbb9e'],
+     ['Lanai & balkoni','Feruni Limestone 2.0 Beige LS02 · 300×600 Griptech','#b9aa8c'],['Bilik 1','Strip kayu (ikut lukisan)','#9e6039'],['Kabinet dapur','Walnut (bawah) + krim (atas)','#6b4a33']]},
+  {id:'japandi', n:'Japandi', t:'Japandi hangat · Nippon Paint', sw:['#ddcfc0','#2c2b2a'],
+   nota:'Beige hangat, oak cerah dan hitam lembut (palet artikel Japandi Nippon Malaysia). Hitam hanya pada plinth, fascia dan bingkai. Bumbung Ebony paling panas: pasang penebat di bawah jubin. Kod ≈; sahkan dengan kad warna.',
+   warna:{aksen:'#c3a585',wall:'#ddcfc0',wallIn:'#ddcfc0',col:'#c3a585',siding:'#c3a585',plinth:'#504845',fascia:'#504845',soffit:'#f3ede1',ceil:'#f3ede1',roof:'#2c2b2a',frame:'#232221',door:'#c8a57a',rail:'#2a2726',
+          kcab:'#c9a77c',kcab2:'#e6ddcf',counter:'#efe9df',wood2:'#b08a60',oak:'#c9a77c',fabric:'#d8cfc0',fabric2:'#8f8578',linen:'#efe9de',throwA:'#504845',throwB:'#c3a585'},
+   lantai:{tamu:'blitzen',makan:'blitzen',dapur:'blitzen',b1:'oakstrip',b2:'blitzen',b3:'blitzen',b4:'blitzen',lanai:'ls01',balkoni:'ls01',yard:'ls01'}, langsir:'#efe9de',
+   butiran:[['Dinding TV','Nippon Natural Oak NP N 1871T','#c3a585'],['Dinding luar & dalam','Nippon Wall Arte NP N 1865P · LRV 64','#ddcfc0'],['Pilihan ruang tamu','Nippon Birch Patina NP N 1852P','#d4ccbf'],['Tiang & gable','Nippon Natural Oak NP N 1871T','#c3a585'],
+     ['Plinth & fascia','Nippon Painted Faces NP N 1925A','#504845'],['Siling & sofit','Nippon Cotton White NP OW 2200P','#f3ede1'],['Bumbung','Monier Elabana Tropical · Ebony','#2c2b2a'],
+     ['Bingkai','Aluminium hitam matte','#232221'],['Pintu utama','Kayu nyatoh / oak cerah, matte jernih','#c8a57a'],['Lantai dalam','Niro Granite Blitzen Stone Bright GGBZ01 · 60×120 / 60×60','#d9d2c4'],
+     ['Lanai & balkoni','Feruni Limestone 2.0 Almond LS01 · 300×600 Griptech','#d3c8b3'],['Bilik 1','Strip oak cerah','#c9a77c'],['Kabinet dapur','Oak cerah + krim matte','#c9a77c']]},
+  {id:'bali', n:'Bali', t:'Bali / rustik tropika · Jotun', sw:['#d0a892','#8e4a35'],
+   nota:'Dinding Tuscany berlepa pasir halus, aksen terracotta, plinth batu, bumbung merah tanah. Warna dinding sederhana gelap menyerap lebih haba; cucur 725 mm membantu. Batu & terracotta perlu sealer. Kod ≈; sahkan dengan kad warna.',
+   warna:{aksen:'#d0a892',wall:'#d0a892',wallIn:'#f0efe2',col:'#9e6e63',siding:'#9e6e63',plinth:'#c9b48e',fascia:'#59473f',soffit:'#f0efe2',ceil:'#f0efe2',roof:'#8e4a35',frame:'#6b4a30',door:'#4a2f1f',rail:'#1c1c1c',
+          kcab:'#5a3a26',kcab2:'#efe6d4',counter:'#d9cbb3',wood2:'#4a2f1f',oak:'#6a3f27',fabric:'#e8dcc6',fabric2:'#9e6e63',linen:'#efe6d4',throwA:'#af957a',throwB:'#9e6e63'},
+   lantai:{tamu:'tv02',makan:'tv02',dapur:'tv02',b1:'merbau',b2:'tv02',b3:'tv02',b4:'tv02',lanai:'terra',balkoni:'terra',yard:'terra'}, langsir:'#c9b28d',
+   butiran:[['Dinding TV','Jotun 2225 Tuscany, rupa limewash','#d0a892'],['Dinding luar','Jotun 2225 Tuscany · Jotashield · LRV ≈44','#d0a892'],['Dinding dalam','Jotun 1453 Vanilla','#f0efe2'],['Tiang & gable','Jotun 2111 Burned Terracotta','#9e6e63'],
+     ['Plinth','Batu pasir Palimanan (perlu sealer)','#c9b48e'],['Fascia','Nippon Painted Frame NP N 1904A','#59473f'],['Bumbung','Monier Elabana Tropical · Antique Red','#8e4a35'],
+     ['Bingkai','Powder coat rupa kayu / bronze gelap','#6b4a30'],['Pintu utama','Merbau / chengal, stain walnut gelap','#4a2f1f'],['Lantai dalam','Feruni Travertino 2.0 Beige TV02MH · 600×600','#dccba8'],
+     ['Lanai & balkoni','Terracotta Vietnam 300×300 (GNG Tiles)','#b5653f'],['Bilik 1','Strip merbau gelap','#6a3f27'],['Kabinet dapur','Walnut gelap + krim','#5a3a26']]}
+];
+/* Dinding aksen (muka dalam sahaja): dinding TV ruang tamu (M1004). h = dinding mendatar pada y = f, dari a1 ke a2; sg = sisi (−1 = sisi −y) */
+const AKSEN=[{h:true,f:7.8,a1:8.4,a2:12.3,sg:-1}];
+/* Syot render untuk gaya earth tone (render/gaya/<id>/); set Arkitek kekal dalam render/.
+   GAYA_SEDIA = gaya yang rendernya sudah ada; gaya lain memaparkan set Arkitek dengan nota. */
+const GAYA_SEDIA=[];
+const RENDER_GAYA=['luar_pagi','lanai_petang','luar_senja','dalam_tamu','dalam_bilik1','dalam_dapur'];
+const PANO_GAYA=['p_tamu'];
+/* Panorama 360° (equirectangular); yaw = arah pandangan awal (darjah): 0 = utara (+x, jalan), −90 = barat (+y, rumah keluarga), 90 = timur (−y, lorong), 180 = selatan (−x, bendang) */
 const PANOS=[
   {f:'p_tamu', t:'Ruang tamu & makan', yaw:0},
   {f:'p_bilik1', t:'Bilik 1 (utama)', yaw:-90},

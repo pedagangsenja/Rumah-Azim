@@ -55,7 +55,7 @@ const depthFor=mat=>new THREE.MeshDepthMaterial({depthPacking:THREE.RGBADepthPac
 const LOT_AREA=(function(){ let a=0; for(let i=0;i<LOT.length;i++){ const [x1,y1]=LOT[i], [x2,y2]=LOT[(i+1)%LOT.length]; a+=x1*y2-x2*y1; } return Math.abs(a)/2; })();
 INFO.LOT={t:'Sempadan lot',ref:'M1001',rows:[['Luas','≈'+LOT_AREA.toFixed(0)+' m² (dikira daripada ukuran sempadan)'],
   ...LOT_SIDES.map(([s,l,b,n])=>['Sisi '+s.toLowerCase(),l+' · '+b+(n?' · '+n:'')]),
-  ['Anjakan rumah','Grid 1 ke sempadan utara 3 000 mm; grid A ke sempadan timur ≈1.52 m (diukur pada skala)']]};
+  ['Anjakan rumah','Grid 1 ke sempadan selatan (bendang) 3 000 mm; grid A ke sempadan barat (rumah keluarga) ≈1.52 m (diukur pada skala)']]};
 (function(){
   const sh=new THREE.Shape(LOT.map(([x,y])=>new THREE.Vector2(x,y))), geo=new THREE.ShapeGeometry(sh); geo.rotateX(-Math.PI/2);
   const m=new THREE.Mesh(geo,new THREE.MeshBasicMaterial({transparent:true,opacity:0,depthWrite:false})); m.position.y=.004; m.userData.info='LOT'; land.add(m); pick.push(m); // kawasan ketik sahaja
@@ -79,7 +79,7 @@ for(const rd of ROADS){
   const geo=new THREE.ShapeGeometry(new THREE.Shape(pts)); geo.rotateX(-Math.PI/2);
   const uv=geo.attributes.uv; for(let i=0;i<uv.count;i++){ const x=uv.getX(i), y=uv.getY(i); uv.setXY(i,(x*ux+y*uy)/4,(x*nx+y*ny)/4); }
   const m=new THREE.Mesh(geo,rd.k==='asphalt'?M.asphalt:M.laterite); m.position.y=rd.k==='asphalt'?.03:.018; m.receiveShadow=true;
-  m.userData.info={t:rd.n,ref:'M1001',rows:[['Kedudukan',rd.side===1?'Di luar sempadan selatan':'Di luar sempadan barat'],['Lebar','≈'+rd.w.toFixed(1)+' m (anggaran, untuk konteks)']]};
+  m.userData.info={t:rd.n,ref:'M1001',rows:[['Kedudukan',rd.side===1?'Di luar sempadan utara':'Di luar sempadan timur'],['Lebar','≈'+rd.w.toFixed(1)+' m (anggaran, untuk konteks)']]};
   land.add(m); pick.push(m);
 }
 

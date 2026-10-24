@@ -18,10 +18,11 @@ Model memerlukan internet kerana three.js dan fon dimuatkan dari CDN.
 | Jalan | Mod orang pertama pada paras mata 1.6 m. Telefon: seret bulatan untuk berjalan, seret skrin untuk memandang. Komputer: W A S D / anak panah, Shift untuk laju, Esc untuk keluar. Dinding, pagar dan perabot menghalang; tangga dinaiki ikut aras sebenar |
 | Waktu matahari | Kedudukan matahari sebenar untuk Kangar (≈6.44° U, 100.19° T) pada tarikh hari ini, 6:30 pagi hingga 7:30 malam. Bayang-bayang, warna langit dan pantulan kaca ikut waktu |
 | Lapisan | Bumbung, potong dinding, siling, lampu & kipas, perabot, sanitari, label, landskap, sempadan lot |
-| Galeri | Gambar fotorealistik (Blender Cycles) dari luar dan dalam: petang keemasan, tengah hari, senja. Leret atau ketik anak panah |
+| Galeri | Gambar fotorealistik (Blender Cycles) dari luar dan dalam: pagi, tengah hari, petang dan senja, dengan matahari ikut utara sebenar. Leret atau ketik anak panah |
 | 360° | Panorama 360° ruang tamu & makan, Bilik 1, dapur, lanai & teres. Seret untuk memandang, cubit untuk zum |
 | Panel | Butang anak panah di sebelah tab melipat atau membuka panel. Di telefon panel dilipat secara lalai dan dilipat semula bila skrin diseret; pandangan 3D dialih supaya rumah tidak terlindung |
 | Kemasan | Warna bumbung, dinding, bingkai, pintu; jubin lantai setiap bilik |
+| Gaya | Butang di bawah tajuk: **Arkitek** (ikut lukisan, lalai) atau tiga gaya earth tone (Tropika, Japandi, Bali). Gaya menukar warna dinding luar & dalam, dinding aksen TV, tiang, bumbung, bingkai, pintu, lantai, kabinet dapur dan perabot; galeri dan 360° ikut gaya yang dipilih. Butiran produk dalam tab Kemasan |
 
 ## Struktur fail
 
@@ -52,7 +53,7 @@ Fail dimuatkan mengikut turutan `data → core → model → landskap → ui →
   - Rasuk bumbung 3.80
   - Cucur atap (atas jubin) ≈3.69
   - Rabung utama ≈6.40, rabung gable lanai ≈5.27
-- **Utara:** ke arah −x (sisi yard dan dapur). Timur = +y (sisi jiran), selatan = +x (jalan berturap), barat = −y (jalan dalam).
+- **Utara:** ke arah +x (jalan berturap), seperti anak panah semua helaian. Utara sebenar (Google Earth) = +x diputar 8.9° ke arah +y (`UTARA` dalam `js/data.js`). Barat ≈ +y (rumah keluarga), timur ≈ −y (jalan dalam), selatan ≈ −x (bendang).
 - **Kedudukan bukaan:** dalam `WALLS`, nilai `c` ialah jarak pusat bukaan dari hujung dinding yang lebih kecil koordinatnya.
 
 ## Perkara yang perlu disahkan dengan arkitek
@@ -62,11 +63,11 @@ Fail dimuatkan mengikut turutan `data → core → model → landskap → ui →
 3. **Pintu D3 bilik air:** pelan 750 mm, jadual D3001 900 mm. Model ikut pelan.
 4. **Tinggi siling ruang utama:** 2850 mm, dikira daripada rantai dimensi keratan 1-2 (M1006-4: ambang W5 1000 + W5 600 + 1250). Tiada dimensi siling yang ditulis terus. Siling bilik air 2400 mm ikut D4001.
 5. **Warna bumbung dan dinding luar:** belum ditetapkan dalam lukisan (*to architect's selection*).
-6. **Arah utara:** anak panah M1001 dan M1002 menghala ke grid 6, tetapi M1003–M1005 menghala ke grid 1. Model ikut grid 1 kerana bering sempadan M1001 hanya membentuk lilitan ikut arah jam (cara biasa pelan ukur) jika utara ke arah grid 1, dan gambar dron pemilik (utara di atas) sepadan dengan susunan ini.
-7. **Kedudukan rumah dalam lot:** M1001 tulis 3 000 mm dari grid 1 ke sempadan utara, tetapi pada skala jaraknya ≈3.11 m. Dimensi 2 124, 1 100 dan 2 000 pada M1001 juga tidak sepadan dengan skala. Jarak grid A ke sempadan timur (≈1.52 m) tiada dimensi bertulis; model guna ukuran pada skala.
-8. **Sisi sempadan selatan (tepi jalan berturap):** M1001 tulis 16.09 m; gambar dron pemilik menandakan ≈19 m. Model ikut M1001.
+6. **Arah utara:** anak panah semua helaian (M1001–M1006, D1005, D1006) menghala ke jalan berturap, dan ini sepadan dengan Google Earth. Bering M1001 juga sepadan (dilalui lawan arah jam), tetapi dirujuk pada sisi rumah keluarga sebagai 0°00′00″; utara sebenar ≈8.9° berbeza. Model guna utara sebenar. (Versi model sebelum 24 Okt tersilap membaca anak panah M1003–M1005 dan meletakkan utara ke arah bendang.)
+7. **Kedudukan rumah dalam lot:** M1001 tulis 3 000 mm dari grid 1 ke sempadan selatan (bendang); pada skala ≈3.07 m. Di sisi rumah keluarga, dimensi 2 000 (dinding) dan 1 100 (cucur) bermula ≈0.5 m di luar garisan sempadan; dari sempadan, dinding ≈1.5 m dan cucur ≈0.65 m. Jarak grid A ke sempadan barat (≈1.52 m) tiada dimensi bertulis; model guna ukuran pada skala.
+8. **Ukuran sempadan:** M1001 tulis 16.09 / 27.83 / 12.00 / 26.94 m (382 m²). Poligon Google Earth pemilik: 16.03 / 27.76 / 12.40 / 27.97 m (393.3 m²). Model ikut M1001; sempadan muktamad perlu dipacak juruukur berlesen.
 9. **Ketinggian bumbung:** M1005 tulis rabung 6400 sebagai *approx. max height*, tetapi elevation E1 pada skala ≈6.2 m. Butiran cucur D5001 (skala 1:10) memberi permukaan jubin ≈3.65 m di tepi cucur; dengan cerun 30° rabung jadi ≈6.36 m. Model guna 6.40 m, cerun 30° dan cucur 725 mm dari muka dinding, jadi tepi cucur ≈3.69 m.
-10. **Lebar tangga lanai:** E1 tunjuk 1 000, D6002 tunjuk 1 050, D7007 tunjuk 1 200 mm. Model guna ≈1 050.
+10. **Tangga lanai:** E1 tunjuk pier 300 + tangga 1 000, D6002 (1:25) tunjuk pier 300 + tangga 1 050 + zon pagar 150, D7007 tunjuk 1 200 mm. Model ikut D6002: pier dinding penuh 300 mm di hujung dinding Bilik 1, tangga y 4.275–5.325, pagar sisi pada y 5.4. (Versi sebelum 24 Okt meletakkan pagar pendek di tempat pier.)
 11. **W6:** teks jadual D3002 tulis "3 equal panels", tetapi gambar W6 dalam D3002 dan Elevation 1 (M1005) kedua-duanya tunjuk 4 panel sama. Model ikut gambar (4 panel). Tiada lukisan tunjuk satu kepingan kaca besar.
 12. **Dinding gable teres:** E1 lukis papan mendatar dengan bolong udara, bahan tidak dinyatakan.
 13. **Longkang U 300 mm:** keratan M1006 tulis apron 600 + longkang 300 dari muka dinding. Di sisi A, papak balkoni mengunjur 300 mm di atas apron (D6004), jadi longkang ikut ukuran yang sama. Saluran keluar ke longkang awam tidak ditunjukkan.
@@ -75,11 +76,21 @@ Fail dimuatkan mengikut turutan `data → core → model → landskap → ui →
 16. **Tinggi pagar:** nota tulis 900 mm, tetapi E3, E4 dan D6001–D6004 tunjuk 850 mm. Model guna 900.
 17. **Ambang W5:** D3002 dan keratan 1-2 tulis 1000 mm, E4 tulis 900 mm. Model guna 1000.
 18. **Keratan 1-3 dan W1 Bilik 1:** keratan 1-3 melabel W6 (dinding grid 5, dilihat dari dalam ruang tamu) sebagai W1. Kedudukan W1 Bilik 1: B-B tulis 300 dari muka dalam dinding grid 6 dan E2 tulis 450 dari muka luar (kedua-duanya meletakkan tepi tingkap ≈14.625 m), M1003 tulis 600 dari grid (14.40 m), dan pelan M1003 dilukis ≈14.48 m. Model guna 600.
-19. **Tangki air, kebuk pam dan perigi (M1001/M1002):** dilukis di luar sempadan timur lot. Model ikut lukisan.
+19. **Tangki air, kebuk pam dan perigi (M1001/M1002):** dilukis di luar sempadan barat lot (tanah keluarga). Model ikut lukisan.
 20. **Dapur dan perabot:** model kini ikut M1004 (peti sejuk dua pintu di sebelah GD2, kaunter L di dinding W5 dan dinding yard, meja Bilik 4 di dinding grid 1, kabinet rendah di hadapan W1 Bilik 1). Unit penghawa dingin, kondenser dan 42 downlight ikut D9001, diukur pada skala 1:75. Pelmet langsir ikut D4001: ruang tamu ada dua pelmet pendek di W2 dan satu di W6, bukan satu pelmet di sepanjang dinding TV.
 21. **Balkoni dan GD1:** M1002, M1003, D1005, D1006, D3002, D4001, D6004, D9001 dan keratan 2-1 menunjukkan GD1 450 mm ke dalam dari grid A, dan balkoni 750 mm dalam (450 di dalam garis grid A + 300 di luar). Model kini ikut ini; versi lama meletakkan GD1 pada grid A. Luas ruang makan 15.39 m² (M1003) dikira hingga grid A, jadi bertindih dengan balkoni 2.52 m². GD1 375 mm dari grid 3 (M1003, D3002), tetapi D6004 tulis 225 di sisi itu. Papak kanopi 100 mm pada kepala GD1 hanya ditunjukkan dalam keratan 2-1, dan unjurannya diukur pada skala (≈).
 22. **Label lukisan:** E3 melabel pintu dapur ke yard sebagai D3, tetapi pelan, D3001 dan keratan 1-1 menunjukkan D1. Keratan 1-1 melabel Bilik 4 sebagai Bilik 3.
-23. **Siling lanai dan teres:** D4001 menanda gipsum tahan lembap, tetapi keratan A-A menulis panel sofit gred luaran. Model guna sofit, pada aras siling 2850 mm (keratan A-A).
+23. **Siling lanai dan teres:** D4001 menanda gipsum tahan lembap, tetapi keratan A-A menulis panel sofit gred luaran. Model guna sofit, pada aras siling 2850 mm (keratan A-A), penuh termasuk di atas tangga; bawah rasuk teres dan lanai rata dengan sofit (A-A, E1: rasuk 450 mm).
+24. **Tangga yard:** D6001 dan D7006 tunjuk 3 naik 100 mm (jejak 300) dalam 900 mm terakhir sebelum grid A, lebar 900 mm, kemudian naik 100 ke apron. Model kini ikut ini (versi lama ada 4 jejak bermula 1.2 m dari grid A). Pagar yard di sisi tangga kekal rata pada aras yard seperti keratan D6001; tiangnya turun ke jejak.
+
+## Gaya earth tone (cadangan pemilik, bukan lukisan)
+
+- Tiga palet dalam `GAYA` (`js/data.js`), dikaji untuk iklim panas lembap: dinding luar terang hingga sederhana (LRV ≈44–64) untuk kurangkan haba, aksen tanah liat / oak / terracotta pada tiang dan gable (≈10%), plinth gelap atau batu untuk percikan hujan, cat luar anti-kulat.
+- **Tropika** (Nippon Paint): Basket Beige NP N 1879P, Good Earth NP YO 2415D, Red Earth NP R 1379A; bumbung Monier Elabana Tropical Mocha Brown; lantai Feruni Stone X Lime SX05M.
+- **Japandi** (Nippon Paint): Wall Arte NP N 1865P, Natural Oak NP N 1871T, Painted Faces NP N 1925A; bumbung Monier Elabana Tropical Ebony (perlu penebat); lantai Niro Granite Blitzen Stone Bright GGBZ01.
+- **Bali** (Jotun): 2225 Tuscany, 2111 Burned Terracotta, 1453 Vanilla; plinth batu pasir Palimanan; bumbung Monier Elabana Tropical Antique Red; lantai Feruni Travertino 2.0 Beige TV02MH, terracotta di lanai.
+- Kod dan warna hex diambil daripada hasil carian (laman pengeluar tidak dapat dibuka semasa kajian), jadi semuanya ≈. Sahkan dengan kad warna dan sampel jubin sebenar sebelum membeli.
+- Render setiap gaya dalam `render/gaya/<id>/` (6 gambar + panorama ruang tamu); set Arkitek dalam `render/` tidak berubah. Jana dengan `GAYA=<id> node eksport.js`, `GAYA=<id> python adegan.py`, `python render.py <syot> --gaya=<id>`.
 
 ## Had model
 

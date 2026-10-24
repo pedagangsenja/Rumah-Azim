@@ -1,12 +1,14 @@
 # Bina adegan Cycles Banglo Azim daripada banglo.glb dan simpan sebagai banglo.blend
-# Koordinat Blender = (x pelan, y pelan, aras). Utara = -x, timur = +y.
+# Koordinat Blender = (x pelan, y pelan, aras). Utara ≈ +x (diputar 8.9° ke arah +y), timur ≈ -y.
 import bpy, bmesh, math, random, os, sys
 from mathutils import Vector
 
 D = os.path.dirname(os.path.abspath(__file__))
 random.seed(7)
 bpy.ops.wm.read_factory_settings(use_empty=True)
-bpy.ops.import_scene.gltf(filepath=os.path.join(D, 'banglo.glb'))
+GY = os.environ.get('GAYA', '')   # gaya kemasan: kosong = Arkitek; selain itu banglo_<gaya>.glb + gaya_<gaya>.json daripada eksport.js
+GJ = __import__('json').load(open(os.path.join(D, 'gaya_' + GY + '.json'))) if GY else {'kunci': [], 'langsir': None}
+bpy.ops.import_scene.gltf(filepath=os.path.join(D, 'banglo' + ('_' + GY if GY else '') + '.glb'))
 sc = bpy.context.scene
 
 def bsdf(m):
@@ -36,12 +38,12 @@ for m in bpy.data.materials:
         setp(n, 'Base Color', (0.92, 0.94, 0.95, 1)); setp(n, 'Transmission Weight', 1.0); setp(n, 'Roughness', 0.35); setp(n, 'IOR', 1.5); setp(n, 'Metallic', 0.0)
     elif k in ('frame', 'rail', 'louvre'):
         setp(n, 'Metallic', 0.6); setp(n, 'Roughness', 0.38)
-    elif k in ('wall',):
+    elif k in ('wall', 'wallIn', 'col', 'aksen'):
         setp(n, 'Roughness', 0.78)
-    elif k in ('fascia', 'soffit', 'ceil', 'cab'):
-        setp(n, 'Roughness', 0.55 if k == 'cab' else 0.8)
+    elif k in ('fascia', 'soffit', 'ceil', 'cab', 'kcab', 'kcab2'):
+        setp(n, 'Roughness', 0.55 if k in ('cab', 'kcab', 'kcab2') else 0.8)
     elif k.startswith('floor_'):
-        r = {'padova': .1, 'castello': .45, 'timber': .32, 'norwich': .4, 'orche': .5, 'trav': .3}.get(k[6:], .4)
+        r = {'padova': .1, 'castello': .45, 'timber': .32, 'norwich': .4, 'orche': .5, 'trav': .3, 'sx05': .55, 'ls02': .7, 'blitzen': .5, 'ls01': .7, 'oakstrip': .4, 'tv02': .6, 'merbau': .38, 'terra': .75}.get(k[6:], .4)
         setp(n, 'Roughness', r); setp(n, 'Coat Weight', .25 if k[6:] in ('padova', 'timber') else 0)
     elif k == 'tileW':
         setp(n, 'Roughness', 0.22)
@@ -64,7 +66,7 @@ for m in bpy.data.materials:
     elif k == 'counter':
         setp(n, 'Roughness', 0.12); setp(n, 'Coat Weight', 0.4)
     elif k == 'roof':
-        setp(n, 'Roughness', 0.5)
+        setp(n, 'Roughness', 0.68 if GY else 0.5)   # jubin konkrit gaya: kurang kilat supaya warna tidak dibiru langit
         tex = next((x for x in m.node_tree.nodes if x.type == 'TEX_IMAGE'), None)
         if tex:
             bmp = m.node_tree.nodes.new('ShaderNodeBump'); bmp.inputs['Strength'].default_value = 0.6; bmp.inputs['Distance'].default_value = 0.03
@@ -78,7 +80,8 @@ for m in bpy.data.materials:
 def s2l(c): return c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4
 for m in bpy.data.materials:
     k, n = base(m), bsdf(m)
-    if not n or k in ('wall', 'frame', 'louvre', 'door', 'roof', 'cap', 'glass', 'frost'): continue
+    # bahan yang warnanya ditukar ke linear dalam three.js (pilihan kemasan & gaya) tidak ditukar lagi
+    if not n or k in ('wall', 'wallIn', 'col', 'aksen', 'frame', 'louvre', 'door', 'roof', 'cap', 'glass', 'frost') or k in GJ['kunci']: continue
     inp = n.inputs['Base Color']
     if inp.is_linked: continue
     c = inp.default_value; inp.default_value = (s2l(c[0]), s2l(c[1]), s2l(c[2]), 1)
@@ -110,7 +113,8 @@ for o in list(bpy.data.objects):
 # ---------------- Langsir di pelmet (D4001: ruang tamu, ruang makan, Bilik 1) ----------------
 FFL = 0.5; CEIL = FFL + 2.85
 cmat = bpy.data.materials.new('langsir'); cmat.use_nodes = True
-cb = bsdf(cmat); setp(cb, 'Base Color', (0.86, 0.83, 0.77, 1)); setp(cb, 'Roughness', 0.9); setp(cb, 'Sheen Weight', 0.8)
+LC = tuple(s2l(int(GJ['langsir'][i:i + 2], 16) / 255) for i in (1, 3, 5)) + (1,) if GJ['langsir'] else (0.86, 0.83, 0.77, 1)
+cb = bsdf(cmat); setp(cb, 'Base Color', LC); setp(cb, 'Roughness', 0.9); setp(cb, 'Sheen Weight', 0.8)
 setp(cb, 'Subsurface Weight', 0.0); setp(cb, 'Transmission Weight', 0.25)
 def curtain(x1, y1, x2, y2, inward):
     """Dua langsir terbuka di hujung pelmet; inward = arah ke dalam bilik (dx, dy)."""
@@ -165,7 +169,7 @@ UTIL = [(-1.97, -0.95, 1.0), (3.01, -1.95, .4), (-1.57, 2.92, .4), (-2.29, 5.12,
 def grassy(x, y):
     if -1.05 < x < 17.25 and -1.05 < y < 9.0: return False
     if x > 24.0 and x < 28.6: return False                      # jalan berturap (≈)
-    # jalan dalam di luar sempadan barat
+    # jalan dalam di luar sempadan timur
     d = (y - (-2.678 + (x + 3) * (-4.079 / 27.534)))
     if -3.6 < d < -0.3: return False
     for ux, uy, r in UTIL:
@@ -239,7 +243,7 @@ def cam(name, pos, look, lens=24, pano=False):
         c.shift_y = 0.0
     c.clip_start = 0.05; c.clip_end = 600
     return o
-cam('luar_petang', (24.0, -9.0, 1.7), (10.0, 3.2, 2.0), 26)
+cam('luar_pagi', (24.0, -9.0, 1.7), (10.0, 3.2, 2.0), 26)
 cam('luar_jalan', (26.0, 6.2, 1.6), (13.0, 4.6, 2.3), 26)
 cam('luar_udara', (31.0, -15.0, 17.0), (8.6, 3.6, 0.8), 40)
 cam('luar_senja', (22.5, -7.0, 1.6), (9.5, 3.4, 2.0), 26)
@@ -268,5 +272,5 @@ sc.view_settings.view_transform = 'AgX'
 try: sc.view_settings.look = 'AgX - Medium High Contrast'
 except Exception: pass
 sc.render.image_settings.file_format = 'JPEG'; sc.render.image_settings.quality = 88
-bpy.ops.wm.save_as_mainfile(filepath=os.path.join(D, 'banglo.blend'))
+bpy.ops.wm.save_as_mainfile(filepath=os.path.join(D, 'banglo' + ('_' + GY if GY else '') + '.blend'))
 print('SIAP', len(bpy.data.objects), 'objek; rumput', ps.count)

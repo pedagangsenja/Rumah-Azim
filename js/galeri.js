@@ -1,7 +1,7 @@
 /* Banglo Azim 3D — galeri render dan lawatan 360° (imej Blender Cycles dalam folder render/) */
 'use strict';
 
-const GAL={i:0, built:false, x0:null};
+const GAL={i:0, key:null, list:[], x0:null};
 const PV={i:0, r:null, cam:null, scene:null, mesh:null, lon:0, lat:0, fov:75, ptrs:new Map(), pinch:0, run:false, tex:{}};
 
 /* ================= Tukar mod: Model 3D / Galeri / 360° ================= */
@@ -19,18 +19,26 @@ document.querySelectorAll('.mode').forEach(b=>b.addEventListener('click',()=>ope
 window.addEventListener('resize',()=>{ setSheetH(); if(PV.run) sizePano(); });
 
 /* ================= Galeri ================= */
+/* Set gambar ikut gaya: Arkitek = render/; gaya lain = render/gaya/<id>/ (syot RENDER_GAYA / PANO_GAYA sahaja) */
+const gayaNow=()=>GAYA.find(g=>g.id===S.gaya)||GAYA[0];
+const gayaRender=()=>{ const g=gayaNow(); return g.id!=='arkitek'&&GAYA_SEDIA.includes(g.id)?g:GAYA[0]; }; // gaya tanpa render -> set Arkitek
+function galSet(){ const g=gayaRender(); return g.id==='arkitek'?RENDERS.map(r=>Object.assign({dir:'render/'},r))
+  :RENDER_GAYA.map(f=>Object.assign({dir:'render/gaya/'+g.id+'/'},RENDERS.find(r=>r.f===f))); }
+function panoSet(){ const g=gayaRender(); return g.id==='arkitek'?PANOS.map(p=>Object.assign({dir:'render/'},p))
+  :PANO_GAYA.map(f=>Object.assign({dir:'render/gaya/'+g.id+'/'},PANOS.find(p=>p.f===f))); }
 function buildGal(){
-  if(GAL.built) return; GAL.built=true;
-  RENDERS.forEach((r,i)=>{ const b=document.createElement('button'); b.type='button'; b.setAttribute('aria-label',r.t);
-    const im=document.createElement('img'); im.src='render/kecil/'+r.f+'.jpg'; im.alt=''; b.appendChild(im);
+  if(GAL.key===S.gaya) return; GAL.key=S.gaya; GAL.list=galSet(); $('gThumbs').innerHTML='';
+  GAL.list.forEach((r,i)=>{ const b=document.createElement('button'); b.type='button'; b.setAttribute('aria-label',r.t);
+    const im=document.createElement('img'); im.src=r.dir+'kecil/'+r.f+'.jpg'; im.alt=''; b.appendChild(im);
     b.addEventListener('click',()=>showGal(i)); $('gThumbs').appendChild(b); });
 }
 function showGal(i){
-  const n=RENDERS.length; GAL.i=(i+n)%n; const r=RENDERS[GAL.i];
-  $('gImg').src='render/'+r.f+'.jpg'; $('gImg').alt=r.t; $('gT').textContent=r.t; $('gMeta').textContent='Render Cycles · '+r.m+' · 23 Okt';
+  const L=GAL.list, n=L.length; GAL.i=(i+n)%n; const r=L[GAL.i], g=gayaNow(), gr=gayaRender();
+  $('gImg').src=r.dir+r.f+'.jpg'; $('gImg').alt=r.t; $('gT').textContent=r.t;
+  $('gMeta').textContent='Render Cycles · '+r.m+' · 24 Okt'+(g.id==='arkitek'?'':gr===g?' · Gaya '+g.n:' · Arkitek (render gaya '+g.n+' belum siap)');
   $('gCount').textContent=(GAL.i+1)+' / '+n;
   $('gThumbs').querySelectorAll('button').forEach((b,j)=>{ b.setAttribute('aria-current',j===GAL.i?'true':'false'); if(j===GAL.i) b.scrollIntoView({block:'nearest',inline:'center'}); });
-  const nx=new Image(); nx.src='render/'+RENDERS[(GAL.i+1)%n].f+'.jpg'; // pramuat gambar seterusnya
+  const nx=new Image(); nx.src=L[(GAL.i+1)%n].dir+L[(GAL.i+1)%n].f+'.jpg'; // pramuat gambar seterusnya
 }
 $('gPrev').addEventListener('click',()=>showGal(GAL.i-1));
 $('gNext').addEventListener('click',()=>showGal(GAL.i+1));
@@ -42,8 +50,14 @@ window.addEventListener('keydown',e=>{
 });
 
 /* ================= Lawatan 360° ================= */
-PANOS.forEach((p,i)=>{ const b=document.createElement('button'); b.type='button'; b.className='chip'; b.textContent=p.t; b.setAttribute('aria-pressed',i===0?'true':'false');
-  b.addEventListener('click',()=>loadPano(i)); $('pChips').appendChild(b); });
+let PL=[];
+function buildChips(){ PL=panoSet(); $('pChips').innerHTML='';
+  PL.forEach((p,i)=>{ const b=document.createElement('button'); b.type='button'; b.className='chip'; b.textContent=p.t; b.setAttribute('aria-pressed',i===0?'true':'false');
+    b.addEventListener('click',()=>loadPano(i)); $('pChips').appendChild(b); }); }
+buildChips();
+/* Dipanggil oleh applyGaya (ui.js) */
+function onGaya(){ setSheetH(); if(!$('galeri').hidden){ buildGal(); showGal(Math.min(GAL.i,GAL.list.length-1)); }
+  const cur=PL[PV.i]&&PL[PV.i].f; buildChips(); if(PV.run){ const j=PL.findIndex(p=>p.f===cur); loadPano(j<0?0:j); } else PV.i=0; }
 function startPano(){
   if(!PV.r){
     PV.r=new THREE.WebGLRenderer({canvas:$('pc'),antialias:false}); PV.r.outputEncoding=THREE.sRGBEncoding;
@@ -59,12 +73,12 @@ function startPano(){
 function stopPano(){ if(PV.r&&PV.run){ PV.r.setAnimationLoop(null); PV.run=false; } }
 function sizePano(){ const c=$('pano').getBoundingClientRect(); PV.r.setSize(c.width,c.height,false); PV.cam.aspect=c.width/c.height; PV.cam.updateProjectionMatrix(); }
 function loadPano(i){
-  PV.i=i; const p=PANOS[i]; $('pChips').querySelectorAll('.chip').forEach((b,j)=>b.setAttribute('aria-pressed',j===i?'true':'false'));
+  PV.i=i; const p=PL[i], key=p.dir+p.f; $('pChips').querySelectorAll('.chip').forEach((b,j)=>b.setAttribute('aria-pressed',j===i?'true':'false'));
   PV.lon=180+p.yaw; PV.lat=-10; PV.fov=75; PV.cam.fov=PV.fov; PV.cam.updateProjectionMatrix();
   const use=t=>{ PV.mesh.material.dispose(); PV.mesh.material=new THREE.MeshBasicMaterial({map:t}); $('pLoad').hidden=true; };
-  if(PV.tex[p.f]){ use(PV.tex[p.f]); return; }
+  if(PV.tex[key]){ use(PV.tex[key]); return; }
   $('pLoad').hidden=false; $('pLoad').textContent='Memuatkan panorama…';
-  new THREE.TextureLoader().load('render/'+p.f+'.jpg',t=>{ t.encoding=THREE.sRGBEncoding; t.minFilter=THREE.LinearFilter; t.generateMipmaps=false; PV.tex[p.f]=t; if(PV.i===i) use(t); },
+  new THREE.TextureLoader().load(key+'.jpg',t=>{ t.encoding=THREE.sRGBEncoding; t.minFilter=THREE.LinearFilter; t.generateMipmaps=false; PV.tex[key]=t; if(PV.i===i&&PL[i]===p) use(t); },
     undefined,()=>{ $('pLoad').textContent='Panorama tidak dapat dimuatkan.'; });
 }
 const pc=$('pc');

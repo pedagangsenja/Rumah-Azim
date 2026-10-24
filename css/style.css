@@ -140,6 +140,18 @@ body.panel-min .tabs button[aria-selected="true"]{background:transparent; color:
 .mode{flex:1 1 auto; font:600 12px/1 var(--f-ui); color:var(--ink); background:var(--chip); border:1px solid var(--line); border-radius:6px; padding-block:7px; padding-inline:9px; cursor:pointer}
 .mode[aria-pressed="true"]{background:var(--accent); border-color:var(--accent); color:var(--accent-ink)}
 .sheet{z-index:9}
+/* Pilihan gaya kemasan (Arkitek + gaya earth tone) */
+.gaya{display:flex; align-items:center; gap:4px; margin-top:6px}
+.gaya-lbl{flex:none; font:600 10px/1 var(--f-mono); letter-spacing:.06em; text-transform:uppercase; color:var(--muted); margin-right:2px}
+.gy{flex:1 1 0; min-width:0; display:flex; align-items:center; justify-content:center; gap:5px; font:600 11.5px/1 var(--f-ui); color:var(--ink);
+  background:transparent; border:1px solid var(--line); border-radius:6px; padding-block:6px; padding-inline:5px; cursor:pointer; white-space:nowrap}
+.gy i{flex:none; width:12px; height:12px; border-radius:50%; background:linear-gradient(135deg,var(--a) 50%,var(--b) 50%); box-shadow:inset 0 0 0 1px rgba(0,0,0,.18)}
+.gy[aria-pressed="true"]{border-color:var(--accent); box-shadow:inset 0 0 0 1px var(--accent)}
+.gy:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.gaya-dl{display:grid; grid-template-columns:auto 1fr; gap:3px 10px; margin:6px 0 0; font-size:11.5px; line-height:1.35}
+.gaya-dl dt{color:var(--muted)} .gaya-dl dd{margin:0}
+.gaya-dl .sw-dot{display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:5px; vertical-align:-1px; box-shadow:inset 0 0 0 1px rgba(0,0,0,.2)}
+@media (max-width:400px){ .gy i{display:none} .gy{padding-inline:3px} }
 
 /* Galeri & 360°: dunia gelap untuk melihat foto, sama dalam kedua-dua tema */
 :root{ --ov-bg:#0c1012; --ov-ink:#e9eff0; --ov-muted:#9aabb0; --ov-line:#26323a; --ov-chip:#162026 }
