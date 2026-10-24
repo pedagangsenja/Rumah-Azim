@@ -15,6 +15,8 @@ const CDN = process.env.THREE_PKG || (__dirname + '/three'); // isi pakej npm th
   });
   await p.goto('file://' + require('path').resolve(__dirname, '../../index.html')); await p.waitForTimeout(2500);
   await p.addScriptTag({ path: CDN + '/examples/js/exporters/GLTFExporter.js' });
+  const GY = process.env.GAYA || ''; // gaya kemasan (kosong = Arkitek)
+  if (GY) await p.evaluate(id => applyGaya(id), GY);
   const b64 = await p.evaluate(() => new Promise((res, rej) => {
     S.cut = false; buildWalls(PLATE); S.roof = true; S.label = false; sync();
     for (const k in M) M[k].name = k;
@@ -42,7 +44,8 @@ const CDN = process.env.THREE_PKG || (__dirname + '/three'); // isi pakej npm th
       res(btoa(s));
     }, { binary: true, onlyVisible: true, maxTextureSize: 1024 });
   }));
-  const out = SP + '/banglo.glb'; fs.writeFileSync(out, Buffer.from(b64, 'base64'));
+  const out = SP + '/banglo' + (GY ? '_' + GY : '') + '.glb'; fs.writeFileSync(out, Buffer.from(b64, 'base64'));
+  if (GY) fs.writeFileSync(SP + '/gaya_' + GY + '.json', JSON.stringify(await p.evaluate(id => { const g = GAYA.find(x => x.id === id); return { id, kunci: Object.keys(g.warna || {}).concat(['louvre', 'cap']), langsir: g.langsir }; }, GY)));
   console.log('GLB', (fs.statSync(out).size / 1e6).toFixed(1), 'MB');
   await b.close();
 })();

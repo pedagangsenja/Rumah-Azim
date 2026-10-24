@@ -22,6 +22,7 @@ Model memerlukan internet kerana three.js dan fon dimuatkan dari CDN.
 | 360° | Panorama 360° ruang tamu & makan, Bilik 1, dapur, lanai & teres. Seret untuk memandang, cubit untuk zum |
 | Panel | Butang anak panah di sebelah tab melipat atau membuka panel. Di telefon panel dilipat secara lalai dan dilipat semula bila skrin diseret; pandangan 3D dialih supaya rumah tidak terlindung |
 | Kemasan | Warna bumbung, dinding, bingkai, pintu; jubin lantai setiap bilik |
+| Gaya | Butang di bawah tajuk: **Arkitek** (ikut lukisan, lalai) atau tiga gaya earth tone (Tropika, Japandi, Bali). Gaya menukar warna dinding luar & dalam, dinding aksen TV, tiang, bumbung, bingkai, pintu, lantai, kabinet dapur dan perabot; galeri dan 360° ikut gaya yang dipilih. Butiran produk dalam tab Kemasan |
 
 ## Struktur fail
 
@@ -80,6 +81,15 @@ Fail dimuatkan mengikut turutan `data → core → model → landskap → ui →
 21. **Balkoni dan GD1:** M1002, M1003, D1005, D1006, D3002, D4001, D6004, D9001 dan keratan 2-1 menunjukkan GD1 450 mm ke dalam dari grid A, dan balkoni 750 mm dalam (450 di dalam garis grid A + 300 di luar). Model kini ikut ini; versi lama meletakkan GD1 pada grid A. Luas ruang makan 15.39 m² (M1003) dikira hingga grid A, jadi bertindih dengan balkoni 2.52 m². GD1 375 mm dari grid 3 (M1003, D3002), tetapi D6004 tulis 225 di sisi itu. Papak kanopi 100 mm pada kepala GD1 hanya ditunjukkan dalam keratan 2-1, dan unjurannya diukur pada skala (≈).
 22. **Label lukisan:** E3 melabel pintu dapur ke yard sebagai D3, tetapi pelan, D3001 dan keratan 1-1 menunjukkan D1. Keratan 1-1 melabel Bilik 4 sebagai Bilik 3.
 23. **Siling lanai dan teres:** D4001 menanda gipsum tahan lembap, tetapi keratan A-A menulis panel sofit gred luaran. Model guna sofit, pada aras siling 2850 mm (keratan A-A).
+
+## Gaya earth tone (cadangan pemilik, bukan lukisan)
+
+- Tiga palet dalam `GAYA` (`js/data.js`), dikaji untuk iklim panas lembap: dinding luar terang hingga sederhana (LRV ≈44–64) untuk kurangkan haba, aksen tanah liat / oak / terracotta pada tiang dan gable (≈10%), plinth gelap atau batu untuk percikan hujan, cat luar anti-kulat.
+- **Tropika** (Nippon Paint): Basket Beige NP N 1879P, Good Earth NP YO 2415D, Red Earth NP R 1379A; bumbung Monier Elabana Tropical Mocha Brown; lantai Feruni Stone X Lime SX05M.
+- **Japandi** (Nippon Paint): Wall Arte NP N 1865P, Natural Oak NP N 1871T, Painted Faces NP N 1925A; bumbung Monier Elabana Tropical Ebony (perlu penebat); lantai Niro Granite Blitzen Stone Bright GGBZ01.
+- **Bali** (Jotun): 2225 Tuscany, 2111 Burned Terracotta, 1453 Vanilla; plinth batu pasir Palimanan; bumbung Monier Elabana Tropical Antique Red; lantai Feruni Travertino 2.0 Beige TV02MH, terracotta di lanai.
+- Kod dan warna hex diambil daripada hasil carian (laman pengeluar tidak dapat dibuka semasa kajian), jadi semuanya ≈. Sahkan dengan kad warna dan sampel jubin sebenar sebelum membeli.
+- Render setiap gaya dalam `render/gaya/<id>/` (6 gambar + panorama ruang tamu); set Arkitek dalam `render/` tidak berubah. Jana dengan `GAYA=<id> node eksport.js`, `GAYA=<id> python adegan.py`, `python render.py <syot> --gaya=<id>`.
 
 ## Had model
 

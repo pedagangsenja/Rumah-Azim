@@ -31,6 +31,12 @@ function quad(g,pts,uvs,mat,shadow=true){
 }
 /* Garis dalam bilik? (untuk menentukan sisi luar dinding) */
 function inRoom(x,y){ for(const rm of ROOMS) for(const [x1,y1,x2,y2] of rm.r) if(x>x1&&x<x2&&y>y1&&y<y2) return rm; return null; }
+/* Sisi dinding: 'e' = luar (tiada bilik, atau yard / lanai / balkoni), 'i' = dalam */
+const LUARAN=new Set(['yard','lanai','balkoni']);
+function sisiDinding(x,y){ const rm=inRoom(x,y); return !rm||LUARAN.has(rm.id)?'e':'i'; }
+/* Bahan setiap muka kotak dinding (urutan BoxGeometry: +x, −x, +y, −y, +z, −z; +z three = sisi −y pelan) */
+function bahanDinding(horiz,neg,pos){ const m=c=>c==='e'?M.wall:c==='a'?M.aksen:M.wallIn, end=neg==='e'||pos==='e'?M.wall:M.wallIn;
+  return horiz?[end,end,end,end,m(neg),m(pos)]:[m(pos),m(neg),end,end,end,end]; }
 
 /* ================= Apron, plinth & longkang (M1002) ================= */
 const site=new THREE.Group(); scene.add(site);
@@ -97,10 +103,18 @@ function buildWalls(top){
   for(const [x1,y1,x2,y2,ops] of WALLS){
     const horiz=Math.abs(y2-y1)<1e-6, a0=horiz?Math.min(x1,x2):Math.min(y1,y2);
     const len=Math.abs(horiz?x2-x1:y2-y1), fx=horiz?y1:x1, L=len+T, st=a0-T/2;
-    const piece=(s,e,z1,z2,mat=M.wall,th=T,grp=g,off=0)=>{
+    const box=(a1,a2,z1,z2,mat,th,grp,c)=>horiz? boxPlan(a1,c-th/2,a2,c+th/2,z1,z2,mat,grp) : boxPlan(c-th/2,a1,c+th/2,a2,z1,z2,mat,grp);
+    const sisi=(a,sg)=>{ const k=horiz?sisiDinding(a,fx+sg*.3):sisiDinding(fx+sg*.3,a);
+      return k==='i'&&AKSEN.some(w=>w.h===horiz&&Math.abs(w.f-fx)<1e-6&&w.sg===sg&&a>w.a1&&a<w.a2)?'a':k; };
+    const piece=(s,e,z1,z2,mat=null,th=T,grp=g,off=0)=>{
       if(e-s<0.004||z2-z1<0.004) return;
       const a1=st+s, a2=st+e, c=fx+off;
-      return horiz? boxPlan(a1,c-th/2,a2,c+th/2,z1,z2,mat,grp) : boxPlan(c-th/2,a1,c+th/2,a2,z1,z2,mat,grp);
+      if(mat) return box(a1,a2,z1,z2,mat,th,grp,c);
+      // dinding biasa: dipecah di tempat sisi luar/dalam bertukar supaya warna dinding luar & dalam boleh berbeza
+      let p0=a1, k0=sisi(a1+.025,-1)+sisi(a1+.025,1);
+      for(let a=a1+.05;a<a2;a+=.05){ const k=sisi(Math.min(a+.025,a2-.001),-1)+sisi(Math.min(a+.025,a2-.001),1);
+        if(k!==k0){ box(p0,a,z1,z2,bahanDinding(horiz,k0[0],k0[1]),th,grp,c); p0=a; k0=k; } }
+      return box(p0,a2,z1,z2,bahanDinding(horiz,k0[0],k0[1]),th,grp,c);
     };
     const list=(ops||[]).map(o=>Object.assign({},o,{s:o.c-o.w/2+T/2,e:o.c+o.w/2+T/2,zs:FFL+o.sill,zh:FFL+o.sill+o.h})).sort((p,q)=>p.s-q.s);
     let cur=0;
@@ -143,11 +157,11 @@ function buildWalls(top){
     piece(cur,L,BASE,top);
   }
   const cg=tagged(g,'COL');
-  for(const [x,y] of COLS) boxPlan(x-.1,y-.1,x+.1,y+.1,0.05,top,M.wall,cg);
+  for(const [x,y] of COLS) boxPlan(x-.1,y-.1,x+.1,y+.1,0.05,top,M.col,cg);
   if(full){
     const z1=3.45;
-    [[-.1,5.1,.1,7.8],[0,7.7,1.8,7.9],[12.3,7.7,15,7.9],[14.9,3.9,15.1,7.8],[16.0,3.9,16.2,7.7],[15,7.6,16.2,7.8],[15,3.8,16.2,4.0]].forEach(r=>boxPlan(r[0],r[1],r[2],r[3],z1,WTOP,M.wall,cg));
-    boxPlan(5.1,7.725,8.4,7.875,CEIL,WTOP,M.wall,cg); // rasuk grid A di atas ceruk balkoni (keratan 2-1)
+    [[-.1,5.1,.1,7.8],[0,7.7,1.8,7.9],[12.3,7.7,15,7.9],[14.9,3.9,15.1,7.8],[16.0,3.9,16.2,7.7],[15,7.6,16.2,7.8],[15,3.8,16.2,4.0]].forEach(r=>boxPlan(r[0],r[1],r[2],r[3],z1,WTOP,M.col,cg));
+    boxPlan(5.1,7.725,8.4,7.875,CEIL,WTOP,M.col,cg); // rasuk grid A di atas ceruk balkoni (keratan 2-1)
   }
   wallGroup=g;
 }
@@ -201,7 +215,7 @@ const bars=new THREE.InstancedMesh(new THREE.BoxGeometry(0.01,0.84,0.04),M.rail,
 barMats.forEach((m,i)=>bars.setMatrixAt(i,m)); bars.castShadow=true; railG.add(bars);
 
 /* Papak kanopi balkoni (keratan 2-1) */
-boxPlan(KANOPI[0],KANOPI[1],KANOPI[2],KANOPI[3],FFL+2.4,FFL+2.5,M.wall,tagged(house,'KANOPI'));
+boxPlan(KANOPI[0],KANOPI[1],KANOPI[2],KANOPI[3],FFL+2.4,FFL+2.5,M.col,tagged(house,'KANOPI'));
 
 /* ================= Bumbung (M1004): limas + gable atas lanai & teres, cerun 30° ================= */
 const roof=tagged(scene,'ROOF');
@@ -272,7 +286,7 @@ function roofTop(x,y){ let best=null; for(const P of ROOFP.planes){ const c=P.po
   const sh=new THREE.Shape([new THREE.Vector2(3.9,PLATE),new THREE.Vector2(7.8,PLATE),new THREE.Vector2(7.8,uA),new THREE.Vector2(gy,ua),new THREE.Vector2(3.9,uG)]);
   const geo=new THREE.ShapeGeometry(sh); const uv=geo.attributes.uv, p=geo.attributes.position;
   for(let i=0;i<p.count;i++){ uv.setXY(i,p.getX(i)/1.2,p.getY(i)/.6); }
-  const gm=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({map:sidingTex,roughness:.85,side:THREE.DoubleSide}));
+  const gm=new THREE.Mesh(geo,M.siding);
   gm.rotation.y=Math.PI/2; gm.position.set(gxw,0,0); gm.castShadow=gm.receiveShadow=true; gm.userData.info='GABLE'; roof.add(gm); pick.push(gm);
   const vent=new THREE.Mesh(new THREE.BoxGeometry(.04,.42,.3),M.louvre); vent.position.set(gxw,ua-.75,-gy); roof.add(vent);
 })();
@@ -355,9 +369,9 @@ wardrobe(11.05,.12,12.45,.7); desk(11.4,3.6,'y-',.9); chair(furn,11.4,3.05,FFL,'
 })();
 // Dapur (M1004, M1006-4) — kaunter L di dinding W5 & dinding yard, hob & sinki di bawah W5, peti sejuk dua pintu di sebelah GD2
 (function(){ const g=tagged(furn,'KIT');
-  boxPlan(1.95,7.1,4.47,7.725,FFL,FFL+.86,M.cab,g); boxPlan(1.93,7.07,4.49,7.725,FFL+.86,FFL+.9,M.counter,g);
-  boxPlan(1.95,6.15,2.55,7.1,FFL,FFL+.86,M.cab,g); boxPlan(1.93,6.12,2.58,7.1,FFL+.86,FFL+.9,M.counter,g);
-  boxPlan(1.95,7.4,4.47,7.725,FFL+1.75,FFL+2.45,M.cab,g);
+  boxPlan(1.95,7.1,4.47,7.725,FFL,FFL+.86,M.kcab,g); boxPlan(1.93,7.07,4.49,7.725,FFL+.86,FFL+.9,M.counter,g);
+  boxPlan(1.95,6.15,2.55,7.1,FFL,FFL+.86,M.kcab,g); boxPlan(1.93,6.12,2.58,7.1,FFL+.86,FFL+.9,M.counter,g);
+  boxPlan(1.95,7.4,4.47,7.725,FFL+1.75,FFL+2.45,M.kcab2,g);
   boxPlan(2.6,7.3,3.2,7.7,FFL+.9,FFL+.91,M.black,g); boxPlan(2.6,7.35,3.2,7.75,FFL+1.62,FFL+1.75,M.steel,g);
   boxPlan(3.7,7.32,4.3,7.68,FFL+.86,FFL+.905,M.steel,g); cyl(g,.015,.015,.28,M.chrome,4.0,FFL+1.04,-7.62,8);
   const fr=tagged(furn,{t:'Peti sejuk dua pintu',ref:'M1004 · M1006-4',rows:[['Saiz','≈900 × 700 × 1800 mm (anggaran)'],['Lokasi','Di sebelah pintu GD2']]}); boxPlan(4.33,5.07,5.02,6.0,FFL,FFL+1.8,M.steel,fr); boxPlan(4.32,5.53,4.33,5.54,FFL+.2,FFL+1.7,M.black,fr,false);

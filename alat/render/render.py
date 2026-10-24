@@ -1,5 +1,5 @@
 # Render satu atau lebih syot daripada banglo.blend
-# Guna: python render.py <syot>[,<syot>...] [--uji]
+# Guna: python render.py <syot>[,<syot>...] [--uji] [--gaya=<id>] [--spp=<n>]  (gaya: banglo_<id>.blend → out/gaya/<id>/)
 import bpy, math, os, sys, datetime, time
 from mathutils import Vector
 
@@ -8,7 +8,9 @@ argv = sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else sys.argv[1:]
 shots = argv[0].split(',') if argv else []
 TEST = '--uji' in argv
 SKYROT = float(next((a.split('=')[1] for a in argv if a.startswith('--skyrot=')), '0'))
-bpy.ops.wm.open_mainfile(filepath=os.path.join(D, 'banglo.blend'))
+GY = next((a.split('=')[1] for a in argv if a.startswith('--gaya=')), '')
+SPP = int(next((a.split('=')[1] for a in argv if a.startswith('--spp=')), '0'))   # 0 = sampel lalai syot
+bpy.ops.wm.open_mainfile(filepath=os.path.join(D, 'banglo' + ('_' + GY if GY else '') + '.blend'))
 sc = bpy.context.scene
 
 # Kedudukan matahari: Kangar ≈ 6.44° U, 100.19° T, UTC+8, tarikh 23 Okt 2026 (sama seperti model web)
@@ -55,15 +57,16 @@ def set_time(hour):
     world.node_tree.nodes['Background'].inputs['Strength'].default_value = 0.25 if a > 2 else 0.6
     return a
 
-os.makedirs(os.path.join(D, 'out'), exist_ok=True)
+OUT = os.path.join(D, 'out', 'gaya', GY) if GY else os.path.join(D, 'out')
+os.makedirs(OUT, exist_ok=True)
 for name in shots:
     hour, w, h, spp, ev = SHOTS[name]
     a = set_time(hour)
     sc.camera = bpy.data.objects[name]
     sc.render.resolution_x, sc.render.resolution_y = (w // 4, h // 4) if TEST else (w, h)
     sc.render.resolution_percentage = 100
-    sc.cycles.samples = 24 if TEST else spp
+    sc.cycles.samples = 24 if TEST else (SPP or spp)
     sc.view_settings.exposure = ev
-    sc.render.filepath = os.path.join(D, 'out', name + ('_uji' if TEST else '') + '.jpg')
+    sc.render.filepath = os.path.join(OUT, name + ('_uji' if TEST else '') + '.jpg')
     t = time.time(); bpy.ops.render.render(write_still=True)
     print(f'SYOT {name} matahari {a:.1f}° {time.time() - t:.0f}s -> {sc.render.filepath}', flush=True)

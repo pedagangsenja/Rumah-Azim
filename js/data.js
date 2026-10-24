@@ -10,7 +10,16 @@ const FIN={
   timber:  {kind:'timber',pw:1.088,ph:2.6,seed:17,rough:.7, nama:'Spotted Gum', kod:'Ekowood · jalur kayu lebar 136 mm · matt'},
   norwich: {base:'#eae8e2',grout:'#cdcac2',pw:0.6,ph:1.2,seed:19,rough:.75, nama:'Norwich White', kod:'Kimgress SS-NOW1N6 · 300×600 · natural matt'},
   orche:   {base:'#b87945',grout:'#7e4f2a',pw:1.2,ph:0.6,wood:true,stagger:true,seed:23,rough:.8, nama:'Wood Collection Orche', kod:'Kimgress A36AHV2DMBN · 300×600 · structured matt'},
-  trav:    {base:'#e7dabe',grout:'#c8b994',pw:1.2,ph:0.6,speck:true,stagger:true,seed:29,rough:.6, nama:'Travertine Cream', kod:'Kimgress A36TV2LME · 300×600 · flat satin'}
+  trav:    {base:'#e7dabe',grout:'#c8b994',pw:1.2,ph:0.6,speck:true,stagger:true,seed:29,rough:.6, nama:'Travertine Cream', kod:'Kimgress A36TV2LME · 300×600 · flat satin'},
+  /* Jubin untuk gaya earth tone (cadangan pemilik, bukan dalam lukisan). Warna ≈ daripada carian; sahkan dengan sampel sebenar. */
+  sx05:    {base:'#cdbb9e',grout:'#b3a284',pw:1.2,ph:1.2,speck:true,seed:31,rough:.6, nama:'Stone X Lime', kod:'Feruni SX05M · 600×600 · matt (≈)'},
+  ls02:    {base:'#b9aa8c',grout:'#9e9073',pw:1.2,ph:.6,speck:true,stagger:true,seed:33,rough:.75, nama:'Limestone 2.0 Beige', kod:'Feruni LS02 · 300×600 · Griptech (≈)'},
+  blitzen: {base:'#d9d2c4',grout:'#c2baab',pw:2.4,ph:1.2,speck:true,seed:35,rough:.55, nama:'Blitzen Stone Bright', kod:'Niro Granite GGBZ01 · 600×1200 · matt (≈)'},
+  ls01:    {base:'#d3c8b3',grout:'#b8ad97',pw:1.2,ph:.6,speck:true,stagger:true,seed:37,rough:.75, nama:'Limestone 2.0 Almond', kod:'Feruni LS01 · 300×600 · Griptech (≈)'},
+  oakstrip:{base:'#c9a77c',grout:'#a8875f',pw:2.4,ph:.272,wood:true,stagger:true,seed:39,rough:.5, nama:'Strip oak cerah', kod:'Lantai kayu oak cerah, jalur 136 mm (≈)'},
+  tv02:    {base:'#dccba8',grout:'#c2b190',pw:1.2,ph:1.2,speck:true,band:true,seed:41,rough:.6, nama:'Travertino 2.0 Beige', kod:'Feruni TV02MH · 600×600 · matt berlubang (≈)'},
+  merbau:  {base:'#6a3f27',grout:'#4c2c1a',pw:2.4,ph:.272,wood:true,stagger:true,seed:43,rough:.45, nama:'Strip merbau gelap', kod:'Lantai kayu merbau, jalur 136 mm (≈)'},
+  terra:   {base:'#b5653f',grout:'#8a4b2e',pw:.6,ph:.6,speck:true,seed:47,rough:.8, nama:'Terracotta Vietnam', kod:'GNG Tiles · 300×300 · tidak berkilat, perlu sealer (≈)'}
 };
 /* ================= Data maklumat (jadual lukisan) ================= */
 const INFO={
@@ -211,6 +220,44 @@ const RENDERS=[
   {f:'dalam_dapur', t:'Dapur', m:'12:30 tengah hari'},
   {f:'dalam_bilikair1', t:'Bilik Air 1', m:'12:30 tengah hari'}
 ];
+/* ================= Gaya kemasan (pilihan pemilik; BUKAN sebahagian lukisan arkitek) =================
+   'arkitek' = kemasan ikut lukisan (lalai). Gaya lain menukar warna bahan & jubin sahaja; geometri tidak berubah.
+   warna: kunci bahan M (core.js) · roof = jubin & bubung · frame = bingkai & louvre. lantai: id bilik → kunci FIN. */
+const GAYA=[
+  {id:'arkitek', n:'Arkitek', t:'Ikut lukisan AZR', sw:['#f2f0eb','#5f6265'], nota:'Kemasan dan warna ikut set lukisan arkitek (D1001–D1006). Pilih gaya lain untuk melihat cadangan earth tone; lukisan tidak berubah.'},
+  {id:'tropika', n:'Tropika', t:'Tropika moden · Nippon Paint', sw:['#dcc4ae','#5a4334'],
+   nota:'Dinding pasir hangat, aksen tanah liat pada tiang dan gable, plinth gelap untuk percikan hujan. Cat luar Nippon Weatherbond (anti-kulat). Kod warna ≈ daripada carian; sahkan dengan kad warna sebenar.',
+   warna:{aksen:'#ad664b',wall:'#dcc4ae',wallIn:'#f1e6d6',col:'#ad664b',siding:'#ad664b',plinth:'#79544b',fascia:'#79544b',soffit:'#f1e6d6',ceil:'#f3ede1',roof:'#5a4334',frame:'#4a3c30',door:'#7b4f2c',rail:'#1e1e1e',
+          kcab:'#6b4a33',kcab2:'#ede3d1',counter:'#d9cbb3',wood2:'#6b4a33',oak:'#8a5a3b',fabric:'#cbb89a',fabric2:'#8a6a4f',linen:'#ede3d1',throwA:'#ad664b',throwB:'#79544b'},
+   lantai:{tamu:'sx05',makan:'sx05',dapur:'sx05',b2:'sx05',b3:'sx05',b4:'sx05',lanai:'ls02',balkoni:'ls02',yard:'ls02'}, langsir:'#ede3d1',
+   butiran:[['Dinding TV','Nippon Good Earth NP YO 2415D','#ad664b'],['Dinding luar','Nippon Basket Beige NP N 1879P · LRV 58','#dcc4ae'],['Dinding dalam','Nippon Almond Bits NP OW 2204P','#f1e6d6'],['Tiang & gable','Nippon Good Earth NP YO 2415D','#ad664b'],
+     ['Plinth & fascia','Nippon Red Earth NP R 1379A','#79544b'],['Siling','Nippon Cotton White NP OW 2200P','#f3ede1'],['Bumbung','Monier Elabana Tropical · Mocha Brown','#5a4334'],
+     ['Bingkai','Aluminium dark bronze','#4a3c30'],['Pintu utama','Kayu chengal / merbau, minyak semula jadi','#7b4f2c'],['Lantai dalam','Feruni Stone X Lime SX05M · 600×600 matt','#cdbb9e'],
+     ['Lanai & balkoni','Feruni Limestone 2.0 Beige LS02 · 300×600 Griptech','#b9aa8c'],['Bilik 1','Strip kayu (ikut lukisan)','#9e6039'],['Kabinet dapur','Walnut (bawah) + krim (atas)','#6b4a33']]},
+  {id:'japandi', n:'Japandi', t:'Japandi hangat · Nippon Paint', sw:['#ddcfc0','#2c2b2a'],
+   nota:'Beige hangat, oak cerah dan hitam lembut (palet artikel Japandi Nippon Malaysia). Hitam hanya pada plinth, fascia dan bingkai. Bumbung Ebony paling panas: pasang penebat di bawah jubin. Kod ≈; sahkan dengan kad warna.',
+   warna:{aksen:'#c3a585',wall:'#ddcfc0',wallIn:'#ddcfc0',col:'#c3a585',siding:'#c3a585',plinth:'#504845',fascia:'#504845',soffit:'#f3ede1',ceil:'#f3ede1',roof:'#2c2b2a',frame:'#232221',door:'#c8a57a',rail:'#2a2726',
+          kcab:'#c9a77c',kcab2:'#e6ddcf',counter:'#efe9df',wood2:'#b08a60',oak:'#c9a77c',fabric:'#d8cfc0',fabric2:'#8f8578',linen:'#efe9de',throwA:'#504845',throwB:'#c3a585'},
+   lantai:{tamu:'blitzen',makan:'blitzen',dapur:'blitzen',b1:'oakstrip',b2:'blitzen',b3:'blitzen',b4:'blitzen',lanai:'ls01',balkoni:'ls01',yard:'ls01'}, langsir:'#efe9de',
+   butiran:[['Dinding TV','Nippon Natural Oak NP N 1871T','#c3a585'],['Dinding luar & dalam','Nippon Wall Arte NP N 1865P · LRV 64','#ddcfc0'],['Pilihan ruang tamu','Nippon Birch Patina NP N 1852P','#d4ccbf'],['Tiang & gable','Nippon Natural Oak NP N 1871T','#c3a585'],
+     ['Plinth & fascia','Nippon Painted Faces NP N 1925A','#504845'],['Siling & sofit','Nippon Cotton White NP OW 2200P','#f3ede1'],['Bumbung','Monier Elabana Tropical · Ebony','#2c2b2a'],
+     ['Bingkai','Aluminium hitam matte','#232221'],['Pintu utama','Kayu nyatoh / oak cerah, matte jernih','#c8a57a'],['Lantai dalam','Niro Granite Blitzen Stone Bright GGBZ01 · 60×120 / 60×60','#d9d2c4'],
+     ['Lanai & balkoni','Feruni Limestone 2.0 Almond LS01 · 300×600 Griptech','#d3c8b3'],['Bilik 1','Strip oak cerah','#c9a77c'],['Kabinet dapur','Oak cerah + krim matte','#c9a77c']]},
+  {id:'bali', n:'Bali', t:'Bali / rustik tropika · Jotun', sw:['#d0a892','#8e4a35'],
+   nota:'Dinding Tuscany berlepa pasir halus, aksen terracotta, plinth batu, bumbung merah tanah. Warna dinding sederhana gelap menyerap lebih haba; cucur 725 mm membantu. Batu & terracotta perlu sealer. Kod ≈; sahkan dengan kad warna.',
+   warna:{aksen:'#d0a892',wall:'#d0a892',wallIn:'#f0efe2',col:'#9e6e63',siding:'#9e6e63',plinth:'#c9b48e',fascia:'#59473f',soffit:'#f0efe2',ceil:'#f0efe2',roof:'#8e4a35',frame:'#6b4a30',door:'#4a2f1f',rail:'#1c1c1c',
+          kcab:'#5a3a26',kcab2:'#efe6d4',counter:'#d9cbb3',wood2:'#4a2f1f',oak:'#6a3f27',fabric:'#e8dcc6',fabric2:'#9e6e63',linen:'#efe6d4',throwA:'#af957a',throwB:'#9e6e63'},
+   lantai:{tamu:'tv02',makan:'tv02',dapur:'tv02',b1:'merbau',b2:'tv02',b3:'tv02',b4:'tv02',lanai:'terra',balkoni:'terra',yard:'terra'}, langsir:'#c9b28d',
+   butiran:[['Dinding TV','Jotun 2225 Tuscany, rupa limewash','#d0a892'],['Dinding luar','Jotun 2225 Tuscany · Jotashield · LRV ≈44','#d0a892'],['Dinding dalam','Jotun 1453 Vanilla','#f0efe2'],['Tiang & gable','Jotun 2111 Burned Terracotta','#9e6e63'],
+     ['Plinth','Batu pasir Palimanan (perlu sealer)','#c9b48e'],['Fascia','Nippon Painted Frame NP N 1904A','#59473f'],['Bumbung','Monier Elabana Tropical · Antique Red','#8e4a35'],
+     ['Bingkai','Powder coat rupa kayu / bronze gelap','#6b4a30'],['Pintu utama','Merbau / chengal, stain walnut gelap','#4a2f1f'],['Lantai dalam','Feruni Travertino 2.0 Beige TV02MH · 600×600','#dccba8'],
+     ['Lanai & balkoni','Terracotta Vietnam 300×300 (GNG Tiles)','#b5653f'],['Bilik 1','Strip merbau gelap','#6a3f27'],['Kabinet dapur','Walnut gelap + krim','#5a3a26']]}
+];
+/* Dinding aksen (muka dalam sahaja): dinding TV ruang tamu (M1004). h = dinding mendatar pada y = f, dari a1 ke a2; sg = sisi (−1 = sisi −y) */
+const AKSEN=[{h:true,f:7.8,a1:8.4,a2:12.3,sg:-1}];
+/* Syot render untuk gaya earth tone (render/gaya/<id>/); set Arkitek kekal dalam render/ */
+const RENDER_GAYA=['luar_pagi','lanai_petang','luar_senja','dalam_tamu','dalam_bilik1','dalam_dapur'];
+const PANO_GAYA=['p_tamu'];
 /* Panorama 360° (equirectangular); yaw = arah pandangan awal (darjah): 0 = utara (+x, jalan), −90 = barat (+y, rumah keluarga), 90 = timur (−y, lorong), 180 = selatan (−x, bendang) */
 const PANOS=[
   {f:'p_tamu', t:'Ruang tamu & makan', yaw:0},

@@ -2,7 +2,7 @@
 'use strict';
 
 /* ================= Keadaan & lapisan ================= */
-const S={roof:true,cut:false,ceil:true,light:true,furn:true,san:true,label:true,land:true,lot:true,room:null,walk:false};
+const S={roof:true,cut:false,ceil:true,light:true,furn:true,san:true,label:true,land:true,lot:true,room:null,walk:false,gaya:'arkitek'};
 buildWalls(PLATE);
 function sync(){
   roof.visible=S.roof; ceilG.visible=S.ceil; lightG.visible=S.light; furn.visible=S.furn; san.visible=S.san;
@@ -107,7 +107,7 @@ canvas.addEventListener('pointerup',e=>{ if(!down) return; const d=Math.hypot(e.
 /* ================= Kemasan & warna ================= */
 const OPTS={
   roof:{mat:roofMat,extra:[capMat],list:[['Kelabu arang','#5f6265'],['Merah bata','#93402f'],['Coklat koko','#5e4234'],['Hitam','#2e2f31'],['Biru kelabu','#4b5b70']]},
-  wall:{mat:M.wall,list:[['Putih gading','#f2f0eb'],['Kelabu muda','#d8dad7'],['Krim','#efe3c8'],['Hijau sage','#c7d2bd'],['Biru kabus','#d1dce3']]},
+  wall:{mat:M.wall,extra:[M.wallIn,M.col,M.aksen],list:[['Putih gading','#f2f0eb'],['Kelabu muda','#d8dad7'],['Krim','#efe3c8'],['Hijau sage','#c7d2bd'],['Biru kabus','#d1dce3']]},
   frame:{mat:M.frame,extra:[M.louvre],list:[['Hitam','#2a2d2f'],['Kelabu','#7b8185'],['Putih','#eceeee'],['Champagne','#b49e76']]},
   door:{mat:M.door,list:[['Kayu sederhana','#8b5a36'],['Walnut','#5a3a25'],['Oak cerah','#b98a5a'],['Putih','#ece8e1']]}
 };
@@ -128,7 +128,32 @@ function renderFloorSw(){
   const f=FIN[rm.f]; $('n-floor').textContent=f.nama+' · '+f.kod+(rm.f===rm.f0?' (ikut lukisan)':' (ditukar)');
 }
 floorSel.addEventListener('change',renderFloorSw); renderFloorSw();
-$('resetFin').addEventListener('click',()=>{ for(const k in OPTS) applyOpt(k,0); ROOMS.forEach(rm=>{ if(rm.f!==rm.f0) setFloor(rm,rm.f0); }); renderFloorSw(); });
+$('resetFin').addEventListener('click',()=>applyGaya('arkitek'));
+
+/* ================= Gaya kemasan: Arkitek (ikut lukisan) atau gaya earth tone (cadangan berasingan, lukisan tidak diubah) ================= */
+const bahanGaya=k=>k==='roof'?[roofMat,capMat]:k==='frame'?[M.frame,M.louvre]:[M[k]];
+const ASAL={}; // warna asal (Arkitek) setiap bahan yang diubah oleh mana-mana gaya
+GAYA.forEach(g=>{ for(const k in (g.warna||{})) if(!ASAL[k]) ASAL[k]=bahanGaya(k).map(m=>m.color.clone()); });
+function applyGaya(id){
+  const g=GAYA.find(x=>x.id===id)||GAYA[0]; S.gaya=g.id;
+  for(const k in ASAL) bahanGaya(k).forEach((m,i)=>m.color.copy(ASAL[k][i]));
+  for(const k in OPTS) applyOpt(k,0);
+  ROOMS.forEach(rm=>{ const f=(g.lantai&&g.lantai[rm.id])||rm.f0; if(rm.f!==f) setFloor(rm,f); });
+  if(g.warna){
+    for(const k in g.warna) bahanGaya(k).forEach(m=>m.color.set(g.warna[k]).convertSRGBToLinear());
+    for(const k in OPTS){ $('n-'+k).textContent='ikut gaya '+g.n; document.querySelectorAll('#sw-'+k+' .sw').forEach(b=>b.setAttribute('aria-pressed','false')); }
+  }
+  renderFloorSw();
+  document.querySelectorAll('.gy').forEach(b=>b.setAttribute('aria-pressed',b.dataset.gaya===g.id?'true':'false'));
+  $('n-gaya').textContent=g.t; $('gayaT').textContent=g.nota||'';
+  const dl=$('gayaInfo'); dl.innerHTML='';
+  for(const [k,v,c] of (g.butiran||[])){ const dt=document.createElement('dt'), dd=document.createElement('dd'); dt.textContent=k;
+    if(c){ const s=document.createElement('span'); s.className='sw-dot'; s.style.background=c; dd.appendChild(s); } dd.appendChild(document.createTextNode(v)); dl.append(dt,dd); }
+  if(typeof onGaya==='function') onGaya();
+}
+GAYA.forEach(g=>{ const b=document.createElement('button'), i=document.createElement('i'); b.type='button'; b.className='gy'; b.dataset.gaya=g.id; b.title=g.t;
+  i.style.setProperty('--a',g.sw[0]); i.style.setProperty('--b',g.sw[1]); b.append(i,g.n); b.addEventListener('click',()=>applyGaya(g.id)); $('gaya').appendChild(b); });
+applyGaya('arkitek');
 
 /* ================= Tema, saiz, gelung ================= */
 function applyTheme(){ if(selBox) selBox.material.color.copy(selColor()); }
