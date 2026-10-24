@@ -21,9 +21,10 @@ window.addEventListener('resize',()=>{ setSheetH(); if(PV.run) sizePano(); });
 /* ================= Galeri ================= */
 /* Set gambar ikut gaya: Arkitek = render/; gaya lain = render/gaya/<id>/ (syot RENDER_GAYA / PANO_GAYA sahaja) */
 const gayaNow=()=>GAYA.find(g=>g.id===S.gaya)||GAYA[0];
-function galSet(){ const g=gayaNow(); return g.id==='arkitek'?RENDERS.map(r=>Object.assign({dir:'render/'},r))
+const gayaRender=()=>{ const g=gayaNow(); return g.id!=='arkitek'&&GAYA_SEDIA.includes(g.id)?g:GAYA[0]; }; // gaya tanpa render -> set Arkitek
+function galSet(){ const g=gayaRender(); return g.id==='arkitek'?RENDERS.map(r=>Object.assign({dir:'render/'},r))
   :RENDER_GAYA.map(f=>Object.assign({dir:'render/gaya/'+g.id+'/'},RENDERS.find(r=>r.f===f))); }
-function panoSet(){ const g=gayaNow(); return g.id==='arkitek'?PANOS.map(p=>Object.assign({dir:'render/'},p))
+function panoSet(){ const g=gayaRender(); return g.id==='arkitek'?PANOS.map(p=>Object.assign({dir:'render/'},p))
   :PANO_GAYA.map(f=>Object.assign({dir:'render/gaya/'+g.id+'/'},PANOS.find(p=>p.f===f))); }
 function buildGal(){
   if(GAL.key===S.gaya) return; GAL.key=S.gaya; GAL.list=galSet(); $('gThumbs').innerHTML='';
@@ -32,9 +33,9 @@ function buildGal(){
     b.addEventListener('click',()=>showGal(i)); $('gThumbs').appendChild(b); });
 }
 function showGal(i){
-  const L=GAL.list, n=L.length; GAL.i=(i+n)%n; const r=L[GAL.i], g=gayaNow();
+  const L=GAL.list, n=L.length; GAL.i=(i+n)%n; const r=L[GAL.i], g=gayaNow(), gr=gayaRender();
   $('gImg').src=r.dir+r.f+'.jpg'; $('gImg').alt=r.t; $('gT').textContent=r.t;
-  $('gMeta').textContent='Render Cycles · '+r.m+' · 23 Okt'+(g.id==='arkitek'?'':' · Gaya '+g.n);
+  $('gMeta').textContent='Render Cycles · '+r.m+' · 24 Okt'+(g.id==='arkitek'?'':gr===g?' · Gaya '+g.n:' · Arkitek (render gaya '+g.n+' belum siap)');
   $('gCount').textContent=(GAL.i+1)+' / '+n;
   $('gThumbs').querySelectorAll('button').forEach((b,j)=>{ b.setAttribute('aria-current',j===GAL.i?'true':'false'); if(j===GAL.i) b.scrollIntoView({block:'nearest',inline:'center'}); });
   const nx=new Image(); nx.src=L[(GAL.i+1)%n].dir+L[(GAL.i+1)%n].f+'.jpg'; // pramuat gambar seterusnya

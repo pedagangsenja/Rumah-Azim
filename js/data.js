@@ -208,7 +208,7 @@ const AC={
   outside:[[2.65,-.53,3.38,-.23],[6.23,-.53,6.99,-.23],[9.62,-.53,10.37,-.23],[-.53,2.9,-.15,3.73]]
 };
 
-/* ================= Render fotorealistik (Blender Cycles, 23 Okt, kedudukan matahari Kangar) ================= */
+/* ================= Render fotorealistik (Blender Cycles, 24 Okt, kedudukan matahari Kangar) ================= */
 const RENDERS=[
   {f:'luar_pagi', t:'Pandangan dari timur laut (lorong)', m:'8:00 pagi'},
   {f:'lanai_petang', t:'Lanai dan pintu masuk utama', m:'5:15 petang'},
@@ -255,7 +255,9 @@ const GAYA=[
 ];
 /* Dinding aksen (muka dalam sahaja): dinding TV ruang tamu (M1004). h = dinding mendatar pada y = f, dari a1 ke a2; sg = sisi (−1 = sisi −y) */
 const AKSEN=[{h:true,f:7.8,a1:8.4,a2:12.3,sg:-1}];
-/* Syot render untuk gaya earth tone (render/gaya/<id>/); set Arkitek kekal dalam render/ */
+/* Syot render untuk gaya earth tone (render/gaya/<id>/); set Arkitek kekal dalam render/.
+   GAYA_SEDIA = gaya yang rendernya sudah ada; gaya lain memaparkan set Arkitek dengan nota. */
+const GAYA_SEDIA=[];
 const RENDER_GAYA=['luar_pagi','lanai_petang','luar_senja','dalam_tamu','dalam_bilik1','dalam_dapur'];
 const PANO_GAYA=['p_tamu'];
 /* Panorama 360° (equirectangular); yaw = arah pandangan awal (darjah): 0 = utara (+x, jalan), −90 = barat (+y, rumah keluarga), 90 = timur (−y, lorong), 180 = selatan (−x, bendang) */
