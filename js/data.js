@@ -227,7 +227,7 @@ const AC={
   outside:[[2.65,-.53,3.38,-.23],[6.23,-.53,6.99,-.23],[9.62,-.53,10.37,-.23],[-.53,2.9,-.15,3.73]]
 };
 
-/* ================= Render fotorealistik (Blender Cycles, 24 Okt, kedudukan matahari Kangar) ================= */
+/* ================= Render fotorealistik (Blender Cycles, 27 Okt, kedudukan matahari Kangar) ================= */
 const RENDERS=[
   {f:'luar_pagi', t:'Pandangan dari timur laut (lorong)', m:'8:00 pagi'},
   {f:'lanai_petang', t:'Lanai dan pintu masuk utama', m:'5:15 petang'},

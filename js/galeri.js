@@ -35,7 +35,7 @@ function buildGal(){
 function showGal(i){
   const L=GAL.list, n=L.length; GAL.i=(i+n)%n; const r=L[GAL.i], g=gayaNow(), gr=gayaRender();
   $('gImg').src=r.dir+r.f+'.jpg'; $('gImg').alt=r.t; $('gT').textContent=r.t;
-  $('gMeta').textContent='Render Cycles · '+r.m+' · 24 Okt'+(g.id==='arkitek'?'':gr===g?' · Gaya '+g.n:' · Arkitek (render gaya '+g.n+' belum siap)');
+  $('gMeta').textContent='Render Cycles · '+r.m+' · 27 Okt'+(g.id==='arkitek'?'':gr===g?' · Gaya '+g.n:' · Arkitek (render gaya '+g.n+' belum siap)');
   $('gCount').textContent=(GAL.i+1)+' / '+n;
   $('gThumbs').querySelectorAll('button').forEach((b,j)=>{ b.setAttribute('aria-current',j===GAL.i?'true':'false'); if(j===GAL.i) b.scrollIntoView({block:'nearest',inline:'center'}); });
   const nx=new Image(); nx.src=L[(GAL.i+1)%n].dir+L[(GAL.i+1)%n].f+'.jpg'; // pramuat gambar seterusnya
