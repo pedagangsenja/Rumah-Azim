@@ -124,9 +124,13 @@ for(const t of TREES){ if(t.k==='kelapa') coconut(t); else broadTree(t,t.k==='ma
 /* ================= Kemudahan tapak (M1002) ================= */
 for(const u of UTIL){
   const info={t:u.t,ref:'M1002',rows:u.rows||[['Saiz','Ikut cadangan kontraktor']]};
-  const g=item(land,u.x,u.y,0,'x+',info);
+  const g=item(land,u.x,u.y,u.z||0,'x+',info);
   if(u.k==='ist'){ cyl(g,u.d/2,u.d/2,.1,M.cover,0,.05,0,32); for(const dx of [-.3,.3]) cyl(g,.18,.18,.03,M.metal,dx,.115,0,20); }
   else if(u.k==='ic'){ bx(g,.45,.06,.45,M.cover,0,.03,0); bx(g,.3,.01,.3,M.metal,0,.065,0); }
+  else if(u.k==='gt'||u.k==='ft'){ const r=u.k==='gt'?.125:.075; bx(g,2*r,.008,2*r,M.metal,0,.004,0); for(let k=-2;k<=2;k++) bx(g,.012,.003,2*r-.03,M.black,k*r/3,.009,0); }
+  else if(u.k==='grt'){ bx(g,u.w,.05,u.l,M.cover,0,.025,0); bx(g,u.w-.12,.008,u.l-.1,M.metal,0,.054,0); }
+  else if(u.k==='wtp'){ bx(g,.6,.1,.6,M.cover,0,.05,0); cyl(g,.02,.02,.6,M.chrome,0,.4,0,10); bx(g,.1,.03,.03,M.chrome,.04,.68,0); }
+  else if(u.k==='wt'){ g.rotation.y=Math.PI; bx(g,.06,.03,.03,M.chrome,.03,1.0,0); bx(g,.02,.05,.02,M.chrome,.055,.96,0); }
   else if(u.k==='sump'){ bx(g,.6,.08,.6,M.cover,0,.04,0); for(let k=-4;k<=4;k++) bx(g,.03,.012,.5,M.black,k*.055,.085,0); }
   else if(u.k==='tank'){ bx(g,1.5,.25,1.5,M.cover,0,.025,0);
     for(const [a,b] of [[.4,.4],[.4,-.4],[-.4,.4],[-.4,-.4]]) cyl(g,.03,.03,.45,M.stainless,a,.37,b,8);

@@ -134,15 +134,19 @@ function buildWalls(top){
       if(o.k==='win'&&o.sill>0&&o.zs<top){
         const mid=a0+o.c, p1=horiz?[mid,fx-.3]:[fx-.3,mid], p2=horiz?[mid,fx+.3]:[fx+.3,mid];
         const out=!inRoom(...p1)?-1:(!inRoom(...p2)?1:0);
-        if(out){ const sl=tagged(sub,'SILL'); piece(o.s-.03,o.e+.03,o.zs-.035,o.zs,M.frame,.1,sl,out*(T/2+.035)); }
+        if(out){ const sl=tagged(sub,'SILL'); piece(o.s-.03,o.e+.03,o.zs-.035,o.zs,M.frame,.1,sl,out*(T/2+.035));
+          /* Ambang dalam: kuarza 120 × 20 untuk W3 (D8001); kayu 100 × 40 + bingkai kayu 60 × 40 untuk W5 (D8002) */
+          if(o.type==='W3') piece(o.s,o.e,o.zs-.02,o.zs,M.counter,.1,tagged(sub,'SILLQ'),-out*(T/2-.005));
+          if(o.type==='W5'){ const sw=tagged(sub,'SILLW'); piece(o.s,o.e,o.zs-.04,o.zs,M.oak,.1,sw,-out*(T/2));
+            piece(o.s-.06,o.s,o.zs,o.zh,M.oak,.04,sw,-out*(T/2+.02)); piece(o.e,o.e+.06,o.zs,o.zh,M.oak,.04,sw,-out*(T/2+.02)); piece(o.s-.06,o.e+.06,o.zh,o.zh+.06,M.oak,.04,sw,-out*(T/2+.02)); } }
       }
       if(o.k==='win'){ frameRect(o.s,o.e,o.zs,zt,o.div,o.tr,o.frost?M.frost:M.glass); }
       else if(o.k==='door'||o.k==='gdoor'){
         const leafH=Math.min(2.1,top-FFL)-0.02, w=o.w-0.04; if(leafH<=0.05) continue;
         piece(o.s,o.s+.04,FFL,FFL+Math.min(o.h,top-FFL),M.frame,.16,sub); piece(o.e-.04,o.e,FFL,FFL+Math.min(o.h,top-FFL),M.frame,.16,sub);
-        const pv=pivot(o.s+0.02,o.open*1.15);
+        const pv=o.flip?pivot(o.e-0.02,Math.PI-o.open*1.15):pivot(o.s+0.02,o.open*1.15);
         if(o.k==='door'){ bx(pv,w,leafH,0.045,M.door,w/2,FFL+leafH/2,0);
-          bx(pv,0.14,0.02,0.05,M.chrome,w-0.1,FFL+1.0,0.03); bx(pv,0.14,0.02,0.05,M.chrome,w-0.1,FFL+1.0,-0.03); }
+          bx(pv,0.14,0.02,0.05,M.chrome,w-0.1,FFL+1.05,0.03); bx(pv,0.14,0.02,0.05,M.chrome,w-0.1,FFL+1.05,-0.03); } // pemegang 1050 (D8005)
         else { bx(pv,w,leafH,0.015,M.glass,w/2,FFL+leafH/2,0);
           for(const [ww,hh,xx,yy] of [[w,0.05,w/2,FFL+0.025],[w,0.05,w/2,FFL+leafH-0.025],[0.05,leafH,0.025,FFL+leafH/2],[0.05,leafH,w-0.025,FFL+leafH/2],[w,0.03,w/2,FFL+1.0]]) bx(pv,ww,hh,0.05,M.frame,xx,yy,0);
           if(o.zh>FFL+2.12) frameRect(o.s,o.e,FFL+2.12,zt,1,[],M.glass); }
@@ -165,6 +169,21 @@ function buildWalls(top){
   }
   wallGroup=g;
 }
+
+/* ================= Skirting aluminium 80 mm (D7001): dinding ruang kering, terputus pada bukaan pintu ================= */
+(function(){ const g=tagged(house,'SKIRT'), KERING=new Set(['tamu','makan','dapur','b1','b2','b3','b4']);
+  for(const [x1,y1,x2,y2,ops] of WALLS){
+    const horiz=Math.abs(y2-y1)<1e-6, a0=horiz?Math.min(x1,x2):Math.min(y1,y2), a1=horiz?Math.max(x1,x2):Math.max(y1,y2), f=horiz?y1:x1;
+    const gaps=(ops||[]).filter(o=>o.sill===0).map(o=>[a0+o.c-o.w/2,a0+o.c+o.w/2]);
+    for(const sg of [-1,1]){
+      const face=f+sg*(T/2+.006); let run=null;
+      const ok=a=>{ if(gaps.some(([s,e])=>a>s&&a<e)) return false; const rm=horiz?inRoom(a,f+sg*.3):inRoom(f+sg*.3,a); return !!rm&&KERING.has(rm.id); };
+      const put=(s,e)=>{ if(e-s<.03) return; if(horiz) boxPlan(s,face-.006,e,face+.006,FFL,FFL+.08,M.frame,g,false); else boxPlan(face-.006,s,face+.006,e,FFL,FFL+.08,M.frame,g,false); };
+      for(let a=a0;a<=a1+1e-6;a+=.025){ const k=ok(Math.min(a,a1-.001)); if(k&&run===null) run=a; if(!k&&run!==null){ put(run,a); run=null; } }
+      if(run!==null) put(run,a1);
+    }
+  }
+})();
 
 /* ================= Jubin dinding bilik air (D1001–D1004) ================= */
 const tileG=new THREE.Group(); house.add(tileG);
@@ -344,7 +363,9 @@ bed(1.08,1.4,1.6,2.0,'x+',M.throwA); nightstand(.3,.35,'x+'); nightstand(.3,2.45
 wardrobe(2.38,.15,2.92,2.9); desk(.33,3.25,'x+',1.1); chair(furn,.85,3.25,FFL,'x-');
 // Bilik 3
 bed(4.05,.6,.9,1.95,'x+',M.throwB); bed(4.05,2.1,.9,1.95,'x+',M.throwA); nightstand(3.3,1.35,'x+');
-desk(3.75,3.6,'y-',1.0); chair(furn,3.75,3.05,FFL,'y+'); wardrobe(4.3,3.3,5.05,3.82); wardrobe(5.5,1.2,5.92,2.6);
+desk(3.75,3.6,'y-',1.0); chair(furn,3.75,3.05,FFL,'y+'); wardrobe(4.3,3.3,5.05,3.82);
+(function(){ const g=tagged(furn,{t:'Kabinet rendah & TV 42"',ref:'M1004 · M1006-4 (keratan 1-2)',rows:[['Kabinet','≈2520 × 450 × 900 mm, di dinding grid 3'],['TV','42" di atas kabinet']]});
+  boxPlan(5.48,.09,5.925,2.61,FFL,FFL+.9,M.wood2,g); boxPlan(5.68,1.1,5.76,1.45,FFL+.9,FFL+.93,M.black,g); boxPlan(5.7,.79,5.74,1.76,FFL+.95,FFL+1.5,M.screen,g); })();
 // Bilik 2
 bed(7.75,1.1,.95,1.95,'y+',M.throwB); nightstand(8.5,.3,'y+'); wardrobe(9.3,1.95,9.82,3.6); desk(8.75,3.6,'y-',.9); chair(furn,8.75,3.05,FFL,'y+');
 // Bilik 1
@@ -358,10 +379,10 @@ wardrobe(11.05,.12,12.45,.7); desk(11.4,3.6,'y-',.9); chair(furn,11.4,3.05,FFL,'
 })();
 // Ruang tamu — sofa L, meja kopi, kabinet TV, TV 80"
 (function(){ const g=tagged(furn,{t:'Sofa L',ref:'M1004',rows:[['Saiz','≈2700 × 1800 mm (anggaran)'],['Sumber','Susun atur perabot M1004']]});
-  boxPlan(8.9,5.4,11.6,6.25,FFL,FFL+.42,M.fabric,g); boxPlan(8.9,5.35,11.6,5.6,FFL,FFL+.82,M.fabric,g);
-  boxPlan(10.8,6.25,11.6,7.1,FFL,FFL+.42,M.fabric,g); boxPlan(11.4,6.25,11.65,7.1,FFL,FFL+.62,M.fabric,g); boxPlan(8.85,5.4,9.1,6.25,FFL,FFL+.62,M.fabric,g);
-  const tv=tagged(furn,{t:'Kabinet TV & TV 80"',ref:'M1006-1',rows:[['TV','Maksimum 80" pada dinding antara dua tingkap W2'],['Kabinet','≈1550 × 400 mm']]});
-  boxPlan(9.3,7.35,10.85,7.74,FFL,FFL+.45,M.wood2,tv); boxPlan(9.17,7.68,10.97,7.72,FFL+.85,FFL+1.85,M.screen,tv);
+  boxPlan(8.8,5.3,11.9,6.07,FFL,FFL+.42,M.fabric,g); boxPlan(8.8,5.3,11.9,5.52,FFL,FFL+.82,M.fabric,g);
+  boxPlan(11.16,6.07,11.9,6.92,FFL,FFL+.42,M.fabric,g); boxPlan(11.7,5.3,11.92,6.92,FFL,FFL+.62,M.fabric,g); boxPlan(8.77,5.3,8.97,6.07,FFL,FFL+.62,M.fabric,g);
+  const tv=tagged(furn,{t:'Kabinet TV & TV 80"',ref:'M1006-1',rows:[['TV','Maksimum 80" pada dinding antara dua tingkap W2'],['Kabinet','≈2100 × 430 mm (M1004)']]});
+  boxPlan(9.31,7.29,11.4,7.72,FFL,FFL+.45,M.wood2,tv); boxPlan(9.47,7.68,11.25,7.72,FFL+.8,FFL+1.8,M.screen,tv); // M1004 kabinet, A-A kedudukan TV
 })();
 // Lanai — meja bulat 4 kerusi
 (function(){ const g=item(furn,13.85,6.9,.45,'x+',{t:'Set meja lanai',ref:'M1004',rows:[['Susunan','Meja bulat + 4 kerusi'],['Sumber','Susun atur perabot M1004']]});
@@ -370,13 +391,21 @@ wardrobe(11.05,.12,12.45,.7); desk(11.4,3.6,'y-',.9); chair(furn,11.4,3.05,FFL,'
 })();
 // Dapur (M1004, M1006-4) — kaunter L di dinding W5 & dinding yard, hob & sinki di bawah W5, peti sejuk dua pintu di sebelah GD2
 (function(){ const g=tagged(furn,'KIT');
-  boxPlan(1.95,7.1,4.47,7.725,FFL,FFL+.86,M.kcab,g); boxPlan(1.93,7.07,4.49,7.725,FFL+.86,FFL+.9,M.counter,g);
+  boxPlan(1.95,7.1,5.025,7.725,FFL,FFL+.86,M.kcab,g); boxPlan(1.93,7.07,5.025,7.725,FFL+.86,FFL+.9,M.counter,g);
+  boxPlan(4.43,6.13,5.025,7.1,FFL,FFL+.86,M.kcab,g); boxPlan(4.4,6.1,5.025,7.1,FFL+.86,FFL+.9,M.counter,g); // kaki ketiga di dinding ruang makan (M1004, keratan 1-2)
+  boxPlan(4.675,5.03,5.025,7.725,FFL+2.0,FFL+2.6,M.kcab2,g); boxPlan(4.675,6.13,5.025,7.1,FFL+1.6,FFL+2.0,M.kcab2,g); // kabinet atas & kabinet microwave (keratan 1-2)
+  boxPlan(4.66,6.15,4.675,6.69,FFL+1.62,FFL+1.94,M.black,g);
   boxPlan(1.95,6.15,2.55,7.1,FFL,FFL+.86,M.kcab,g); boxPlan(1.93,6.12,2.58,7.1,FFL+.86,FFL+.9,M.counter,g);
-  boxPlan(1.95,7.4,4.47,7.725,FFL+1.75,FFL+2.45,M.kcab2,g);
+  boxPlan(2.32,7.3,4.675,7.725,FFL+1.75,FFL+2.6,M.kcab2,g); // kabinet atas: M1004 (garis putus), A-A & 1-2
   boxPlan(2.6,7.3,3.2,7.7,FFL+.9,FFL+.91,M.black,g); boxPlan(2.6,7.35,3.2,7.75,FFL+1.62,FFL+1.75,M.steel,g);
   boxPlan(3.7,7.32,4.3,7.68,FFL+.86,FFL+.905,M.steel,g); cyl(g,.015,.015,.28,M.chrome,4.0,FFL+1.04,-7.62,8);
-  const fr=tagged(furn,{t:'Peti sejuk dua pintu',ref:'M1004 · M1006-4',rows:[['Saiz','≈900 × 700 × 1800 mm (anggaran)'],['Lokasi','Di sebelah pintu GD2']]}); boxPlan(4.33,5.07,5.02,6.0,FFL,FFL+1.8,M.steel,fr); boxPlan(4.32,5.53,4.33,5.54,FFL+.2,FFL+1.7,M.black,fr,false);
-  const wm=tagged(furn,{t:'Mesin basuh',ref:'M1004',rows:[['Lokasi','Yard']]}); boxPlan(1.0,6.2,1.62,6.8,.45,1.3,M.porcelain,wm);
+  const fr=tagged(furn,{t:'Peti sejuk dua pintu',ref:'M1004 · M1006-4',rows:[['Saiz','≈900 × 700 × 1900 mm (keratan 1-2)'],['Lokasi','Di sebelah pintu GD2']]}); boxPlan(4.33,5.07,5.02,6.0,FFL,FFL+1.9,M.steel,fr); boxPlan(4.32,5.53,4.33,5.54,FFL+.2,FFL+1.8,M.black,fr,false);
+  // Dobi yard (keratan 1-1): 2 mesin muat depan di bawah kaunter 900, kabinet atas + rak terbuka, di dinding dapur
+  const wm=tagged(furn,{t:'Ruang dobi yard',ref:'M1006-3 (keratan 1-1) · M1004',rows:[['Mesin','2 unit muat depan (≈600 mm setiap satu) di bawah kaunter'],['Kaunter','Tinggi ≈900 mm, y 6.10–7.72 m'],['Kabinet atas','≈1520–2500 mm dari lantai yard; rak terbuka di hujung dekat WT']]});
+  boxPlan(1.125,6.1,1.725,7.72,.45+.86,.45+.9,M.counter,wm);
+  for(const [a,b] of [[6.17,6.72],[6.77,7.32]]){ boxPlan(1.15,a,1.72,b,.45,.45+.85,M.porcelain,wm); cyl(wm,.17,.17,.01,M.black,1.145,.45+.42,-(a+b)/2,24).rotation.z=Math.PI/2; }
+  boxPlan(1.375,6.1,1.725,7.24,.45+1.52,.45+2.5,M.kcab2,wm); boxPlan(1.375,7.24,1.725,7.72,.45+2.48,.45+2.5,M.kcab2,wm);
+  for(const h of [1.52,1.85,2.17]) boxPlan(1.375,7.24,1.725,7.72,.45+h,.45+h+.02,M.kcab2,wm);
 })();
 
 /* ================= Sanitari (D2001–D2008) ================= */
@@ -401,17 +430,24 @@ wc(9.66,.075,'y+','WC1',false);
 shower(9.375,1.3,'x+','SHW1',true);
 (function(){ const g=tagged(san,'SHW1'); boxPlan(9.43,1.0,9.53,1.6,.45,.456,M.steel,g,false); })();
 // Bilik air 2
-wc(6.525,.075,'y+','WC2',true); wallBasin(7.125,1.05,'x-','B2'); shower(6.075,1.4,'x+','SHW2',false);
-(function(){ const g=tagged(san,'SHW2'); boxPlan(6.3,1.25,6.43,1.38,.45,.456,M.steel,g,false); })();
+wc(6.525,.075,'y+','WC2',true); wallBasin(7.125,1.23,'x-','B2'); shower(6.075,1.23,'x+','SHW2',false); // kedudukan ikut pelan D1003
+(function(){ const g=tagged(san,'SHW2'); boxPlan(6.08,.93,6.21,1.06,.45,.456,M.steel,g,false); })();
+(function(){ const g=item(san,7.125,.87,.45,'x-','WTHS'); bx(g,.06,.1,.1,M.chrome,.03,.6,0); cyl(g,.015,.015,.2,M.chrome,.06,.75,.05,8); })();
 // Bilik air 3
 (function(){ const g=item(san,.075,4.5,.45,'x+','SQ');
   const p=bx(g,.55,.03,.42,M.porcelain,.42,.015,0); const h=new THREE.Mesh(new THREE.CylinderGeometry(.13,.13,.031,20),M.black); h.scale.set(1.5,1,.9); h.position.set(.45,.016,0); g.add(h);
   bx(g,.15,.3,.4,M.porcelain,.08,1.7,0); cyl(g,.015,.015,1.3,M.porcelain,.1,.95,.12,8); })();
 (function(){ const g=tagged(san,'SQ'); boxPlan(.78,3.98,.82,5.02,.45,.47,M.steel,g,false); })();
-wallBasin(1.35,3.975,'y+','B2');
-(function(){ const g=item(san,.95,3.975,.45,'y+','WTHS'); bx(g,.06,.1,.1,M.chrome,.03,.6,0); cyl(g,.015,.015,.2,M.chrome,.06,.75,.05,8); })();
-shower(1.15,5.025,'y-','SHW2',false);
-(function(){ const g=tagged(san,'SHW2'); boxPlan(1.15,4.65,1.28,4.78,.45,.456,M.steel,g,false); })();
+wallBasin(1.42,3.975,'y+','B2'); // kedudukan ikut pelan D1004
+(function(){ const g=item(san,1.06,3.975,.45,'y+','WTHS'); bx(g,.06,.1,.1,M.chrome,.03,.6,0); cyl(g,.015,.015,.2,M.chrome,.06,.75,.05,8); })();
+shower(1.26,5.025,'y-','SHW2',false);
+(function(){ const g=tagged(san,'SHW2'); boxPlan(.9,4.88,1.03,5.01,.45,.456,M.steel,g,false); })();
+/* Aksesori (D2001; kedudukan pelan D1002–D1004, tinggi ikut elevation dinding D1002; Bilik air 2 & 3 ≈) */
+function hook(px,py,face,h,info){ const g=item(san,px,py,.45+h,face,info); bx(g,.02,.06,.03,M.chrome,.01,0,0); for(const dz of [-.025,.025]) bx(g,.05,.012,.012,M.chrome,.03,.01,dz); return g; }
+hook(10.51,1.725,'y-',1.48,'TR'); hook(6.075,.38,'x+',1.5,'TH2'); hook(.5,5.025,'y-',1.5,'TH2');
+(function(){ const g=tagged(san,'SHF'); boxPlan(9.46,.075,9.89,.18,.45+1.12,.45+1.135,M.metal,g); })();
+(function(){ const g=item(san,10.875,.4,.45+1.3,'x-','TH1'); bx(g,.02,.05,.03,M.chrome,.01,.08,0); const r=new THREE.Mesh(new THREE.TorusGeometry(.1,.008,8,32),M.chrome); r.rotation.y=Math.PI/2; r.position.set(.035,-.02,0); g.add(r); })();
+(function(){ const g=item(san,10.28,1.725,.45+.62,'y-','WTW'); bx(g,.03,.06,.06,M.chrome,.015,0,0); bx(g,.1,.025,.025,M.chrome,.06,-.01,0); bx(g,.025,.03,.025,M.chrome,.1,-.03,0); })();
 
 
 /* ================= Penghawa dingin (D9001) ================= */
