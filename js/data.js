@@ -46,6 +46,9 @@ const INFO={
   DB:{t:'Papan agihan (DB)',ref:'M1002 · D9001',rows:[['Lokasi','Dinding lanai, sebelah tangga']]},
   TILEW:{t:'Jubin dinding bilik air',ref:'D1001–D1004',rows:[['Jubin','Kimgress Travertine A36TV2LME · 300×600 · Cream · flat satin'],['Susunan','Mendatar, lantai ke siling, semua bilik air']]},
   KITKAT:{t:'Jubin ciri Kit Kat',ref:'D1001 · D1002',rows:[['Jubin','GNG & TTC Kit Kat KBT CT-CZ0919Y · 300×300 · Deep Brown, glazed'],['Lokasi','Bilik Air 1, dinding 2 & 4, dari ≈900 mm ke siling']]},
+  SILLQ:{t:'Ambang dalam kuarza (W3)',ref:'D8001',rows:[['Bahan','Batu kuarza 120 × 20 mm, alur titis 5 × 5 mm'],['Lokasi','Tingkap W3 Bilik air 1 & 2'],['Unjuran','45 mm dari muka jubin']]},
+  SILLW:{t:'Ambang dalam kayu (W5)',ref:'D8002',rows:[['Ambang','Kayu pejal 100 × 40 mm, dimeterai & varnis'],['Bingkai','Kayu pejal 60 × 40 mm di sekeliling bukaan'],['Lokasi','Tingkap dapur W5']]},
+  SKIRT:{t:'Skirting aluminium',ref:'D7001',rows:[['Profil','Aluminium 80 mm tinggi, warna ikut pilihan arkitek'],['Pemasangan','Pelekat MS polimer hibrid, sendi mitre 45° atau penyambung buatan kilang'],['Lokasi','Dinding ruang kering (model: ruang tamu, makan, dapur, bilik tidur)']]},
   SILL:{t:'Ambang tingkap luar',ref:'D3002 · D8001 · D8002',rows:[['Bahan','Aluminium / konkrit'],['Kecerunan','Condong ke luar']]},
   DRAIN:{t:'Longkang U',ref:'M1002',rows:[['Jenis','Longkang U konkrit pratuang, lebar 300 mm, condong mengalir'],['Kedudukan','Apron 600 mm + longkang 300 mm dari muka dinding (keratan M1006); papak balkoni mengunjur 300 mm di atas apron (D6004)'],['Saluran keluar','Tidak ditunjukkan dalam lukisan'],['Penutup','Papak konkrit di sisi teres']]},
   APRON:{t:'Apron konkrit',ref:'M1002 · M1006',rows:[['Aras','+50 mm dari tanah'],['Lebar','600 mm dari muka dinding']]},
@@ -58,16 +61,21 @@ const INFO={
   WL:{t:'Titik lampu dinding',ref:'D9001',rows:[['Ketinggian','2100 mm dari FFL'],['Lokasi','Dinding luar dan tiang teres']]},
   WC1:{t:'WC satu keping (Bilik air 1)',ref:'D2001 · D2002',rows:[['Model','Johnson Suisse WBSC950218WW Venice Rimless one-piece'],['Kuantiti','1']]},
   WC2:{t:'WC close-couple (Bilik air 2)',ref:'D2001 · D2005',rows:[['Model','Sericite WC 1026 / LC 5026 Rhodium wash down'],['Kuantiti','1']]},
-  SQ:{t:'Mangkuk tandas cangkung (Bilik air 3)',ref:'D2001 · D2007',rows:[['Model','Sericite SQ7004 Regal square, tangki PVC tuil'],['Butiran','Stepnose bucu bulat, kawasan cangkung dp 75 mm']]},
+  SQ:{t:'Mangkuk tandas cangkung (Bilik air 3)',ref:'D2001 · D2007',rows:[['Model','Sericite SQ7004 Regal square, tangki PVC tuil'],['Butiran','Stepnose bucu bulat, kawasan cangkung dp 75 mm'],['Stepnose','MML Bone Natural 107 · 197 × 75 mm (D1001)']]},
   B1:{t:'Sinki atas kaunter (Bilik air 1)',ref:'D2001 · D2002',rows:[['Sinki','Johnson Suisse WBVC950143WW Valencia slim, putih matte'],['Pili','Johnson Suisse WBFA301351CP Trento tuil tinggi'],['Perangkap','WBFT400992CP brass bottle trap'],['Kaunter','Meja konkrit 100 mm berjubin, tinggi 850 mm']]},
   B2:{t:'Sinki dinding (Bilik air 2 & 3)',ref:'D2001',rows:[['Sinki','Sericite WB 2027 Natralite 345 × 305 × 125 mm'],['Pili','Sericite SR91020 tuil tunggal air sejuk'],['Sisa','Sericite A70001 pop-up 32 mm']]},
   SHW1:{t:'Pancuran (Bilik air 1)',ref:'D2001',rows:[['Model','Johnson Suisse WBFA301568CP Trento mixer dinding + palang gelangsar'],['Perangkap lantai','Evans SG-668ST linear 600 mm keluli tahan karat']]},
   SHW2:{t:'Pancuran (Bilik air 2 & 3)',ref:'D2001',rows:[['Kepala','Sericite SH60005 + lengan A70006 150 mm'],['Injap','Sericite SR16002 tuil tersembunyi'],['Perangkap lantai','Sericite A70004C 5" × 5"']]},
   HB:{t:'Bidet tangan',ref:'D2001',rows:[['Model','Johnson Suisse WBFA301562CP, hos 1.2 m, injap sudut']]},
   WTHS:{t:'Pili dengan semburan tangan',ref:'D2001',rows:[['Model','Sericite SR16012 pili dinding 2 hala + SR12022']]},
+  TR:{t:'Penyangkut jubah berkembar (Bilik air 1)',ref:'D2001 · D1002',rows:[['Model','Johnson Suisse WBBA100379 Cesena double robe hook'],['Kedudukan','Dinding sisi pancuran, ≈1480 mm dari lantai (D1002)']]},
+  TH1:{t:'Gelang tuala (Bilik air 1)',ref:'D2001 · D1002',rows:[['Model','Johnson Suisse WBBA100268CP Trendy towel ring 20 cm'],['Kedudukan','Dinding pintu, sebelah sinki, ≈1300 mm dari lantai (D2002, D2004 C-C)']]},
+  TH2:{t:'Penyangkut jubah berkembar (Bilik air 2 & 3)',ref:'D2001 · D1003 · D1004',rows:[['Model','Sericite A70035 stainless steel double robe hook'],['Ketinggian','Tidak dinyatakan; model ≈1500 mm']]},
+  SHF:{t:'Rak (Bilik air 1)',ref:'D2002 · D2004',rows:[['Model','Evans EVAH31002 sole gun metal single shelf 430 mm'],['Kedudukan','Di bawah tingkap W3, atas WC; tinggi ≈1120 mm (diukur pada skala 1:25)']]},
+  WTW:{t:'Pili dinding (Bilik air 1)',ref:'D2001 · D1002',rows:[['Model','Johnson Suisse WBFA300769CP Ferla-N single lever ½" bib tap'],['Kedudukan','Dinding sisi pancuran, ≈620 mm dari lantai']]},
   MR:{t:'Cermin LED (Bilik air 1)',ref:'D2001',rows:[['Model','Evans LW03 cermin bujur LED 900 × 500 mm'],['Cahaya','3 warna']]},
   FURN:{t:'Perabot',ref:'M1004',rows:[['Sumber','Susun atur perabot M1004'],['Saiz','Anggaran sahaja — bukan sebahagian kontrak bangunan']]},
-  KIT:{t:'Kabinet dapur',ref:'M1004 · M1006-4',rows:[['Kaunter','Tinggi 900 mm, bentuk L di dinding W5 dan dinding yard'],['Dapur masak & sinki','Kedua-duanya di bawah tingkap W5 (sinki ikut kedudukan KT)'],['Kabinet atas','Di atas tingkap W5'],['Nota','Saiz anggaran daripada pelan perabot']]},
+  KIT:{t:'Kabinet dapur',ref:'M1004 · M1006-1 · M1006-4',rows:[['Kaunter','Tinggi 900 mm, bentuk U: dinding yard, dinding W5 dan dinding ruang makan'],['Dapur masak & sinki','Kedua-duanya di bawah tingkap W5 (sinki ikut kedudukan KT)'],['Kabinet atas','Di atas tingkap W5 dan di dinding ruang makan (termasuk atas peti sejuk); kabinet microwave di atas kaunter'],['Nota','Saiz anggaran daripada pelan perabot dan keratan A-A, 1-2']]},
   AC:{t:'Penghawa dingin (split)',ref:'D9001',rows:[['Unit dalam','Unit dinding di Bilik 1, 2, 3 dan 4'],['Unit luar','3 kondenser di luar dinding grid C, 1 di luar dinding grid 1'],['Kapasiti','Tidak dinyatakan dalam lukisan']]}
 };
 
@@ -103,17 +111,19 @@ const TYPES={
   D2:{w:.9,sill:0,h:2.1,k:'door'},
   D3:{w:.75,sill:0,h:2.1,k:'bifold'}
 };
-const op=(type,c,open)=>Object.assign({type,c,open:open||1},TYPES[type]);
+/* open: arah buka (±1); flip: engsel di hujung koordinat besar bukaan */
+const op=(type,c,open,flip)=>Object.assign({type,c,open:open||1,flip:!!flip},TYPES[type]);
 const WALLS=[
   [0,0,15,0,[op('W1',1.425),op('W1',4.425),op('W3',6.525),op('W1',8.175),op('W3',9.675),op('W1',13.5)]],
   [15,0,15,4.2,[op('W2',1.275),op('W2',2.025),op('W2',2.775)]], // dinding Bilik 1 diteruskan 300 ke lanai sebagai pier penuh (D6002, E1 '300')
-  [1.8,7.8,5.1,7.8,[op('W5',1.65)]],[8.4,7.8,12.3,7.8,[op('W2',.675),op('W2',3.15)]],
+  [1.8,7.8,5.1,7.8,[op('W5',1.65)]],[1.075,7.8,1.8,7.8], // yard sisi grid A: dinding x 1.0–1.8, bukaan 900 untuk tangga sahaja (E4, M1002, D7006)[8.4,7.8,12.3,7.8,[op('W2',.675),op('W2',3.15)]],
   /* Balkoni separuh ke dalam (M1003, D6004, keratan 2-1): GD1 450 mm ke dalam dari grid A; tiada dinding pada grid A antara grid 3 dan 4 */
   [5.1,7.35,8.4,7.35,[op('GD1',1.725)]],[8.4,7.35,8.4,7.8],
   [0,0,0,5.1,[op('W4',4.5)]],
-  [0,3.9,6.0,3.9,[op('D2',2.45,-1),op('D2',5.55,-1)]],
-  [7.2,3.9,15,3.9,[op('D2',.55,-1),op('D2',3.2,-1)]],
-  [3,0,3,3.9],[6,0,6,3.9],[7.2,0,7.2,3.9],
+  [0,3.9,6.0,3.9,[op('D2',2.45,-1,1)]],
+  [7.2,3.9,15,3.9,[op('D2',3.2,-1)]],
+  /* Pintu Bilik 3 & Bilik 2 pada dinding koridor, 1050 dari dinding Bilik Air 2 (M1003, keratan 2-1) */
+  [3,0,3,3.9],[6,0,6,3.9,[op('D2',3.375,1,1)]],[7.2,0,7.2,3.9,[op('D2',3.375,-1,1)]],
   [6,1.8,7.2,1.8,[op('D3',.45)]],
   [9.3,0,9.3,1.8],[9.3,1.8,10.95,1.8],[10.95,0,10.95,1.8,[op('D3',1.35,-1)]],[9.9,1.8,9.9,3.9],
   [1.8,3.9,1.8,7.8,[op('D3',.75,-1),op('D1',1.75)]],
@@ -130,7 +140,7 @@ const STAIRS=[
 ];
 /* [x1,y1,x2,y2,aras tapak]. Pagar sisi tangga lanai pada y 5.4 (zon 150 selepas tangga, D6002), aras atas rata (D6003) */
 const RAILS=[
-  [0,5.1,0,7.8,.45],[.9,7.8,1.8,7.8,.45],
+  [0,5.1,0,7.8,.45],
   [15,5.4,15,7.8,.45],[12.3,7.8,15,7.8,.45],[13.6,5.4,15,5.4,.45],
   [5.1,8.1,8.4,8.1,.45],[5.1,7.875,5.1,8.1,.45],[8.4,7.875,8.4,8.1,.45]
 ];
@@ -175,7 +185,7 @@ const RF={x0:-.8, x1:15.8, y0:-.8, y1:8.6, ridge:6.4, pitch:Math.PI/6, gx:17.0, 
 const WTILE={ba1:{kit:['y1','y2'],kz:.9}, ba2:{}, ba3:{}};
 
 /* ================= Paip udara VP (M1001, M1002) ================= */
-const VPIPE=[{n:'VP1',x:9.4,y:-.13},{n:'VP2',x:6.15,y:-.13},{n:'VP3',x:-.13,y:4.05}];
+const VPIPE=[{n:'VP1',x:9.33,y:-.13},{n:'VP2',x:6.0,y:-.13},{n:'VP3',x:-.13,y:3.9}]; // M1002 & E2/E3, diukur pada skala 1:100
 
 /* ================= Tapak (M1001, M1002) ================= */
 /* Utara ke arah jalan berturap (+x), seperti anak panah semua helaian. Bering M1001 dirujuk pada sisi rumah keluarga (0°);
@@ -199,7 +209,16 @@ const UTIL=[
   {k:'sump',x:-1.97,y:8.64,t:'Sump 600 × 600 mm',rows:[['Binaan','Konkrit bertetulang, jeriji G.I. boleh tanggal'],['Kedalaman','Ikut invert longkang']]},
   {k:'tank',x:-1.86,y:10.86,d:1.23,h:2.08,t:'Tangki air 1,500 liter',rows:[['Model','King Kong HR150 keluli tahan karat, kaki menegak'],['Saiz','Ø1230 × 2080 mm'],['Tapak','Papak konkrit bertetulang 150 mm atas hardcore, 100 mm atas aras tanah']]},
   {k:'pump',x:.14,y:11.16,w:.9,l:.6,h:1.0,t:'Kebuk pam penggalak',rows:[['Saiz dalam','≈900 × 600 × 1000 mm'],['Penutup','Kalis cuaca, bolong udara']]},
-  {k:'well',x:11.59,y:12.95,d:1.2,t:'Perigi sedia ada',rows:[['Cadangan','Pam perigi tenggelam (submersible)']]}
+  {k:'well',x:11.59,y:12.95,d:1.2,t:'Perigi sedia ada',rows:[['Cadangan','Pam perigi tenggelam (submersible)']]},
+  /* Perangkap & pili (M1002, diukur pada skala 1:100); z = aras tapak */
+  {k:'gt',x:9.5,y:-.19,z:.05,t:'Gully trap GT 1',rows:[['Lokasi','Apron di luar Bilik Air 1, sebelah VP 1'],['Saiz','Ikut cadangan kontraktor']]},
+  {k:'gt',x:6.17,y:-.19,z:.05,t:'Gully trap GT 2',rows:[['Lokasi','Apron di luar Bilik Air 2, sebelah VP 2'],['Saiz','Ikut cadangan kontraktor']]},
+  {k:'gt',x:-.17,y:4.08,z:.05,t:'Gully trap GT 3',rows:[['Lokasi','Apron di luar Bilik Air 3, sebelah VP 3'],['Saiz','Ikut cadangan kontraktor']]},
+  {k:'grt',x:2.2,y:8.08,z:.05,w:.6,l:.3,t:'Perangkap gris (GRT)',rows:[['Lokasi','Di luar dinding dapur (grid A), ke sisa dapur'],['Saiz dilukis','≈600 × 300 mm'],['Jenis','Ikut cadangan kontraktor']]},
+  {k:'wtp',x:15.68,y:-1.24,t:'Pili air luar WT 1',rows:[['Lokasi','Bucu teres sisi lorong'],['Butiran','Ikut butiran arkitek (tiada dalam set lukisan); tapak ≈600 × 600 mm dilukis']]},
+  {k:'ft',x:1.67,y:7.66,z:.45,t:'Perangkap lantai (FT) yard',rows:[['Lokasi','Bucu yard, sebelah dinding dapur']]},
+  {k:'ft',x:2.575,y:7.025,z:.5,t:'Perangkap lantai (FT) dapur',rows:[['Lokasi','700 mm dari muka dinding grid A dan dinding yard']]},
+  {k:'wt',x:1.725,y:7.44,z:.45,t:'Pili air WT 2 (yard)',rows:[['Lokasi','Dinding dapur, sisi yard'],['Ketinggian','1000 mm dari lantai yard (keratan 1-1)']]}
 ];
 
 /* ================= Penghawa dingin (D9001, diukur pada skala 1:75) ================= */
