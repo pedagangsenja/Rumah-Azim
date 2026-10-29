@@ -124,7 +124,9 @@ function buildWalls(top){
       const frameRect=(s,e,z1,z2,div,tr,glassMat)=>{
         if(z2-z1<0.02) return;
         piece(s,e,z1,z2,glassMat,0.012,sub);
-        for(let i=0;i<=div;i++){ const p=s+i*(e-s)/div; piece(Math.max(s,p-f/2),Math.min(e,p+f/2),z1,z2,M.frame,0.07,sub); }
+        for(let i=0;i<=div;i++){ const p=s+i*(e-s)/div, tepi=i===0||i===div;
+          if(o.joint&&!tepi) piece(p-.003,p+.003,z1,z2,M.frame,.02,sub); // sambungan kaca nipis, tiada mullion aluminium (W6: D3002, E1)
+          else piece(Math.max(s,p-f/2),Math.min(e,p+f/2),z1,z2,M.frame,0.07,sub); }
         piece(s,e,z1,Math.min(z2,z1+f),M.frame,0.07,sub);
         if(o.zh<=top) piece(s,e,z2-f,z2,M.frame,0.07,sub);
         for(const t of (tr||[])){ const zz=z1+t; if(zz<z2-0.02) piece(s,e,zz-f/2,zz+f/2,M.frame,0.07,sub); }
