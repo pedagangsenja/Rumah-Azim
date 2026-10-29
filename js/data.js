@@ -28,7 +28,7 @@ const INFO={
   W3:{t:'W3 · Tingkap bilik air',ref:'D3002',rows:[['Jenis','Top-hung atas + kaca tetap bawah'],['Saiz','750 × 900 mm, ambang 1200 mm'],['Kaca','Kaca frosted / obscure terbaja'],['Kuantiti','2 (Bilik air 1 & 2)']]},
   W4:{t:'W4 · Tingkap bilik air 3',ref:'D3002',rows:[['Jenis','Top-hung aluminium 2 panel (525 + 525)'],['Saiz','1050 × 450 mm, ambang 1650 mm'],['Kaca','Kaca frosted / obscure terbaja'],['Kuantiti','1']]},
   W5:{t:'W5 · Tingkap dapur',ref:'D3002',rows:[['Jenis','Gelangsar 4 panel: 2 tetap di tepi, 2 gelangsar di tengah'],['Saiz','3150 × 600 mm (4 × 788), ambang 1000 mm'],['Kaca','Kaca jernih / berwarna terbaja'],['Kuantiti','1']]},
-  W6:{t:'W6 · Tingkap kaca tetap ruang tamu',ref:'D3002',rows:[['Jenis','Kaca tetap aluminium, 4 panel sama (≈525 mm setiap satu)'],['Saiz','2100 × 2100 mm, ambang 300 mm'],['Kaca','Kaca terbaja (tertakluk kelulusan arkitek)'],['Kuantiti','1 (menghadap lanai)']]},
+  W6:{t:'W6 · Tingkap kaca tetap ruang tamu',ref:'D3002',rows:[['Jenis','Kaca tetap dalam satu bingkai aluminium keliling; 4 keping kaca sama (≈525 mm) bercantum dengan sambungan nipis, tiada mullion aluminium (D3002, E1)'],['Saiz','2100 × 2100 mm, ambang 300 mm'],['Kaca','Kaca terbaja (tertakluk kelulusan arkitek)'],['Kuantiti','1 (menghadap lanai)']]},
   MD1:{t:'MD1 · Pintu masuk utama',ref:'D3001',rows:[['Jenis','Pintu kayu pejal satu daun'],['Saiz','1000 × 2400 mm'],['Daun','Kayu pejal 44 mm'],['Bingkai','Kayu keras, kemasan stain + varnis'],['Perkakasan','Engsel berat, pemegang tuil, kunci mortis, deadbolt'],['Lokasi','Lanai ke ruang tamu (1)']]},
   D1:{t:'D1 · Pintu dapur ke yard',ref:'D3001',rows:[['Jenis','Pintu kayu pejal satu daun'],['Saiz','900 × 2100 mm'],['Ambang','Batu tumit konkrit 100 mm'],['Lokasi','Dapur ke yard (1)']]},
   D2:{t:'D2 · Pintu bilik tidur',ref:'D3001',rows:[['Jenis','Pintu flush kayu satu daun'],['Saiz','900 × 2100 mm'],['Daun','Papan lapis 38 mm, lipping kayu keras'],['Bingkai','Keluli lembut tekan, salutan serbuk'],['Kuantiti','4 (semua bilik tidur)']]},
@@ -103,7 +103,7 @@ const TYPES={
   W3:{w:.75,sill:1.2,h:.9,k:'win',div:1,tr:[.45],frost:true},
   W4:{w:1.05,sill:1.65,h:.45,k:'win',div:2,frost:true},
   W5:{w:3.15,sill:1.0,h:.6,k:'win',div:4},
-  W6:{w:2.1,sill:.3,h:2.1,k:'win',div:4},
+  W6:{w:2.1,sill:.3,h:2.1,k:'win',div:4,joint:true},
   GD1:{w:2.7,sill:0,h:2.4,k:'win',div:4,tr:[2.1]},
   GD2:{w:.9,sill:0,h:2.85,k:'gdoor',tr:[2.1]},
   MD1:{w:1.0,sill:0,h:2.4,k:'door'},
@@ -116,7 +116,8 @@ const op=(type,c,open,flip)=>Object.assign({type,c,open:open||1,flip:!!flip},TYP
 const WALLS=[
   [0,0,15,0,[op('W1',1.425),op('W1',4.425),op('W3',6.525),op('W1',8.175),op('W3',9.675),op('W1',13.5)]],
   [15,0,15,4.2,[op('W2',1.275),op('W2',2.025),op('W2',2.775)]], // dinding Bilik 1 diteruskan 300 ke lanai sebagai pier penuh (D6002, E1 '300')
-  [1.8,7.8,5.1,7.8,[op('W5',1.65)]],[1.075,7.8,1.8,7.8], // yard sisi grid A: dinding x 1.0–1.8, bukaan 900 untuk tangga sahaja (E4, M1002, D7006)[8.4,7.8,12.3,7.8,[op('W2',.675),op('W2',3.15)]],
+  /* Yard sisi grid A: dinding x 1.0–1.8, bukaan 900 untuk tangga sahaja (E4, M1002, D7006) */
+  [1.8,7.8,5.1,7.8,[op('W5',1.65)]],[1.075,7.8,1.8,7.8],[8.4,7.8,12.3,7.8,[op('W2',.675),op('W2',3.15)]],
   /* Balkoni separuh ke dalam (M1003, D6004, keratan 2-1): GD1 450 mm ke dalam dari grid A; tiada dinding pada grid A antara grid 3 dan 4 */
   [5.1,7.35,8.4,7.35,[op('GD1',1.725)]],[8.4,7.35,8.4,7.8],
   [0,0,0,5.1,[op('W4',4.5)]],
