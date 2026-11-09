@@ -385,6 +385,11 @@ wardrobe(11.05,.12,12.45,.7); desk(11.4,3.6,'y-',.9); chair(furn,11.4,3.05,FFL,'
   boxPlan(11.16,6.07,11.9,6.92,FFL,FFL+.42,M.fabric,g); boxPlan(11.7,5.3,11.92,6.92,FFL,FFL+.62,M.fabric,g); boxPlan(8.77,5.3,8.97,6.07,FFL,FFL+.62,M.fabric,g);
   const tv=tagged(furn,{t:'Kabinet TV & TV 80"',ref:'M1006-1',rows:[['TV','Maksimum 80" pada dinding antara dua tingkap W2'],['Kabinet','≈2100 × 430 mm (M1004)']]});
   boxPlan(9.31,7.29,11.4,7.72,FFL,FFL+.45,M.wood2,tv); boxPlan(9.47,7.68,11.25,7.72,FFL+.8,FFL+1.8,M.screen,tv); // M1004 kabinet, A-A kedudukan TV
+  /* Hiasan (bukan lukisan): kusyen, meja kopi, permaidani */
+  const h=tagged(furn,{t:'Hiasan ruang tamu',ref:'—',rows:[['Nota','Kusyen, meja kopi dan permaidani ialah hiasan untuk gambaran, bukan sebahagian lukisan']]});
+  for(const [x,y,mat,rz] of [[9.4,5.75,M.throwA,.12],[10.3,5.72,M.linen,-.08],[11.55,5.78,M.throwB,.2],[11.5,6.5,M.throwA,-.15]]){ const c=bx(h,.42,.42,.13,mat,0,0,0); c.position.set(x,FFL+.42+.2,-y); c.rotation.set(-.25,rz,0); c.geometry=new THREE.BoxGeometry(.42,.42,.13,4,4,2); const P=c.geometry.attributes.position; for(let i=0;i<P.count;i++){ const px=P.getX(i),py=P.getY(i),pz=P.getZ(i); const k=1-Math.hypot(px/.21,py/.21)/1.414*.55; P.setZ(i,pz*Math.max(.2,k)); } c.geometry.computeVertexNormals(); }
+  boxPlan(9.3,6.35,11.0,7.1,FFL+.001,FFL+.012,M.fabric2,h); // permaidani
+  boxPlan(9.6,6.5,10.7,7.0,FFL+.36,FFL+.4,M.oak,h); for(const [x,y] of [[9.65,6.55],[10.65,6.55],[9.65,6.95],[10.65,6.95]]) boxPlan(x-.02,y-.02,x+.02,y+.02,FFL,FFL+.36,M.black,h); // meja kopi
 })();
 // Lanai — meja bulat 4 kerusi
 (function(){ const g=item(furn,13.85,6.9,.45,'x+',{t:'Set meja lanai',ref:'M1004',rows:[['Susunan','Meja bulat + 4 kerusi'],['Sumber','Susun atur perabot M1004']]});

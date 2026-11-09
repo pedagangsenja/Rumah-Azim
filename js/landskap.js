@@ -120,6 +120,10 @@ function coconut(t){
   return g;
 }
 for(const t of TREES){ if(t.k==='kelapa') coconut(t); else broadTree(t,t.k==='mangga'?6.2:5.0,t.k==='mangga'?113:127); }
+/* Pasu tanaman lanai & teres (hiasan) */
+for(const [x,y,lv] of [[12.55,7.55,.45],[14.75,7.55,.45],[15.3,4.1,.06]]){ const g=item(furn,x,y,lv,'x+',{t:'Pasu tanaman',ref:'—',rows:[['Nota','Hiasan untuk gambaran, bukan lukisan']]});
+  cyl(g,.17,.13,.36,std(0x8a6a52,{roughness:.9}),0,.18,0,18); cyl(g,.15,.15,.02,std(0x3a2d22,{roughness:1}),0,.36,0,18);
+  const r=rnd(Math.round(x*100+y)); for(let k=0;k<7;k++){ const s=.1+r()*.1, m=new THREE.Mesh(blobGeo(s,200+k),M.leaf); m.position.set((r()-.5)*.25,.42+r()*.35,(r()-.5)*.25); m.castShadow=true; g.add(m); } }
 
 /* ================= Kemudahan tapak (M1002) ================= */
 for(const u of UTIL){
