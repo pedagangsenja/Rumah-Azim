@@ -9,6 +9,7 @@ Model 3D three.js (r128, global `THREE` dari CDN) untuk banglo setingkat milik p
 - **Data vs kod:** Data (bilik, bukaan, jadual, kemasan) diletakkan dalam `js/data.js`. Kod binaan diletakkan dalam `js/model.js`. Jangan campurkan.
 - **Privasi:** Repo ini awam. Jangan tambah PDF lukisan, alamat lot, nombor lot atau nama penuh pemilik.
 - **Turutan skrip:** `data.js → core.js → model.js → landskap.js → ui.js → jalan.js → galeri.js`. Semua skrip klasik berkongsi `const` peringkat atas, jadi elakkan nama berulang antara fail.
+- **Semakan automatik:** `node alat/semak_data.js` (tanpa pakej) menyemak luas bilik lawan M1003, kuantiti bukaan lawan D3001/D3002, bilangan dinding/pagar dan tepi bilik yang terbuka; GitHub Actions `semak.yml` menjalankannya pada setiap push. Jalankan sebelum commit; jika lukisan berubah, kemas kini nilai `BIL`/`JADUAL`/`TERBUKA` dengan sengaja, bukan dengan melonggarkan semakan.
 - **Telefon:** Pemilik kebanyakannya menggunakan telefon. Pastikan susun atur berfungsi pada lebar ~400 px dan sentuhan (ketik / seret / cubit) masih berfungsi.
 
 ## Render fotorealistik

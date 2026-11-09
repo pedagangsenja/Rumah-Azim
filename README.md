@@ -32,6 +32,7 @@ Model memerlukan internet kerana three.js dan fon dimuatkan dari CDN.
 | `css/style.css` | Gaya, tema cerah/gelap |
 | `js/data.js` | **Semua data lukisan**: aras, kemasan (D1001), jadual maklumat, bilik (M1003), dinding & bukaan (D3001/D3002), tangga & pagar (D6xxx, D7006/D7007), balkoni & kanopi (D6004, keratan 2-1), bumbung (M1004, D5001), jubin dinding bilik air (D1001–D1004), pelmet (D4001), downlight (D9001), paip VP, sempadan lot & kemudahan tapak (M1001, M1002) |
 | `js/core.js` | Renderer, kamera, langit, matahari ikut waktu, pantulan persekitaran, bahan, tekstur |
+| `alat/semak_data.js` | Semakan automatik data lawan jadual lukisan (dijalankan GitHub Actions) |
 | `js/model.js` | Binaan rumah: apron, longkang, lantai, tangga, dinding, jubin dinding, pagar, bumbung, siling, lampu, perabot, sanitari, VP |
 | `js/landskap.js` | Tanah, sempadan lot & batu sempadan, jalan, pokok sedia ada, tangki air, tangki septik, kebuk pemeriksaan, perigi |
 | `js/ui.js` | Tab, lapisan, pandangan, waktu matahari, lawatan bilik, kad maklumat, pilihan kemasan, gelung animasi |
@@ -55,6 +56,14 @@ Fail dimuatkan mengikut turutan `data → core → model → landskap → ui →
   - Rabung utama ≈6.40, rabung gable lanai ≈5.27
 - **Utara:** ke arah +x (jalan berturap), seperti anak panah semua helaian. Utara sebenar (Google Earth) = +x diputar 8.9° ke arah +y (`UTARA` dalam `js/data.js`). Barat ≈ +y (rumah keluarga), timur ≈ −y (jalan dalam), selatan ≈ −x (bendang).
 - **Kedudukan bukaan:** dalam `WALLS`, nilai `c` ialah jarak pusat bukaan dari hujung dinding yang lebih kecil koordinatnya.
+
+## Tahap ketepatan
+
+- **Tepat ikut dimensi bertulis:** grid, dinding, semua bukaan dan ambangnya (M1003, D3001, D3002), aras lantai dan siling, cerun bumbung dan cucur (D5001), tangga (D7006, D7007), pagar (D6001–D6004), kemasan lantai dan dinding (D1001–D1006), jubin dinding bilik air. Luas 12 daripada 13 ruang dalam model sama dengan jadual M1003 hingga 0.01 m² (ruang makan: lihat item 21).
+- **Diukur pada skala (ditanda ≈):** kedudukan downlight, kipas, penghawa dingin dan kondenser (D9001, 1:75), perangkap dan pili luar (M1002, 1:100), unjuran kanopi balkoni (keratan 2-1), saiz perabot (M1004) dan aksesori bilik air tanpa dimensi bertulis. Ketepatan anggaran ±50–100 mm.
+- **Bercanggah antara helaian, menunggu keputusan arkitek:** item 3, 9, 10, 11, 15, 16, 17 di bawah; yang paling ketara ialah tinggi bumbung gable depan (item 15).
+- **Tidak dimodel:** suis dan soket (D9001), titik pemanas air (item 28), bucu PVC dan trim (D8003, D8004), anjung kereta sedia ada di tanah keluarga (M1001).
+- **Semakan automatik:** `node alat/semak_data.js` menyemak luas, kuantiti bukaan dan tepi bilik pada setiap push (GitHub Actions). Ditambah selepas dinding TV ruang tamu hilang tanpa disedari dalam semakan 27 Okt.
 
 ## Perkara yang perlu disahkan dengan arkitek
 
