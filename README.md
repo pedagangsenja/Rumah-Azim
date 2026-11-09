@@ -62,6 +62,7 @@ Fail dimuatkan mengikut turutan `data → core → model → landskap → ui →
 - **Tepat ikut dimensi bertulis:** grid, dinding, semua bukaan dan ambangnya (M1003, D3001, D3002), aras lantai dan siling, cerun bumbung dan cucur (D5001), tangga (D7006, D7007), pagar (D6001–D6004), kemasan lantai dan dinding (D1001–D1006), jubin dinding bilik air. Luas 12 daripada 13 ruang dalam model sama dengan jadual M1003 hingga 0.01 m² (ruang makan: lihat item 21).
 - **Diukur pada skala (ditanda ≈):** kedudukan downlight, kipas, penghawa dingin dan kondenser (D9001, 1:75), perangkap dan pili luar (M1002, 1:100), unjuran kanopi balkoni (keratan 2-1), saiz perabot (M1004) dan aksesori bilik air tanpa dimensi bertulis. Ketepatan anggaran ±50–100 mm.
 - **Bercanggah antara helaian, menunggu keputusan arkitek:** item 3, 9, 10, 11, 15, 16, 17 di bawah; yang paling ketara ialah tinggi bumbung gable depan (item 15).
+- **Hiasan, bukan lukisan:** kusyen sofa, meja kopi, permaidani dan pasu tanaman lanai/teres ditambah untuk gambaran sahaja; ketik untuk lihat nota "hiasan".
 - **Tidak dimodel:** suis dan soket (D9001), titik pemanas air (item 28), bucu PVC dan trim (D8003, D8004), anjung kereta sedia ada di tanah keluarga (M1001).
 - **Semakan automatik:** `node alat/semak_data.js` menyemak luas, kuantiti bukaan dan tepi bilik pada setiap push (GitHub Actions). Ditambah selepas dinding TV ruang tamu hilang tanpa disedari dalam semakan 27 Okt.
 

@@ -28,6 +28,50 @@ def ancestors(o):
 
 # ---------------- Bahan ----------------
 TINT = (0.62, 0.74, 0.76, 1)
+
+def nodes(m): return m.node_tree.nodes, m.node_tree.links
+def texcoord(m):
+    N, L = nodes(m)
+    tc = next((x for x in N if x.type == 'TEX_COORD'), None) or N.new('ShaderNodeTexCoord')
+    return tc
+def noise(m, scale, detail=4.0, rough=0.5, distort=0.0, coord='Object'):
+    N, L = nodes(m); t = N.new('ShaderNodeTexNoise')
+    t.inputs['Scale'].default_value = scale; t.inputs['Detail'].default_value = detail
+    t.inputs['Roughness'].default_value = rough; t.inputs['Distortion'].default_value = distort
+    L.new(texcoord(m).outputs[coord], t.inputs['Vector']); return t
+def bump_from(m, sock, strength, dist):
+    """Sambung ketinggian ke Normal Principled; jika sudah ada bump, rantaikan."""
+    N, L = nodes(m); n = bsdf(m); b = N.new('ShaderNodeBump')
+    b.inputs['Strength'].default_value = strength; b.inputs['Distance'].default_value = dist
+    L.new(sock, b.inputs['Height'])
+    if n.inputs['Normal'].is_linked:
+        prev = n.inputs['Normal'].links[0].from_socket; L.new(prev, b.inputs['Normal'])
+    L.new(b.outputs['Normal'], n.inputs['Normal']); return b
+def vary(m, scale, amount, detail=3.0):
+    """Variasi warna halus (darab) di atas warna asas atau tekstur sedia ada."""
+    N, L = nodes(m); n = bsdf(m); t = noise(m, scale, detail)
+    ramp = N.new('ShaderNodeValToRGB'); ramp.color_ramp.elements[0].color = (1 - amount, 1 - amount, 1 - amount, 1); ramp.color_ramp.elements[1].color = (1 + amount * .6,) * 3 + (1,)
+    L.new(t.outputs['Fac'], ramp.inputs['Fac'])
+    mix = N.new('ShaderNodeMix'); mix.data_type = 'RGBA'; mix.blend_type = 'MULTIPLY'; mix.inputs[0].default_value = 1.0
+    inp = n.inputs['Base Color']
+    if inp.is_linked: L.new(inp.links[0].from_socket, mix.inputs[6])
+    else: mix.inputs[6].default_value = tuple(inp.default_value)
+    L.new(ramp.outputs['Color'], mix.inputs[7]); L.new(mix.outputs[2], inp); return mix
+def plaster(m, strength=0.25):
+    t = noise(m, 180.0, 6.0, 0.7); bump_from(m, t.outputs['Fac'], strength, 0.002)
+    t2 = noise(m, 2.5, 2.0, 0.5); bump_from(m, t2.outputs['Fac'], 0.08, 0.004)   # ombak lepa besar
+    vary(m, 3.0, 0.03)
+def wood(m, dark, light, scale=18.0, ring=2.5):
+    """Urat kayu: gelombang terherot oleh hingar, diwarna antara dua ton, dengan bump halus."""
+    N, L = nodes(m); n = bsdf(m)
+    w = N.new('ShaderNodeTexWave'); w.wave_type = 'BANDS'; w.bands_direction = 'X'; w.wave_profile = 'SAW'
+    w.inputs['Scale'].default_value = ring; w.inputs['Distortion'].default_value = 6.0; w.inputs['Detail'].default_value = 3.0; w.inputs['Detail Scale'].default_value = scale
+    L.new(texcoord(m).outputs['Object'], w.inputs['Vector'])
+    ramp = N.new('ShaderNodeValToRGB'); ramp.color_ramp.elements[0].color = dark + (1,); ramp.color_ramp.elements[1].color = light + (1,)
+    L.new(w.outputs['Fac'], ramp.inputs['Fac']); L.new(ramp.outputs['Color'], n.inputs['Base Color'])
+    bump_from(m, w.outputs['Fac'], 0.08, 0.001)
+def lin(hexs): return tuple(s2l(int(hexs[i:i + 2], 16) / 255) for i in (1, 3, 5))
+def s2l(c): return c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4
 for m in bpy.data.materials:
     k, n = base(m), bsdf(m)
     if not n: continue
@@ -77,7 +121,6 @@ for m in bpy.data.materials:
         setp(n, 'Roughness', 0.35)
 
 # Warna three.js tanpa tekstur ditulis sebagai sRGB tetapi dibaca linear; tukar supaya ikut warna hex sebenar
-def s2l(c): return c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4
 for m in bpy.data.materials:
     k, n = base(m), bsdf(m)
     # bahan yang warnanya ditukar ke linear dalam three.js (pilihan kemasan & gaya) tidak ditukar lagi
@@ -85,6 +128,38 @@ for m in bpy.data.materials:
     inp = n.inputs['Base Color']
     if inp.is_linked: continue
     c = inp.default_value; inp.default_value = (s2l(c[0]), s2l(c[1]), s2l(c[2]), 1)
+
+# ---------------- Tekstur prosedural (selepas warna asas linear) ----------------
+for m in bpy.data.materials:
+    k, n = base(m), bsdf(m)
+    if not n: continue
+    if k in ('wall', 'wallIn', 'col', 'aksen'): plaster(m, 0.3)
+    elif k in ('fascia', 'soffit', 'ceil'): plaster(m, 0.12)
+    elif k in ('plinth', 'apron', 'cover', 'side', 'tileCounter'):
+        t = noise(m, 60.0, 8.0, 0.75); bump_from(m, t.outputs['Fac'], 0.35, 0.003); vary(m, 1.2, 0.08, 4.0)
+        setp(n, 'Roughness', 0.92)
+    elif k == 'door':
+        c = tuple(n.inputs['Base Color'].default_value[:3]); wood(m, tuple(x * 0.55 for x in c), tuple(min(1, x * 1.15) for x in c), 22.0, 3.0)
+    elif k in ('wood2', 'oak'):
+        c = tuple(n.inputs['Base Color'].default_value[:3]); wood(m, tuple(x * 0.6 for x in c), tuple(min(1, x * 1.12) for x in c), 30.0, 4.0)
+    elif k.startswith('floor_') or k in ('tileW', 'kitkat'):
+        tex = next((x for x in m.node_tree.nodes if x.type == 'TEX_IMAGE'), None)
+        if tex:   # garis grout dan urat daripada tekstur sebagai bump; jubin berkilat pantulan sedikit kabur
+            bump_from(m, tex.outputs['Color'], 0.12 if 'timber' in k or 'strip' in k or k[6:] in ('oakstrip', 'merbau') else 0.25, 0.002)
+        vary(m, 0.8, 0.05, 2.0)
+    elif k in ('fabric', 'fabric2', 'linen', 'pillow', 'throwA', 'throwB', 'langsir'):
+        t = noise(m, 400.0, 2.0, 0.6); bump_from(m, t.outputs['Fac'], 0.15, 0.0008); vary(m, 6.0, 0.06)
+    elif k == 'roof':
+        vary(m, 0.35, 0.18, 2.0)   # variasi warna antara jubin
+        t = noise(m, 90.0, 5.0, 0.7); bump_from(m, t.outputs['Fac'], 0.2, 0.001)
+    elif k in ('asphalt', 'laterite', 'grass'):
+        t = noise(m, 30.0, 6.0, 0.7); bump_from(m, t.outputs['Fac'], 0.3, 0.004); vary(m, 0.25, 0.25 if k == 'grass' else 0.12, 3.0)
+    elif k in ('bark',):
+        t = noise(m, 12.0, 8.0, 0.8, 1.0); bump_from(m, t.outputs['Fac'], 0.6, 0.01); vary(m, 2.0, 0.2)
+    elif k == 'glass':
+        setp(n, 'Roughness', 0.015)
+    elif k in ('frame', 'rail'):
+        t = noise(m, 300.0, 2.0); bump_from(m, t.outputs['Fac'], 0.05, 0.0005); setp(n, 'Roughness', 0.42)
 
 # ---------------- Bevel: bucu lembut ----------------
 for o in bpy.data.objects:
@@ -139,8 +214,8 @@ curtain(12.3, 0.075, 14.7, 0.075, (0, 1)); curtain(14.925, 0.8, 14.925, 3.1, (-1
 # ---------------- Rumput (rumpun berinstans) ----------------
 def clump():
     bm = bmesh.new()
-    for b in range(9):
-        a = random.random() * 6.283; r = random.random() * 0.03; h = 0.06 + random.random() * 0.08; w = 0.006
+    for b in range(14):
+        a = random.random() * 6.283; r = random.random() * 0.035; h = 0.05 + random.random() * 0.11; w = 0.005
         bx, by = r * math.cos(a), r * math.sin(a); lean = random.random() * 0.03; la = random.random() * 6.283
         v1 = bm.verts.new((bx - w * math.sin(a), by + w * math.cos(a), 0)); v2 = bm.verts.new((bx + w * math.sin(a), by - w * math.cos(a), 0))
         v3 = bm.verts.new((bx + lean * math.cos(la), by + lean * math.sin(la), h)); bm.faces.new((v1, v2, v3))
@@ -148,7 +223,8 @@ def clump():
     ob = bpy.data.objects.new('rumpun', me); sc.collection.objects.link(ob); return ob
 gmat = bpy.data.materials.new('rumput'); gmat.use_nodes = True; gn = gmat.node_tree; gb = bsdf(gmat)
 oi = gn.nodes.new('ShaderNodeObjectInfo'); ramp = gn.nodes.new('ShaderNodeValToRGB')
-ramp.color_ramp.elements[0].color = (0.10, 0.20, 0.04, 1); ramp.color_ramp.elements[1].color = (0.30, 0.38, 0.10, 1)
+ramp.color_ramp.elements[0].color = (0.08, 0.18, 0.03, 1); ramp.color_ramp.elements[1].color = (0.34, 0.40, 0.11, 1)
+ramp.color_ramp.elements.new(0.5).color = (0.17, 0.30, 0.06, 1)
 gn.links.new(oi.outputs['Random'], ramp.inputs['Fac']); gn.links.new(ramp.outputs['Color'], gb.inputs['Base Color'])
 setp(gb, 'Roughness', 0.6); setp(gb, 'Subsurface Weight', 0.2)
 clumps = [clump() for _ in range(4)]
@@ -187,7 +263,7 @@ me = bpy.data.meshes.new('laman'); bm.to_mesh(me); bm.free()
 lawn = bpy.data.objects.new('laman', me); sc.collection.objects.link(lawn)
 area = sum(p.area for p in lawn.data.polygons)
 ps = lawn.modifiers.new('rumput', 'PARTICLE_SYSTEM').particle_system.settings
-ps.type = 'HAIR'; ps.use_advanced_hair = True; ps.count = int(area * 70); ps.hair_length = 1.0
+ps.type = 'HAIR'; ps.use_advanced_hair = True; ps.count = int(area * 120); ps.hair_length = 1.0
 ps.render_type = 'COLLECTION'; ps.instance_collection = ccol; ps.use_collection_pick_random = True
 ps.particle_size = 1.0; ps.size_random = 0.5; ps.use_rotations = True; ps.rotation_mode = 'NONE'; ps.phase_factor_random = 2.0
 ps.use_whole_collection = False
@@ -202,14 +278,14 @@ lmat = bpy.data.materials.new('daun'); lmat.use_nodes = True; ln = lmat.node_tre
 oi2 = ln.nodes.new('ShaderNodeObjectInfo'); r2 = ln.nodes.new('ShaderNodeValToRGB')
 r2.color_ramp.elements[0].color = (0.04, 0.12, 0.03, 1); r2.color_ramp.elements[1].color = (0.16, 0.30, 0.06, 1)
 ln.links.new(oi2.outputs['Random'], r2.inputs['Fac']); ln.links.new(r2.outputs['Color'], lb.inputs['Base Color'])
-setp(lb, 'Roughness', 0.45); setp(lb, 'Transmission Weight', 0.15)
+setp(lb, 'Roughness', 0.5); setp(lb, 'Transmission Weight', 0.3); setp(lb, 'Subsurface Weight', 0.3); setp(lb, 'Subsurface Radius', (0.02, 0.05, 0.01))
 lcol = bpy.data.collections.new('daun'); sc.collection.children.link(lcol)
 lf = bpy.data.objects.new('daun', leaf_mesh()); lf.data.materials.append(lmat); lcol.objects.link(lf); lf.location = (0, 0, -60)
 for o in list(bpy.data.objects):
     if o.type != 'MESH' or not o.data.materials or base(o.data.materials[0]) != 'leaf': continue
     if 'far_trees' in ancestors(o): continue
     mod = o.modifiers.new('daun', 'PARTICLE_SYSTEM'); s = mod.particle_system.settings
-    s.type = 'HAIR'; s.use_advanced_hair = True; s.count = 1400; s.hair_length = 1.0; s.render_type = 'OBJECT'; s.instance_object = lf
+    s.type = 'HAIR'; s.use_advanced_hair = True; s.count = 2600; s.hair_length = 1.0; s.render_type = 'OBJECT'; s.instance_object = lf
     s.particle_size = 1.4; s.size_random = 0.5; s.use_rotations = True; s.rotation_mode = 'NOR'; s.rotation_factor_random = 0.6; s.phase_factor_random = 2.0
     o.show_instancer_for_render = False
 for o in bpy.data.objects:
@@ -225,6 +301,21 @@ for t in ('MULTIPLE_SCATTERING', 'NISHITA'):
     except Exception: pass
 sky.sun_disc = False; sky.altitude = 30; sky.air_density = 1.0; sky.aerosol_density = 1.5; sky.ozone_density = 1.0
 wn.links.new(sky.outputs['Color'], bg.inputs['Color']); bg.inputs['Strength'].default_value = 0.25
+# Awan kumulus nipis: satah 6 km pada 1 800 m, pancaran lembut, tidak membayang
+cm = bpy.data.materials.new('awan'); cm.use_nodes = True; CN, CL = cm.node_tree.nodes, cm.node_tree.links
+for x in list(CN):
+    if x.type == 'BSDF_PRINCIPLED': CN.remove(x)
+out = next(x for x in CN if x.type == 'OUTPUT_MATERIAL')
+cn = CN.new('ShaderNodeTexNoise'); cn.inputs['Scale'].default_value = 1.6; cn.inputs['Detail'].default_value = 7.0; cn.inputs['Roughness'].default_value = 0.62
+cn2 = CN.new('ShaderNodeTexNoise'); cn2.inputs['Scale'].default_value = 0.35; cn2.inputs['Detail'].default_value = 2.0
+cmul = CN.new('ShaderNodeMath'); cmul.operation = 'MULTIPLY'; CL.new(cn.outputs['Fac'], cmul.inputs[0]); CL.new(cn2.outputs['Fac'], cmul.inputs[1])
+cr = CN.new('ShaderNodeValToRGB'); cr.color_ramp.elements[0].position = 0.24; cr.color_ramp.elements[1].position = 0.42
+CL.new(cmul.outputs[0], cr.inputs['Fac'])
+ce = CN.new('ShaderNodeEmission'); ce.inputs['Color'].default_value = (1.0, 1.0, 1.0, 1); ce.inputs['Strength'].default_value = 1.1
+ct = CN.new('ShaderNodeBsdfTransparent'); cmix = CN.new('ShaderNodeMixShader')
+CL.new(cr.outputs['Color'], cmix.inputs['Fac']); CL.new(ct.outputs[0], cmix.inputs[1]); CL.new(ce.outputs[0], cmix.inputs[2]); CL.new(cmix.outputs[0], out.inputs['Surface'])
+bpy.ops.mesh.primitive_plane_add(size=6000, location=(10, 3, 1800)); cloud = bpy.context.active_object; cloud.name = 'awan'
+cloud.data.materials.append(cm); cloud.visible_shadow = False; cloud.visible_diffuse = False
 sunL = bpy.data.lights.new('matahari', 'SUN'); sunL.angle = math.radians(0.55)
 sun = bpy.data.objects.new('matahari', sunL); sc.collection.objects.link(sun)
 

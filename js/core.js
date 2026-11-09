@@ -119,8 +119,13 @@ const concreteTex=canvasTex(256,(g,S)=>{ const r=rnd(41); g.fillStyle='#bdb9b0';
   speckle(g,S,r,5000,['rgba(90,85,75,.12)','rgba(255,255,255,.18)','rgba(60,55,50,.08)'],2); });
 const sidingTex=canvasTex(128,(g,S)=>{ g.fillStyle='#ecebe6'; g.fillRect(0,0,S,S); for(let y=0;y<S;y+=16){ g.fillStyle='rgba(0,0,0,.16)'; g.fillRect(0,y+13,S,3); g.fillStyle='rgba(255,255,255,.5)'; g.fillRect(0,y,S,2); } });
 
+/* Bump lepa simen (butiran halus) untuk dinding, tiang, fascia dan siling */
+const plasterTex=canvasTex(256,(g,S)=>{ const r=rnd(43); g.fillStyle='#808080'; g.fillRect(0,0,S,S);
+  speckle(g,S,r,9000,['rgba(255,255,255,.22)','rgba(0,0,0,.2)','rgba(255,255,255,.1)','rgba(0,0,0,.1)'],1.8);
+  g.globalAlpha=.08; for(let k=0;k<60;k++){ g.fillStyle=r()>.5?'#fff':'#000'; g.beginPath(); g.ellipse(r()*S,r()*S,6+r()*24,4+r()*12,r()*3,0,6.3); g.fill(); } g.globalAlpha=1; },[2,2],true);
+const plaster=o=>Object.assign({roughness:.9,envMapIntensity:.6,bumpMap:plasterTex,bumpScale:.004},o);
 const M={
-  wall:std(0xf2f0eb,{roughness:.92,envMapIntensity:.6}), wallIn:std(0xf2f0eb,{roughness:.92,envMapIntensity:.6}), aksen:std(0xf2f0eb,{roughness:.92,envMapIntensity:.6}), col:std(0xf2f0eb,{roughness:.92,envMapIntensity:.6}),
+  wall:std(0xf2f0eb,plaster()), wallIn:std(0xf2f0eb,plaster()), aksen:std(0xf2f0eb,plaster()), col:std(0xf2f0eb,plaster()),
   plinth:std(0xa9a69e,{map:concreteTex}), apron:std(0xc8c4ba,{roughness:.95,map:concreteTex}),
   glass:std(0x8fb3bf,{roughness:.04,metalness:.6,transparent:true,opacity:.32,depthWrite:false,envMapIntensity:1.5}),
   frost:std(0xe9eef0,{roughness:.35,metalness:.1,transparent:true,opacity:.93}),
@@ -128,8 +133,8 @@ const M={
   louvre:new THREE.MeshStandardMaterial({map:louvreTex,color:0x2a2d2f,roughness:.5,metalness:.3}),
   rail:std(0x1e2123,{roughness:.55,metalness:.4}),
   door:std(0x8b5a36,{roughness:.55}),
-  fascia:std(0xf4f3ef,{roughness:.8}), soffit:std(0xf1efe9,{roughness:.9}), siding:std(0xffffff,{map:sidingTex,roughness:.85,side:THREE.DoubleSide}),
-  ceil:std(0xf7f6f2,{roughness:.95,envMapIntensity:.6}),
+  fascia:std(0xf4f3ef,plaster({bumpScale:.002})), soffit:std(0xf1efe9,plaster({bumpScale:.002})), siding:std(0xffffff,{map:sidingTex,roughness:.85,side:THREE.DoubleSide}),
+  ceil:std(0xf7f6f2,plaster({roughness:.95,bumpScale:.0015})),
   side:std(0xcfcbc2,{map:concreteTex}),
   porcelain:std(0xfbfbfa,{roughness:.18,envMapIntensity:1.2}), steel:std(0xc9cdd0,{roughness:.3,metalness:.6}), chrome:std(0xe2e6e9,{roughness:.12,metalness:.9}),
   black:std(0x1b1c1e,{roughness:.4}), screen:std(0x0e1013,{roughness:.12,metalness:.3}),
